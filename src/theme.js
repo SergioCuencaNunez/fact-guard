@@ -4,20 +4,20 @@ import { mode } from '@chakra-ui/theme-tools';
 const theme = extendTheme({
   config: {
     initialColorMode: 'light',
-    useSystemColorMode: false,
+    useSystemColorMode: true,
   },
   styles: {
     global: (props) => ({
       body: {
         bg: mode('gray.100', 'gray.900')(props),
         color: mode('black', 'white')(props),
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: 'Muli, sans-serif',
       },
     }),
   },
   fonts: {
-    heading: 'Inter, sans-serif',
-    body: 'Inter, sans-serif',
+    heading: 'Muli, sans-serif',
+    body: 'Muli, sans-serif',
   },
 });
 
