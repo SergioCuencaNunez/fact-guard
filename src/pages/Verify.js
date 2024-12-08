@@ -18,9 +18,13 @@ const Verify = () => {
 
   return (
     <Box>
-      <Flex align="center" mb="4">
-        <img src={logo} alt="Verify Logo" style={{ height: '30px', width: 'auto', marginRight: '10px' }} />
+      <Flex justify="space-between" align="center" mb="4">
+        {/* Left: Title */}
         <Heading>Verify Claims</Heading>
+        {/* Right: Moon Icon and Logo */}
+        <Flex direction="column" align="center">
+          <img src={logo} alt="Verify Logo" style={{ height: '50px', width: 'auto' }} />
+        </Flex>
       </Flex>
       <Text mb="4">Input a statement to verify its authenticity:</Text>
       <Input placeholder="Enter a claim..." mb="4" />
