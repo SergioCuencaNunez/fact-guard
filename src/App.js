@@ -14,7 +14,6 @@ import {
   Grid,
   GridItem,
   Button,
-  Collapse,
   Menu,
   MenuButton,
   MenuList,
@@ -25,6 +24,7 @@ import theme from './theme';
 import Detect from './pages/Detect';
 import Verify from './pages/Verify';
 import About from './pages/About';
+import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
 
 const Navbar = () => {
@@ -33,10 +33,10 @@ const Navbar = () => {
   const textColor = useColorModeValue('black', 'white');
 
   return (
-    <Box bg={bg} color={textColor} shadow="sm" px={{ base: '4', md: '8' }} py="3">
+    <Box bg={bg} color={textColor} shadow="sm" px={{ base: '4', md: '8' }} py="3" position="sticky" top="0" zIndex="1000">
       <Flex justify="space-between" align="center" maxW="1200px" mx="auto">
         {/* Logo */}
-        <img src={logo} alt="FactGuard Logo" style={{ height: '25px', width: 'auto' }} />
+        <img src={logo} alt="FactGuard Logo" style={{ height: '50px', width: 'auto' }} />
 
         {/* Links for larger screens */}
         <HStack spacing="5" display={{ base: 'none', md: 'flex' }}>
@@ -101,7 +101,7 @@ const Home = () => {
 
   return (
     <VStack spacing="10" py="10" px="5" maxW="1200px" mx="auto">
-      <Heading>Welcome to FactGuard</Heading>
+      <Heading>Welcome to Fact Guard</Heading>
       <Text>Discover the truth with AI-powered detection and verification.</Text>
       <Grid templateColumns={{ base: '1fr', sm: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6} w="100%">
         <GridItem>
@@ -110,7 +110,9 @@ const Home = () => {
               Detect Fake News
             </Heading>
             <Text mb="4">Paste or upload articles to analyze their authenticity.</Text>
-            <Button colorScheme="blue">Analyze</Button>
+            <Link to="/detect">
+              <Button colorScheme="blue">Analyze</Button>
+            </Link>
           </Box>
         </GridItem>
         <GridItem>
@@ -119,7 +121,9 @@ const Home = () => {
               Verify Claims
             </Heading>
             <Text mb="4">Input statements and get instant verification results.</Text>
-            <Button colorScheme="green">Verify</Button>
+            <Link to="/verify">
+              <Button colorScheme="green">Verify</Button>
+            </Link>
           </Box>
         </GridItem>
         <GridItem>
@@ -128,7 +132,9 @@ const Home = () => {
               Insights Dashboard
             </Heading>
             <Text mb="4">Track your analysis history and generate insights.</Text>
-            <Button colorScheme="purple">View Insights</Button>
+            <Link to="/insights">
+              <Button colorScheme="purple">View Insights</Button>
+            </Link>
           </Box>
         </GridItem>
       </Grid>
@@ -145,8 +151,8 @@ function App() {
           <Navbar />
           <Box
             flex="1"
-            py="10"
-            px="5"
+            py={{ base: '6', md: '10' }}
+            px={{ base: '4', md: '8' }}
             maxW="1200px"
             mx="auto"
             w="100%"
@@ -156,6 +162,7 @@ function App() {
               <Route path="/detect" element={<Detect />} />
               <Route path="/verify" element={<Verify />} />
               <Route path="/about" element={<About />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Box>
           <Footer />

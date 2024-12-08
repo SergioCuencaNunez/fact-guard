@@ -18,9 +18,13 @@ const Detect = () => {
 
   return (
     <Box>
-      <Flex align="center" mb="4">
-        <img src={logo} alt="Detect Logo" style={{ height: '30px', width: 'auto', marginRight: '10px' }} />
+      <Flex justify="space-between" align="center" mb="4">
+        {/* Left: Title */}
         <Heading>Detect Fake News</Heading>
+        {/* Right: Moon Icon and Logo */}
+        <Flex direction="column" align="center">
+          <img src={logo} alt="Detect Logo" style={{ height: '50px', width: 'auto' }} />
+        </Flex>
       </Flex>
       <Text mb="4">Paste or upload a news article to analyze its authenticity:</Text>
       <Textarea placeholder="Paste your article here..." mb="4" />
