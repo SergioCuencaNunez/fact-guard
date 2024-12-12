@@ -17,7 +17,6 @@ const Login = () => {
   };
 
   const bgColor = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('black', 'white');
 
   return (
     <Box
@@ -27,7 +26,7 @@ const Login = () => {
     shadow="md"
     borderWidth="1px"
     borderRadius="md"
-    bg={useColorModeValue('white', 'gray.700')}
+    bg={bgColor}
     >
     <Heading mb="6" textAlign="center">Login</Heading>
     <form onSubmit={handleLogin}>
