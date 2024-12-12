@@ -156,27 +156,68 @@ function App() {
       <Router>
         <Flex direction="column" minH="100vh">
           <Navbar />
-          <Box
-              flex="1"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              py={{ base: '6', md: '10' }}
-              px={{ base: '4', md: '8' }}
-              maxW="1200px"
-              mx="auto"
-              w="100%"            
-          >
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/detect" element={<Detect />} />
-              <Route path="/verify" element={<Verify />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Box>
+          <Routes>
+            {/* Routes with specific settings for Sign Up and Login */}
+            <Route
+              path="/signup"
+              element={
+                <Box
+                  flex="1"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  py={{ base: '6', md: '10' }}
+                  px={{ base: '4', md: '8' }}
+                  maxW="1200px"
+                  mx="auto"
+                  w="100%"
+                >
+                  <SignUp />
+                </Box>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <Box
+                  flex="1"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  py={{ base: '6', md: '10' }}
+                  px={{ base: '4', md: '8' }}
+                  maxW="1200px"
+                  mx="auto"
+                  w="100%"
+                >
+                  <Login />
+                </Box>
+              }
+            />
+
+            {/* Routes with default settings */}
+            <Route
+              path="*"
+              element={
+                <Box
+                  flex="1"
+                  py={{ base: '6', md: '10' }}
+                  px={{ base: '4', md: '8' }}
+                  maxW="1200px"
+                  mx="auto"
+                  w="100%"
+                >
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/detect" element={<Detect />} />
+                    <Route path="/verify" element={<Verify />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Box>
+              }
+            />
+          </Routes>
           <Footer />
         </Flex>
       </Router>
