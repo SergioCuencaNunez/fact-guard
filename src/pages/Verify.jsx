@@ -13,8 +13,11 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
+import logoVerifyBright from '../assets/logo-verify-bright.png';
+import logoVerifyDark from '../assets/logo-verify-dark.png';
+
 const Verify = () => {
-  const logo = useColorModeValue('/logo-verify-bright.png', '/logo-verify-dark.png'); // Page-specific logo
+  const logo = useColorModeValue(logoVerifyBright, logoVerifyDark);
 
   return (
     <Box>

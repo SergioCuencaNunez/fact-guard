@@ -28,9 +28,11 @@ import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
+import logoBright from './assets/logo-main-bright.png';
+import logoDark from './assets/logo-main-dark.png';
 
 const Navbar = () => {
-  const logo = useColorModeValue('/logo-main-bright.png', '/logo-main-dark.png');
+  const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('black', 'white');
 

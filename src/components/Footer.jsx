@@ -1,12 +1,14 @@
 import React from 'react';
 import { Box, Flex, HStack, Icon, Link, Text, VStack, useColorModeValue } from '@chakra-ui/react';
 import { SiGithub, SiLinkedin } from 'react-icons/si';
+import logoBright from '../assets/logo-main-bright.png';
+import logoDark from '../assets/logo-main-dark.png';
 
 const Footer = () => {
   const bg = useColorModeValue('gray.200', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'gray.300');
   const hoverColor = useColorModeValue('blue.600', 'blue.400');
-  const logo = useColorModeValue('/logo-main-bright.png', '/logo-main-dark.png');
+  const logo = useColorModeValue(logoBright, logoDark);
 
   return (
     <Box bg={bg} color={textColor} w="100%" py={{ base: '4', md: '6' }} px={{ base: '4', md: '8' }} mt="auto">
