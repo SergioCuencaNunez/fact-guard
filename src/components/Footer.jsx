@@ -24,7 +24,7 @@ const Footer = () => {
         {/* Left Section with Logo */}
         <VStack align={{ base: 'center', md: 'flex-start' }} spacing="1">
           <img src={logo} alt="FactGuard Logo" style={{ height: '30px', width: 'auto' }} />
-          <Text fontSize="sm">Version 0.3</Text>
+          <Text fontSize="sm">Version 0.4</Text>
           <Text fontSize="sm">© 2024 Fact Guard. All Rights Reserved</Text>
         </VStack>
 
