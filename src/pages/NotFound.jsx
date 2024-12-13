@@ -1,10 +1,12 @@
 import React from 'react';
 import { Box, Button, Image, VStack, Text, useColorModeValue, Heading } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import logoBright from '../assets/logo-main-bright.png';
+import logoDark from '../assets/logo-main-dark.png';
+import notFoundImage from '../assets/404.png';
 
 const NotFound = () => {
-  const notFoundImage = '/404.png';
-  const logo = useColorModeValue('/logo-main-bright.png', '/logo-main-dark.png');
+  const logo = useColorModeValue(logoBright, logoDark);
   const textColor = useColorModeValue('black', 'white');
   const subTextColor = useColorModeValue('gray.600', 'gray.300');
 
@@ -17,7 +19,6 @@ const NotFound = () => {
       justifyContent="center"
       alignItems="center"
     >
-      {/* Static 404 Image */}
       <Image
         src={notFoundImage}
         alt="404 Not Found"
@@ -26,7 +27,6 @@ const NotFound = () => {
         maxWidth="290px"
       />
 
-      {/* Text and Logo */}
       <VStack spacing="4" mb="6" px={{ base: '4', md: '8' }}>
         <Heading as="h1" fontSize={{ base: '3xl', md: '4xl' }} color={textColor}>
           Not Found
@@ -48,7 +48,6 @@ const NotFound = () => {
         />
       </VStack>
 
-      {/* Button */}
       <Link to="/">
         <Button colorScheme="teal" size="lg">
           Go Back Home
