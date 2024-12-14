@@ -17,6 +17,12 @@ import { AtSignIcon, LockIcon } from '@chakra-ui/icons';
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
+const primaryColor = '#4dcfaf';
+const primaryHoverLight = '#3ca790';
+const primaryHoverDark = '#77e4c4';
+const primaryActiveLight = '#2a8073';
+const primaryActiveDark = '#91edd0';
+
 const SignUp = () => {
   const handleSignUp = (event) => {
     event.preventDefault();
@@ -26,6 +32,8 @@ const SignUp = () => {
   const logo = useColorModeValue(logoBright, logoDark);
   const textColor = useColorModeValue('gray.700', 'gray.300');
   const bgColor = useColorModeValue('white', 'gray.800');
+  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flex="1">
@@ -73,17 +81,17 @@ const SignUp = () => {
             </FormControl>
             <Button
               type="submit"
-              bg={useColorModeValue('teal.400', 'teal.300')}
+              bg={primaryColor}
               color="white"
               _hover={{
-                bg: useColorModeValue('teal.500', 'teal.400'),
+                bg: hoverColor,
               }}
               _active={{
-                bg: useColorModeValue('teal.600', 'teal.500'),
+                bg: activeColor,
               }}
               size="md"
-              >
-                Continue
+            >
+              Continue
             </Button>
           </VStack>
         </form>
@@ -96,7 +104,7 @@ const SignUp = () => {
             <Link
               to="/login"
               style={{
-                color: useColorModeValue('#14b8a6', '#5eead4'),
+                color: hoverColor,
                 fontWeight: 'bold',
               }}
             >

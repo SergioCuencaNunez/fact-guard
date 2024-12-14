@@ -28,17 +28,26 @@ import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
+import EnhancedHome from './components/EnhancedHome';
 import logoBright from './assets/logo-main-bright.png';
 import logoDark from './assets/logo-main-dark.png';
 import { FiLogIn, FiUserPlus } from 'react-icons/fi'; // Icons for Login and Sign Up
+
+const primaryColor = '#4dcfaf';
+const primaryHoverLight = '#3ca790';
+const primaryHoverDark = '#77e4c4';
+const primaryActiveLight = '#2a8073';
+const primaryActiveDark = '#91edd0';
 
 const Navbar = () => {
   const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('black', 'white');
   const loginIconBg = useColorModeValue('gray.100', 'gray.700');
-  const loginIconHoverBg = useColorModeValue('gray.200', 'gray.600');
-  const loginIconActiveBg = useColorModeValue('gray.300', 'gray.500');
+  const loginHoverBg = useColorModeValue('gray.200', 'gray.600');
+  const loginActiveBg = useColorModeValue('gray.300', 'gray.500');
+  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
   return (
     <Box bg={bg} color={textColor} shadow="sm" px={{ base: '4', md: '8' }} py="3" position="sticky" top="0" zIndex="1000">
@@ -65,8 +74,8 @@ const Navbar = () => {
             <Button
               bg={loginIconBg}
               color={textColor}
-              _hover={{ bg: loginIconHoverBg }}
-              _active={{ bg: loginIconActiveBg }}
+              _hover={{ bg: loginHoverBg }}
+              _active={{ bg: loginActiveBg }}
               size="md"
             >
               Login
@@ -78,14 +87,10 @@ const Navbar = () => {
             rel="noopener noreferrer"
           >
             <Button
-              bg={useColorModeValue('teal.400', 'teal.300')}
+              bg={primaryColor}
               color="white"
-              _hover={{
-                bg: useColorModeValue('teal.500', 'teal.400'),
-              }}
-              _active={{
-                bg: useColorModeValue('teal.600', 'teal.500'),
-              }}
+              _hover={{ bg: hoverColor }}
+              _active={{ bg: activeColor }}
               size="md"
             >
               Sign Up
@@ -105,8 +110,8 @@ const Navbar = () => {
               icon={<FiLogIn />}
               aria-label="Login"
               bg={loginIconBg}
-              _hover={{ bg: loginIconHoverBg }}
-              _active={{ bg: loginIconActiveBg }}
+              _hover={{ bg: hoverColor }}
+              _active={{ bg: activeColor }}
               size="md"
             />
           </a>
@@ -118,14 +123,10 @@ const Navbar = () => {
             <IconButton
               icon={<FiUserPlus />}
               aria-label="Sign Up"
-              bg={useColorModeValue('teal.400', 'teal.300')}
+              bg={primaryColor}
               color={useColorModeValue('white', 'gray.100')}
-              _hover={{
-                bg: useColorModeValue('teal.500', 'teal.400'),
-              }}
-              _active={{
-                bg: useColorModeValue('teal.600', 'teal.500'),
-              }}
+              _hover={{ bg: hoverColor }}
+              _active={{ bg: activeColor }}
               size="md"
             />
           </a>
@@ -171,52 +172,10 @@ const DarkModeSwitch = () => {
   );
 };
 
-// Home Page
-const Home = () => {
-  const boxBg = useColorModeValue('white', 'gray.700');
-  const boxColor = useColorModeValue('black', 'white');
-
-  return (
-    <VStack spacing="10" py="10" px="5" maxW="1200px" mx="auto">
-      <Heading>Welcome to Fact Guard</Heading>
-      <Text>Discover the truth with AI-powered detection and verification.</Text>
-      <Grid templateColumns={{ base: '1fr', sm: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6} w="100%">
-        <GridItem>
-          <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md">
-            <Heading size="md" mb="2">Detect Fake News</Heading>
-            <Text mb="4">Paste or upload articles to analyze their authenticity.</Text>
-            <Link to="/detect">
-              <Button colorScheme="blue">Analyze</Button>
-            </Link>
-          </Box>
-        </GridItem>
-        <GridItem>
-          <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md">
-            <Heading size="md" mb="2">Verify Claims</Heading>
-            <Text mb="4">Input statements and get instant verification results.</Text>
-            <Link to="/verify">
-              <Button colorScheme="green">Verify</Button>
-            </Link>
-          </Box>
-        </GridItem>
-        <GridItem>
-          <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md">
-            <Heading size="md" mb="2">Insights Dashboard</Heading>
-            <Text mb="4">Track your analysis history and generate insights.</Text>
-            <Link to="/insights">
-              <Button colorScheme="purple">View Insights</Button>
-            </Link>
-          </Box>
-        </GridItem>
-      </Grid>
-    </VStack>
-  );
-};
-
 const AuthLayout = ({ children, title, subtitle }) => {
   const boxBg = useColorModeValue('white', 'gray.700');
   const boxColor = useColorModeValue('black', 'white');
-  const bg = useColorModeValue('teal.400', '#2a8073');
+  const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
 
   return (
     <Flex direction={{ base: 'column', md: 'row' }} minH="100vh">
@@ -226,8 +185,8 @@ const AuthLayout = ({ children, title, subtitle }) => {
         display={{ base: 'none', md: 'flex' }}
         flexDirection="column"
         justifyContent="center"
-        bg={bg}
-        px={{md: '100' }}
+        bgGradient={gradient} // Apply gradient background
+        px={{ md: '100' }}
         py="10"
         maxW="50%"
         color="white"
@@ -332,7 +291,7 @@ function App() {
             element={
               <DefaultLayout>
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<EnhancedHome />} />
                   <Route path="/detect" element={<Detect />} />
                   <Route path="/verify" element={<Verify />} />
                   <Route path="/about" element={<About />} />
