@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="frontend/src/assets/banner.png" alt="Logo" width="500">
+  <img src="frontend/src/assets/banner.png" alt="Logo" width="400">
 </p>
 
 ### Empowering Truth: Delivering Clarity in a World of Misinformation
