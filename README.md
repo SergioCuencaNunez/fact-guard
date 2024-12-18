@@ -3,7 +3,11 @@
   <img src="frontend/src/assets/banner.png" alt="Logo" width="400">
 </p>
 
-### Empowering Truth: Delivering Clarity in a World of Misinformation
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@400;600;700&display=swap" rel="stylesheet">
+
+<h3 style="text-align: center; font-family: 'Muli', sans-serif;">
+    Empowering Truth: Delivering Clarity in a World of Misinformation
+</h3>
 
 ## Overview
 
