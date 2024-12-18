@@ -8,7 +8,8 @@ import {
   Heading,
   Text,
   Button,
-  useColorModeValue
+  useColorModeValue,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import {
@@ -19,17 +20,13 @@ import {
     FaSearch,
     FaBookOpen
   } from 'react-icons/fa';
-import logoBright from '../assets/logo-main-bright.png';
-import logoDark from '../assets/logo-main-dark.png';
 
-const EnhancedHome = () => {
+const Home = () => {
   const primaryColor = '#4dcfaf';
   const primaryHoverLight = '#3ca790';
   const primaryHoverDark = '#77e4c4';
   const primaryActiveLight = '#2a8073';
   const primaryActiveDark = '#91edd0';
-
-  const logo = useColorModeValue(logoBright, logoDark);
 
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
@@ -38,23 +35,25 @@ const EnhancedHome = () => {
 
   const boxBg = useColorModeValue('white', 'gray.700');
   const boxColor = useColorModeValue('black', 'white');
-  const bgHighlight = primaryColor;
+
+  const heroText = useBreakpointValue({
+    base: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. Join a community committed to building a trustworthy and reliable media ecosystem",
+    md: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. By leveraging Deep Learning, FactGuard is able to detect misinformation and uphold accuracy across the globe. Join a community committed to building a trustworthy and reliable media ecosystem.",
+  });
 
   return (
-    <VStack spacing="10" py="10" px="5" maxW="1200px" mx="auto">
+    <VStack spacing="10" py="5" px={{ base: '0', custom: '5' }} w="100%">
       {/* Hero Section */}
       <Box
         bgGradient={gradient}
         color="white"
-        p="10"
+        p={{ base: '6', md: '10' }}
         borderRadius="md"
         textAlign="center"
       >
-        <Heading mb="4">Empowering Truth in a World of Noise</Heading>
-        <Text mb="6">
-          FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing.
-          By leveraging Deep Learning, FactGuard is able to detect misinformation and uphold accuracy across the globe.  
-          Join a community committed to building a trustworthy and reliable media ecosystem.
+        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Empowering Truth in a World of Noise</Heading>
+        <Text mb="6" fontSize={{ base: 'sm', md: 'lg' }}>
+          {heroText}
         </Text>
         <a href="/signup" target="_blank" rel="noopener noreferrer">
           <Button
@@ -140,10 +139,10 @@ const EnhancedHome = () => {
         </Box>
         
       {/* Features Section */}
-      <Heading size="lg" textAlign="center">
+      <Heading textAlign="center" fontSize={{ base: '2xl', md: '4xl' }}>
         Why Choose FactGuard?
       </Heading>
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={8}>
+      <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={8}>
         {[
         {
             icon: FaShieldAlt,
@@ -199,7 +198,7 @@ const EnhancedHome = () => {
       </Grid>
 
       {/* Detailed Benefits Section */}
-      <Heading size="lg" textAlign="left" mt="10">
+      <Heading textAlign="left" mt="10" fontSize={{ base: '2xl', md: '4xl' }}>
         Benefits of Using FactGuard
       </Heading>
       <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6}>
@@ -258,7 +257,7 @@ const EnhancedHome = () => {
         borderRadius="md"
         textAlign="center"
       >
-        <Heading mb="4">Be Part of the Solution</Heading>
+        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Be Part of the Solution</Heading>
         <Text mb="6">
           Empower yourself and your community by promoting factual, unbiased content.
         </Text>
@@ -277,4 +276,4 @@ const EnhancedHome = () => {
   );
 };
 
-export default EnhancedHome;
+export default Home;

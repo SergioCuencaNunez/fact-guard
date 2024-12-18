@@ -8,11 +8,10 @@ import {
   IconButton,
   useColorMode,
   useColorModeValue,
+  useBreakpointValue,
   VStack,
   HStack,
   Text,
-  Grid,
-  GridItem,
   Button,
   Menu,
   MenuButton,
@@ -29,7 +28,7 @@ import Login from './pages/Login';
 import Profile from "./pages/Profile";
 import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
-import EnhancedHome from './components/EnhancedHome';
+import Home from './components/Home';
 import logoBright from './assets/logo-main-bright.png';
 import logoDark from './assets/logo-main-dark.png';
 import { FiLogIn, FiUserPlus } from 'react-icons/fi'; // Icons for Login and Sign Up
@@ -49,13 +48,34 @@ const Navbar = () => {
   const loginActiveBg = useColorModeValue('gray.300', 'gray.500');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
+  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
+  const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
 
   return (
-    <Box bg={bg} color={textColor} shadow="sm" px={{ base: '4', md: '8' }} py="3" position="sticky" top="0" zIndex="1000">
-      <Flex justify="space-between" align="center" maxW="1200px" mx="auto">
+    <Box
+      bg={bg}
+      color={textColor}
+      shadow="sm"
+      px={{ base: '6', md: '10' }}
+      py="4"
+      position="sticky"
+      top="0"
+      zIndex="1000"
+      _after={{
+        content: '""',
+        display: 'block',
+        height: '3px',
+        backgroundImage: gradient,
+        width: '100%',
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+      }}
+    >
+      <Flex justify="space-between" align="center" maxW="1250px" mx="auto" w="100%">
         {/* Logo */}
         <Link to="/">
-          <img src={logo} alt="FactGuard Logo" style={{ height: '50px', width: 'auto', cursor: 'pointer' }} />
+          <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: 'auto', cursor: 'pointer' }} />
         </Link>
         {/* Links for larger screens */}
         <HStack spacing="5" display={{ base: 'none', md: 'flex' }}>
@@ -246,8 +266,7 @@ const DefaultLayout = ({ children }) => (
     <Box
       flex="1"
       py={{ base: '6', md: '10' }}
-      px={{ base: '4', md: '8' }}
-      maxW="1200px"
+      px={{ base: '6', md: '10' }}
       mx="auto"
       w="100%"
     >
@@ -292,7 +311,7 @@ function App() {
             element={
               <DefaultLayout>
                 <Routes>
-                  <Route path="/" element={<EnhancedHome />} />
+                  <Route path="/" element={<Home />} />
                   <Route path="/detect" element={<Detect />} />
                   <Route path="/verify" element={<Verify />} />
                   <Route path="/about" element={<About />} />
