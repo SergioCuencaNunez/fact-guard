@@ -31,7 +31,7 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import logoBright from './assets/logo-main-bright.png';
 import logoDark from './assets/logo-main-dark.png';
-import { FiLogIn, FiUserPlus } from 'react-icons/fi'; // Icons for Login and Sign Up
+import { FiLogIn, FiUserPlus } from 'react-icons/fi';
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
@@ -56,7 +56,7 @@ const Navbar = () => {
       bg={bg}
       color={textColor}
       shadow="sm"
-      px={{ base: '6', md: '10' }}
+      px={{ base: '6', md: '12' }}
       py="4"
       position="sticky"
       top="0"
@@ -265,8 +265,8 @@ const DefaultLayout = ({ children }) => (
     <Navbar />
     <Box
       flex="1"
-      py={{ base: '6', md: '10' }}
-      px={{ base: '6', md: '10' }}
+      py={{ base: '6', md: '12' }}
+      px={{ base: '6', md: '12' }}
       mx="auto"
       w="100%"
     >
