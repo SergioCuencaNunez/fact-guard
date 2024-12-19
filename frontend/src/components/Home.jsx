@@ -70,16 +70,15 @@ const Home = () => {
         justify="space-between"
         w="100%"
         flexWrap={{ base: 'wrap', md: 'nowrap' }}
-        mb="5"
       >
         <Box w={{ base: '100%', md: '55%' }} textAlign={{ base: 'center', md: 'left' }}>
-          <Heading mb="2" fontSize={{ base: '3xl', md: '4xl' }}>
+          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>
             Discover the Power of FactGuard
           </Heading>
-          <Text mb="5" fontSize={{ base: 'md', md: 'lg' }}>
+          <Text fontSize={{ base: 'md', md: 'lg' }}>
             {discoverText}
           </Text>
-          <Text mb="5" fontSize={{ md: 'lg' }}>
+          <Text fontSize={{ md: 'lg' }}>
             {discoverTextLg}
           </Text>
         </Box>
@@ -100,7 +99,7 @@ const Home = () => {
         textAlign="center"
       >
         <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Empowering Truth in a World of Noise</Heading>
-        <Text mb="6" fontSize={{ base: 'sm', md: 'md' }}>
+        <Text fontSize={{ base: 'sm', md: 'md' }}>
           {heroText}
         </Text>
         <a href="/signup" target="_blank" rel="noopener noreferrer">
@@ -129,7 +128,6 @@ const Home = () => {
       borderBottom="2px solid"
       borderColor={useColorModeValue('gray.300', 'gray.600')}
       py="5"
-      my="5"
       >
       {/* Marquee Wrapper */}
       <Box
@@ -149,7 +147,6 @@ const Home = () => {
           "Promoting Media Literacy",
           ]
           .concat(
-              // Duplicate the content for seamless looping
               [
               "Empowering Truth",
               "Fact-Checking Simplified",
@@ -237,7 +234,7 @@ const Home = () => {
             _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
             >
             <HStack justify="center" spacing="3" mb="5">
-                <Box fontSize={{ base: 'sm', md: 'md' }} color={primaryColor}>
+                <Box fontSize={{ base: 'sm', md: 'lg' }} color={primaryColor}>
                 <feature.icon />
                 </Box>
                 <Heading size={{ base: 'sm', md: 'md' }}>{feature.title}</Heading>
@@ -249,7 +246,7 @@ const Home = () => {
       </Grid>
 
       {/* Benefits Section */}
-      <Heading textAlign="left" mt="5" fontSize={{ base: '2xl', md: '3xl' }}>
+      <Heading textAlign="left" fontSize={{ base: '2xl', md: '3xl' }}>
             Benefits of Using FactGuard
       </Heading>
       <HStack
@@ -257,14 +254,12 @@ const Home = () => {
           justify="space-between"
           w="100%"
           flexWrap={{ base: 'wrap', md: 'nowrap' }}
-          mb='5'
         >
           <Image
             src={benefitsImage}
             alt="FactGuard benefits illustration"
             w={{ base: '80%', md: '38%' }}
             mx={{ base: 'auto', md: '0' }}
-            mb={{ base: '5'}}
           />
           <VStack spacing="8" w={{ base: '100%', md: '50%' }} align="start">
             <Grid templateColumns={{ base: '1fr', md: '1fr' }} gap={6}>
@@ -277,7 +272,7 @@ const Home = () => {
                   borderRadius="md"
                   _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
                 >
-                  <HStack justify="start" mb="2">
+                  <HStack justify="start">
                     <Box fontSize="lg" color={primaryColor}>
                       <FaCheckCircle />
                     </Box>
@@ -299,7 +294,7 @@ const Home = () => {
                   _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
                   style={{ height: '100%' }}
                 >
-                  <HStack justify="start" mb="2">
+                  <HStack justify="start">
                     <Box fontSize="lg" color={primaryColor}>
                       <FaTasks />
                     </Box>
@@ -320,7 +315,7 @@ const Home = () => {
                   borderRadius="md"
                   _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
                 >
-                  <HStack justify="start" mb="2">
+                  <HStack justify="start">
                     <Box fontSize="lg" color={primaryColor}>
                       <FaBrain />
                     </Box>
@@ -345,7 +340,7 @@ const Home = () => {
         textAlign="center"
       >
         <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Be Part of the Solution</Heading>
-        <Text mb="6" fontSize={{ base: 'sm', md: 'md' }}>
+        <Text fontSize={{ base: 'sm', md: 'md' }}>
           Empower yourself and your community by promoting factual, unbiased content.
         </Text>
         <Link to="/about">
