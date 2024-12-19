@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Heading,
@@ -11,6 +11,9 @@ import {
   Button,
   Text,
   useColorModeValue,
+  Alert,
+  AlertIcon,
+  AlertDescription,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AtSignIcon, LockIcon } from '@chakra-ui/icons';
@@ -25,7 +28,8 @@ const primaryActiveDark = '#91edd0';
 
 const Login = () => {
   const navigate = useNavigate(); 
-  
+  const [alert, setAlert] = useState(null);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     const email = event.target.email.value;
@@ -41,13 +45,18 @@ const Login = () => {
 
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        alert("Login successful!");
-        navigate("/profile"); // Redirect to profile
+        navigate("/profile");
       } else {
-        alert(data.error);
+        if (data.error === "User not found") {
+          setAlert({ type: "info", message: "Redirecting to Sign Up..." });
+          setTimeout(() => navigate("/signup"), 2000);
+        } else if (data.error === "Incorrect password") {
+          setAlert({ type: "error", message: "Incorrect Password" });
+        }
       }
     } catch (error) {
-      alert("Login failed!");
+      console.error("Login error:", error);
+      setAlert({ type: "error", message: "Login failed! Please try again." });
     }
   };
 
@@ -67,20 +76,26 @@ const Login = () => {
       borderWidth="1px"
       borderRadius="md"
       bg={bgColor}
-      >
-        <Box textAlign="center" mb="6">
-          <img
-            src={logo}
-            alt="FactGuard Logo"
-            style={{
-              height: '40px',
-              width: 'auto',
-              margin: '0 auto',
-              display: 'block',
-            }}
-          />
-        </Box>
+    >
+      <Box textAlign="center" mb="6">
+        <img
+          src={logo}
+          alt="FactGuard Logo"
+          style={{
+            height: '40px',
+            width: 'auto',
+            margin: '0 auto',
+            display: 'block',
+          }}
+        />
+      </Box>
       <Heading mb="6" textAlign="center">Login</Heading>
+      {alert && (
+        <Alert status={alert.type} mb="4">
+          <AlertIcon />
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
       <form onSubmit={handleLogin}>
         <VStack spacing="4" align="stretch">
           <FormControl id="email" isRequired>

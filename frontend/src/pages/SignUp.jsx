@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Heading,
@@ -11,6 +11,10 @@ import {
   Button,
   Text,
   useColorModeValue,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  Spinner,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AtSignIcon, LockIcon } from '@chakra-ui/icons';
@@ -24,13 +28,23 @@ const primaryActiveLight = '#2a8073';
 const primaryActiveDark = '#91edd0';
 
 const SignUp = () => {
+  const navigate = useNavigate();
+  const [alert, setAlert] = useState(null);
+  const [passwordAlert, setPasswordAlert] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignUp = async (event) => {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
 
+    if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,20}/.test(password)) {
+      setPasswordAlert("Password requirements: 1 uppercase, 6-20 characters, no invalid characters");
+      return;
+    }
+
     try {
+      setIsLoading(true);
       const response = await fetch("http://localhost:5001/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,16 +57,24 @@ const SignUp = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-        navigate("/profile"); // Redirect to profile
+        localStorage.setItem("token", data.token);
+        navigate("/profile");
       } else {
-        alert("Error signing up!");
+        setIsLoading(false);
+        if (data.error === "User already exists") {
+          setAlert({ type: "info", message: "Redirecting to Login..." });
+          setTimeout(() => navigate("/login"), 2000);
+        } else {
+          setAlert({ type: "error", message: "Error signing up!" });
+        }
       }
     } catch (error) {
-      alert("Error signing up!");
+      setIsLoading(false);
+      console.error("Sign-up error:", error);
+      setAlert({ type: "error", message: "Error signing up! Please try again." });
     }
   };
-  
+
   const logo = useColorModeValue(logoBright, logoDark);
   const textColor = useColorModeValue('gray.700', 'gray.300');
   const bgColor = useColorModeValue('white', 'gray.800');
@@ -83,6 +105,18 @@ const SignUp = () => {
           />
         </Box>
         <Heading mb="6" textAlign="center">Sign Up</Heading>
+        {alert && (
+          <Alert status={alert.type} mb="4">
+            <AlertIcon />
+            <AlertDescription>{alert.message}</AlertDescription>
+          </Alert>
+        )}
+        {passwordAlert && (
+          <Alert status="error" mb="4">
+            <AlertIcon />
+            <AlertDescription>{passwordAlert}</AlertDescription>
+          </Alert>
+        )}
         <form onSubmit={handleSignUp}>
           <VStack spacing="4" align="stretch">
             <FormControl id="email" isRequired>
@@ -114,8 +148,10 @@ const SignUp = () => {
                 bg: activeColor,
               }}
               size="md"
+              isLoading={isLoading}
+              spinner={<Spinner size="sm" />}
             >
-              Continue
+              {isLoading ? "Signing up..." : "Continue"}
             </Button>
           </VStack>
         </form>
