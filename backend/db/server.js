@@ -96,7 +96,13 @@ const verifyToken = (req, res, next) => {
 
 // Protected Route
 app.get("/profile", verifyToken, (req, res) => {
-  res.json({ message: `Welcome ${req.user.role}`, userId: req.user.id });
+  const query = "SELECT username, email FROM users WHERE id = ?";
+  db.get(query, [req.user.id], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json({ username: user.username, email: user.email });
+  });
 });
 
 app.listen(PORT, () => {
