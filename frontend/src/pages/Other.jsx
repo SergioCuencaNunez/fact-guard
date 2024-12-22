@@ -1,297 +1,341 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
-  Heading,
   VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Button,
+  HStack,
+  Grid,
+  GridItem,
+  Heading,
   Text,
+  Image,
+  Button,
   useColorModeValue,
-  Alert,
-  AlertIcon,
-  AlertDescription,
+  useBreakpointValue
 } from '@chakra-ui/react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AtSignIcon, EmailIcon, LockIcon } from '@chakra-ui/icons';
-import logoBright from '../assets/logo-main-bright.png';
-import logoDark from '../assets/logo-main-dark.png';
+import { Link } from 'react-router-dom';
+import {
+  FaShieldAlt,
+  FaRobot,
+  FaGlobe,
+  FaBolt,
+  FaSearch,
+  FaBookOpen,
+  FaCheckCircle,
+  FaTasks,
+  FaBrain
+} from 'react-icons/fa';
+import { Marquee } from "@devnomic/marquee";
+import "@devnomic/marquee/dist/index.css";
 
-const primaryColor = '#4dcfaf';
-const primaryHoverLight = '#3ca790';
-const primaryHoverDark = '#77e4c4';
-const primaryActiveLight = '#2a8073';
-const primaryActiveDark = '#91edd0';
+import discoverBright from '../assets/discover-bright.png';
+import discoverDark from '../assets/discover-dark.png';
+import benefitsBright from '../assets/benefits-bright.png';
+import benefitsDark from '../assets/benefits-dark.png';
 
-const SignUp = () => {
-  const navigate = useNavigate();
-  const [alert, setAlert] = useState(null);
-  const [passwordAlert, setPasswordAlert] = useState(null);
-  const [emailAlert, setEmailAlert] = useState(null);
-  const [emailValid, setEmailValid] = useState(true);
-  const [usernameAlert, setUsernameAlert] = useState(null);
-  const [passwordValid, setPasswordValid] = useState(true);
-  const [signingUpMessage, setSigningUpMessage] = useState(null);
+const Home = () => {
+  const primaryColor = '#4dcfaf';
+  const primaryHoverLight = '#3ca790';
+  const primaryHoverDark = '#77e4c4';
+  const primaryActiveLight = '#2a8073';
+  const primaryActiveDark = '#91edd0';
 
-  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const validatePassword = (password) => /(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,20}/.test(password);
-
-  const handleSignUp = async (event) => {
-    event.preventDefault();
-    const email = event.target.email.value;
-    const username = event.target.username.value || email.split("@")[0];
-    const password = event.target.password.value;
-
-    if (!validateEmail(email)) {
-      setEmailValid(false);
-      setEmailAlert("Invalid email format.");
-      return;
-    }
-    if (!validatePassword(password)) {
-      setPasswordValid(false);
-      setPasswordAlert("Password requirements: 1 uppercase, 6-20 characters, no invalid characters.");
-      return;
-    }
-
-    try {
-      const usernameResponse = await fetch(`http://localhost:5001/check-username?username=${username}`);
-      const usernameData = await usernameResponse.json();
-      if (usernameData.exists) {
-        setUsernameAlert("Username already in use. Please try with another one.");
-        return;
-      } else {
-        setUsernameAlert(null);
-      }
-
-      const emailResponse = await fetch(`http://localhost:5001/check-email?email=${email}`);
-      const emailData = await emailResponse.json();
-      if (emailData.exists) {
-        setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
-        setTimeout(() => navigate("/login"), 2500);
-        return;
-      } else {
-        setAlert(null);
-      }
-
-      const response = await fetch("http://localhost:5001/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-      });
-      const data = await response.json();
-
-      if (response.ok) {
-        setSigningUpMessage("Signing up... Please wait.");
-        setAlert(null);
-        setTimeout(() => {
-          localStorage.setItem("token", data.token);
-          navigate("/profile");
-        }, 2500);
-      } else {
-        setAlert({ type: "error", message: "Error signing up!" });
-      }
-    } catch (error) {
-      console.error("Sign-up error:", error);
-      setAlert({ type: "error", message: "Error signing up! Please try again." });
-    }
-  };
-
-  const handleEmailBlur = async (event) => {
-    const email = event.target.value;
-    if (!validateEmail(email)) {
-      setEmailValid(false);
-      setEmailAlert("Invalid email format.");
-    } else {
-      setEmailValid(true);
-      setEmailAlert(null);
-      try {
-        const response = await fetch(`http://localhost:5001/check-email?email=${email}`);
-        const data = await response.json();
-        if (data.exists) {
-          setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
-          setTimeout(() => navigate("/login"), 2500);
-        }
-      } catch (error) {
-        console.error("Error checking email:", error);
-      }
-    }
-  };
-
-  const handleUsernameBlur = async (event) => {
-    const username = event.target.value;
-    if (username) {
-      try {
-        const response = await fetch(`http://localhost:5001/check-username?username=${username}`);
-        const data = await response.json();
-        if (data.exists) {
-          setUsernameAlert("Username already in use. Please try with another one.");
-        } else {
-          setUsernameAlert(null);
-        }
-      } catch (error) {
-        console.error("Error checking username:", error);
-      }
-    }
-  };
-
-  const handlePasswordBlur = (event) => {
-    const password = event.target.value;
-    if (!validatePassword(password)) {
-      setPasswordValid(false);
-      setPasswordAlert("Password requirements: 1 uppercase, 6-20 characters, no invalid characters.");
-    } else {
-      setPasswordValid(true);
-      setPasswordAlert(null);
-    }
-  };
-
-  const logo = useColorModeValue(logoBright, logoDark);
-  const textColor = useColorModeValue('gray.700', 'gray.300');
-  const bgColor = useColorModeValue('white', 'gray.800');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
+  const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
+
+  const boxBg = useColorModeValue('white', 'gray.700');
+  const boxColor = useColorModeValue('black', 'white');
+
+  const discoverImage = useColorModeValue(discoverBright, discoverDark);
+  const benefitsImage = useColorModeValue(benefitsBright, benefitsDark);
+  
+  const heroText = useBreakpointValue({
+    base: "FactGuard supports transparency for fake news detection, claim verification, and responsible content sharing. Join a community committed to building a trustworthy and reliable media ecosystem.",
+    md: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. By leveraging Deep Learning, it is able to detect misinformation and uphold accuracy across the globe. Join a community committed to building a trustworthy and reliable media ecosystem.",
+  });
+
+  const discoverText = useBreakpointValue({
+    base: "FactGuard combats misinformation with powerful AI tools. Leverage real-time fact-checking to promote trust.",
+    md: "Our tools are designed to combat misinformation and empower users worldwide. Leverage our advanced DL-driven solutions to promote factual content and foster trust. FactGuard is not just a tool—it’s a commitment to ensuring the credibility of online information.",
+  });
+
+  const discoverTextLg = useBreakpointValue({
+    md: "With FactGuard, you’ll access real-time fact-checking capabilities, educational resources, and a global network of verification partners. Whether you’re an individual, a team, or an organization, FactGuard is here to help you navigate a world of information with confidence.",
+  });
+
+  const phrases = [
+    "Empowering Truth",
+    "Fact-Checking Simplified",
+    "Verify Claims Instantly",
+    "AI-Powered Verification",
+    "Promoting Media Literacy",
+  ];
+
   return (
-    <Box display="flex" alignItems="center" justifyContent="center" flex="1">
-      <Box
-        maxW="md"
-        w="full"
-        p="6"
-        shadow="md"
-        borderWidth="1px"
-        borderRadius="md"
-        bg={bgColor}
+    <VStack spacing="10" py="5" px={{ base: '0', custom: '5' }} w="100%">
+      {/* Welcome Section */}
+      <HStack
+        align="center"
+        justify="space-between"
+        w="100%"
+        flexWrap={{ base: 'wrap', md: 'nowrap' }}
       >
-        <Box textAlign="center" mb="6">
-          <img
-            src={logo}
-            alt="FactGuard Logo"
-            style={{
-              height: '40px',
-              width: 'auto',
-              margin: '0 auto',
-              display: 'block',
-            }}
-          />
-        </Box>
-        <Heading mb="6" textAlign="center">Sign Up</Heading>
-        {alert && (
-          <Alert status={alert.type} mb="4">
-            <AlertIcon />
-            <AlertDescription>{alert.message}</AlertDescription>
-          </Alert>
-        )}
-        {emailAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{emailAlert}</AlertDescription>
-          </Alert>
-        )}
-        {usernameAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{usernameAlert}</AlertDescription>
-          </Alert>
-        )}
-        {passwordAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{passwordAlert}</AlertDescription>
-          </Alert>
-        )}
-        {signingUpMessage && (
-          <Alert status="success" mb="4">
-            <AlertIcon />
-            <AlertDescription>{signingUpMessage}</AlertDescription>
-          </Alert>
-        )}
-        <form onSubmit={handleSignUp}>
-          <VStack spacing="4" align="stretch">
-            <FormControl id="username">
-              <FormLabel>Username</FormLabel>
-              <InputGroup>
-              <InputLeftElement pointerEvents="none">
-                <AtSignIcon color="gray.500" />
-                </InputLeftElement>
-                <Input 
-                  type="text" 
-                  placeholder="Enter a username" 
-                  name="username"
-                  onBlur={handleUsernameBlur}
-                />
-              </InputGroup>
-            </FormControl>
-            <FormControl id="email" isRequired isInvalid={!emailValid}>
-              <FormLabel>Email</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <EmailIcon color="gray.500" />
-                </InputLeftElement>
-                <Input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  name="email"
-                  onBlur={handleEmailBlur}
-                />
-              </InputGroup>
-            </FormControl>
-            <FormControl id="password" isRequired isInvalid={!passwordValid}>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <LockIcon color="gray.500" />
-                </InputLeftElement>
-                <Input 
-                  type="password" 
-                  placeholder="Create a password" 
-                  name="password"
-                  onBlur={handlePasswordBlur} 
-                />
-              </InputGroup>
-            </FormControl>
-            <Button
-              type="submit"
-              bg={primaryColor}
-              color="white"
-              _hover={{
-                bg: hoverColor,
-              }}
-              _active={{
-                bg: activeColor,
-              }}
-              size="md"
-            >
-              Continue
-            </Button>
-          </VStack>
-        </form>
-        <Box textAlign="center" mt="4">
-          <Text fontSize="sm" color={textColor} mb="2">
-            Empowering Truth: Delivering Clarity in a World of Misinformation
+        <Box w={{ base: '100%', md: '55%' }} textAlign={{ base: 'center', md: 'left' }}>
+          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>
+            Discover the Power of FactGuard
+          </Heading>
+          <Text fontSize={{ base: 'md', md: 'lg' }}>
+            {discoverText}
           </Text>
-          <Text mt="2" fontSize="sm">
-            Already have an account?{' '}
-            <Link
-              to="/login"
-              style={{
-                color: hoverColor,
-                fontWeight: 'bold',
-              }}
-            >
-              Login
-            </Link>
+          <Text fontSize={{ md: 'lg' }}>
+            {discoverTextLg}
           </Text>
         </Box>
+        <Image
+          src={discoverImage}
+          alt="Fake news detection illustration"
+          w={{ base: '80%', md: '35%' }}
+          mx={{ base: 'auto', md: '0' }}
+        />
+      </HStack>
+
+      {/* Hero Section */}
+      <Box
+        bgGradient={gradient}
+        color="white"
+        p={{ base: '6', md: '10' }}
+        borderRadius="md"
+        textAlign="center"
+      >
+        <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Empowering Truth in a World of Noise</Heading>
+        <Text fontSize={{ base: 'sm', md: 'md' }} mb="3">
+          {heroText}
+        </Text>
+        <a href="/signup" target="_blank" rel="noopener noreferrer">
+          <Button
+            bg={primaryColor}
+            color="white"
+            _hover={{ bg: hoverColor }}
+            _active={{ bg: activeColor }}
+            size="md"
+          >
+            Get Started
+          </Button>
+        </a>
       </Box>
-    </Box>
+
+      {/* New Marquee Section */}
+      <Box
+        w="100%"
+        overflow="hidden"
+        position="relative"
+        bgGradient={useColorModeValue(
+          'linear(to-r, gray.100, gray.300)',
+          'linear(to-r, gray.700, gray.900)'
+        )}
+        borderTop="2px solid"
+        borderBottom="2px solid"
+        borderColor={useColorModeValue('gray.300', 'gray.600')}
+        py="5"
+      >
+        <Marquee
+          speed={50}
+          direction="left"
+          gradient={false}
+          className="marquee-container"
+        >
+          {phrases.map((phrase, index) => (
+            <Text
+              key={index}
+              fontSize="lg"
+              fontWeight="semibold"
+              color={useColorModeValue('gray.800', 'gray.100')}
+              style={{
+                marginRight: '40px',
+                whiteSpace: 'nowrap',
+                lineHeight: '1.5',
+              }}
+            >
+              {phrase}
+            </Text>
+          ))}
+        </Marquee>
+      </Box>
+
+      {/* Features Section */}
+      <Heading textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
+        Why Choose FactGuard?
+      </Heading>
+      <Grid templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={8}>
+        {[
+        {
+            icon: FaShieldAlt,
+            title: 'AI-Powered Security',
+            text: 'Secure, accurate fact-checking using ML algorithms.',
+        },
+        {
+            icon: FaSearch,
+            title: 'Real-Time Fact Checking',
+            text: 'Quickly verify the authenticity of content in real time.',
+        },
+        {
+            icon: FaRobot,
+            title: 'AI Efficiency',
+            text: 'Let AI handle the heavy lifting to save you time.',
+        },
+        {
+            icon: FaGlobe,
+            title: 'Global Coverage',
+            text: 'Access a global network of fact-checking partners.',
+        },
+        {
+            icon: FaBookOpen,
+            title: 'Educational Resources',
+            text: 'Learn tools and techniques to identify misinformation.',
+        },
+        {
+            icon: FaBolt,
+            title: 'Instant Results',
+            text: 'Fast, actionable insights for media professionals.',
+        },
+        ].map((feature, index) => (
+        <GridItem key={index}>
+            <Box
+            p="5"
+            bg={boxBg}
+            color={boxColor}
+            shadow="lg"
+            borderRadius="md"
+            textAlign="center"
+            display="flex"
+            flexDirection="column"
+            height="100%"
+            _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
+            >
+            <HStack justify="center" spacing="3" mb="5">
+                <Box fontSize={{ base: 'sm', md: 'lg' }} color={primaryColor}>
+                <feature.icon />
+                </Box>
+                <Heading size={{ base: 'sm', md: 'md' }}>{feature.title}</Heading>
+            </HStack>
+            <Text fontSize={{ base: 'sm', md: 'md' }}>{feature.text}</Text>
+            </Box>
+        </GridItem>
+        ))}
+      </Grid>
+
+      {/* Benefits Section */}
+      <Heading textAlign="left" fontSize={{ base: '2xl', md: '3xl' }}>
+            Benefits of Using FactGuard
+      </Heading>
+      <HStack
+          align="start"
+          justify="space-between"
+          w="100%"
+          flexWrap={{ base: 'wrap', md: 'nowrap' }}
+        >
+          <Image
+            src={benefitsImage}
+            alt="FactGuard benefits illustration"
+            w={{ base: '80%', md: '38%' }}
+            mx={{ base: 'auto', md: '0' }}
+          />
+          <VStack spacing="8" w={{ base: '100%', md: '50%' }} align="start">
+            <Grid templateColumns={{ base: '1fr', md: '1fr' }} gap={6}>
+              <GridItem>
+                <Box
+                  p="5"
+                  bg={boxBg}
+                  color={boxColor}
+                  shadow="md"
+                  borderRadius="md"
+                  _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
+                >
+                  <HStack justify="start">
+                    <Box fontSize="lg" color={primaryColor}>
+                      <FaCheckCircle />
+                    </Box>
+                    <Heading size="md">Enhanced Content Trust</Heading>
+                  </HStack>
+                  <Text fontSize={{ base: 'sm', md: 'md' }}>
+                    Build trust in your brand by ensuring the authenticity of your content. 
+                    With FactGuard's tools, you can confidently share verified information with your audience.
+                  </Text>
+                </Box>
+              </GridItem>
+              <GridItem>
+                <Box
+                  p="5"
+                  bg={boxBg}
+                  color={boxColor}
+                  shadow="md"
+                  borderRadius="md"
+                  _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
+                  style={{ height: '100%' }}
+                >
+                  <HStack justify="start">
+                    <Box fontSize="lg" color={primaryColor}>
+                      <FaTasks />
+                    </Box>
+                    <Heading size="md">Comprehensive Fact-Checking</Heading>
+                  </HStack>
+                  <Text fontSize={{ base: 'sm', md: 'md' }}>
+                    Utilize advanced tools to verify claims and enhance credibility. 
+                    FactGuard provides accurate results to support your decisions and messaging.
+                  </Text>
+                </Box>
+              </GridItem>
+              <GridItem>
+                <Box
+                  p="5"
+                  bg={boxBg}
+                  color={boxColor}
+                  shadow="md"
+                  borderRadius="md"
+                  _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
+                >
+                  <HStack justify="start">
+                    <Box fontSize="lg" color={primaryColor}>
+                      <FaBrain />
+                    </Box>
+                    <Heading size="md">AI-Powered Efficiency</Heading>
+                  </HStack>
+                  <Text fontSize={{ base: 'sm', md: 'md' }}>
+                    Save time and resources with automated fake news detection processes. 
+                    Let our intelligent systems streamline your fact-checking efforts.
+                  </Text>
+                </Box>
+              </GridItem>
+            </Grid>
+          </VStack>
+      </HStack>
+
+      {/* Call to Action */}
+      <Box
+        bgGradient={gradient}
+        color="white"
+        p="10"
+        borderRadius="md"
+        textAlign="center"
+      >
+        <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Be Part of the Solution</Heading>
+        <Text fontSize={{ base: 'sm', md: 'md' }} mb="3">
+          Empower yourself and your community by promoting factual, unbiased content.
+        </Text>
+        <Link to="/about">
+          <Button
+            bg={primaryColor}
+            color="white"
+            _hover={{ bg: hoverColor }}
+            _active={{ bg: activeColor }}
+          >
+            Learn More
+          </Button>
+        </Link>
+      </Box>
+    </VStack>
   );
 };
 
-export default SignUp;
+export default Home;
