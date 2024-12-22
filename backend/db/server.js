@@ -21,10 +21,17 @@ const db = new sqlite3.Database("./database.db", (err) => {
 // Login Route
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
   const query = "SELECT * FROM users WHERE email = ?";
   db.get(query, [email], (err, user) => {
     if (err) return res.status(500).json({ error: "Database error" });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     // Compare passwords
     if (!bcrypt.compareSync(password, user.password)) {
@@ -39,6 +46,19 @@ app.post("/login", (req, res) => {
   });
 });
 
+// Check if Email Exists for Login
+app.get("/check-login-email", (req, res) => {
+  const { email } = req.query;
+  const query = "SELECT * FROM users WHERE email = ?";
+  db.get(query, [email], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (!user) {
+      return res.status(404).json({ message: "User not registered. Redirecting to Sign Up..." });
+    }
+    res.json({ exists: true });
+  });
+});
+
 // Sign Up Route
 app.post("/signup", (req, res) => {
   const { username, email, password } = req.body;
@@ -49,6 +69,16 @@ app.post("/signup", (req, res) => {
   db.run(query, [username, email, hashedPassword], function (err) {
     if (err) return res.status(400).json({ error: "User already exists" });
     res.status(201).json({ message: "User registered successfully" });
+  });
+});
+
+// Check Email Route
+app.get("/check-email", (req, res) => {
+  const { email } = req.query;
+  const query = "SELECT * FROM users WHERE email = ?";
+  db.get(query, [email], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    res.json({ exists: !!user });
   });
 });
 
