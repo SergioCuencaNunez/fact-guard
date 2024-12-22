@@ -136,7 +136,7 @@ const Home = () => {
             fontWeight="semibold"
             color={useColorModeValue('gray.800', 'gray.100')}
             style={{
-              marginRight: '40px',
+              marginRight: '50px',
               whiteSpace: 'nowrap',
               lineHeight: '1.5',
             }}
@@ -148,7 +148,7 @@ const Home = () => {
             fontWeight="semibold"
             color={useColorModeValue('gray.800', 'gray.100')}
             style={{
-              marginRight: '40px',
+              marginRight: '50px',
               whiteSpace: 'nowrap',
               lineHeight: '1.5',
             }}
@@ -160,7 +160,7 @@ const Home = () => {
             fontWeight="semibold"
             color={useColorModeValue('gray.800', 'gray.100')}
             style={{
-              marginRight: '40px',
+              marginRight: '50px',
               whiteSpace: 'nowrap',
               lineHeight: '1.5',
             }}
@@ -172,7 +172,7 @@ const Home = () => {
             fontWeight="semibold"
             color={useColorModeValue('gray.800', 'gray.100')}
             style={{
-              marginRight: '40px',
+              marginRight: '50px',
               whiteSpace: 'nowrap',
               lineHeight: '1.5',
             }}
@@ -184,7 +184,7 @@ const Home = () => {
             fontWeight="semibold"
             color={useColorModeValue('gray.800', 'gray.100')}
             style={{
-              marginRight: '40px',
+              marginRight: '50px',
               whiteSpace: 'nowrap',
               lineHeight: '1.5',
             }}
