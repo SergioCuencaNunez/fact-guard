@@ -10,17 +10,13 @@ import {
   InputLeftElement,
   Button,
   Text,
-  Checkbox,
   useColorModeValue,
-  useBreakpointValue,
   Alert,
   AlertIcon,
   AlertDescription,
-  Link as ChakraLink,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser } from 'react-icons/fa';
-import { EmailIcon, LockIcon } from '@chakra-ui/icons';
+import { AtSignIcon, EmailIcon, LockIcon } from '@chakra-ui/icons';
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
@@ -35,70 +31,56 @@ const SignUp = () => {
   const [alert, setAlert] = useState(null);
   const [passwordAlert, setPasswordAlert] = useState(null);
   const [emailAlert, setEmailAlert] = useState(null);
-  const [checkboxAlert, setCheckboxAlert] = useState(null);
   const [emailValid, setEmailValid] = useState(true);
+  const [usernameAlert, setUsernameAlert] = useState(null);
   const [passwordValid, setPasswordValid] = useState(true);
   const [signingUpMessage, setSigningUpMessage] = useState(null);
-  const [termsChecked, setTermsChecked] = useState(false);
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const validatePassword = (password, email, name) => {
-    if (password.toLowerCase() === email.split("@")[0].toLowerCase()) {
-      return false;
-    }
-    if (password.toLowerCase() === name.toLowerCase()) {
-      return false;
-    }
-    return /(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,20}/.test(password);
-  };
-
-  const resetAlerts = () => {
-    setAlert(null);
-    setPasswordAlert(null);
-    setEmailAlert(null);
-    setCheckboxAlert(null);
-  };
+  const validatePassword = (password) => /(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,20}/.test(password);
 
   const handleSignUp = async (event) => {
     event.preventDefault();
-    resetAlerts();
-
     const email = event.target.email.value;
-    const name = event.target.name.value || email.split("@")[0];
+    const username = event.target.username.value || email.split("@")[0];
     const password = event.target.password.value;
-
-    if (!termsChecked) {
-      setCheckboxAlert("You must agree to the Privacy Policy and Terms & Conditions.");
-      return;
-    }
 
     if (!validateEmail(email)) {
       setEmailValid(false);
       setEmailAlert("Invalid email format.");
       return;
     }
-    if (!validatePassword(password, email, name)) {
+    if (!validatePassword(password)) {
       setPasswordValid(false);
-      setPasswordAlert(
-        "Password cannot match your name or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
-      );
+      setPasswordAlert("Password requirements: 1 uppercase, 6-20 characters, no invalid characters.");
       return;
     }
 
     try {
-      const emailResponse = await fetch(`http://localhost:5001/check-email?email=${encodeURIComponent(email)}`);
+      const usernameResponse = await fetch(`http://localhost:5001/check-username?username=${username}`);
+      const usernameData = await usernameResponse.json();
+      if (usernameData.exists) {
+        setUsernameAlert("Username already in use. Please try with another one.");
+        return;
+      } else {
+        setUsernameAlert(null);
+      }
+
+      const emailResponse = await fetch(`http://localhost:5001/check-email?email=${email}`);
       const emailData = await emailResponse.json();
       if (emailData.exists) {
         setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
         setTimeout(() => navigate("/login"), 2500);
         return;
+      } else {
+        setAlert(null);
       }
 
       const response = await fetch("http://localhost:5001/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
+          username,
           email,
           password,
         }),
@@ -107,29 +89,30 @@ const SignUp = () => {
 
       if (response.ok) {
         setSigningUpMessage("Signing up... Please wait.");
+        setAlert(null);
         setTimeout(() => {
           localStorage.setItem("token", data.token);
           navigate("/profile");
         }, 2500);
       } else {
-        setAlert({ type: "error", message: "Error signing up. If the issue persists, please contact the administrator." });
+        setAlert({ type: "error", message: "Error signing up!" });
       }
     } catch (error) {
       console.error("Sign-up error:", error);
-      setAlert({ type: "error", message: "Error signing up. If the issue persists, please contact the administrator." });
+      setAlert({ type: "error", message: "Error signing up! Please try again." });
     }
   };
 
   const handleEmailBlur = async (event) => {
     const email = event.target.value;
-    resetAlerts();
     if (!validateEmail(email)) {
       setEmailValid(false);
       setEmailAlert("Invalid email format.");
     } else {
       setEmailValid(true);
+      setEmailAlert(null);
       try {
-        const response = await fetch(`http://localhost:5001/check-email?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`http://localhost:5001/check-email?email=${email}`);
         const data = await response.json();
         if (data.exists) {
           setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
@@ -141,18 +124,31 @@ const SignUp = () => {
     }
   };
 
+  const handleUsernameBlur = async (event) => {
+    const username = event.target.value;
+    if (username) {
+      try {
+        const response = await fetch(`http://localhost:5001/check-username?username=${username}`);
+        const data = await response.json();
+        if (data.exists) {
+          setUsernameAlert("Username already in use. Please try with another one.");
+        } else {
+          setUsernameAlert(null);
+        }
+      } catch (error) {
+        console.error("Error checking username:", error);
+      }
+    }
+  };
+
   const handlePasswordBlur = (event) => {
     const password = event.target.value;
-    const email = event.target.form.email.value;
-    const name = event.target.form.name.value || email.split("@")[0];
-    resetAlerts();
-    if (!validatePassword(password, email, name)) {
+    if (!validatePassword(password)) {
       setPasswordValid(false);
-      setPasswordAlert(
-        "Password cannot match your name or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
-      );
+      setPasswordAlert("Password requirements: 1 uppercase, 6-20 characters, no invalid characters.");
     } else {
       setPasswordValid(true);
+      setPasswordAlert(null);
     }
   };
 
@@ -161,7 +157,6 @@ const SignUp = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
-  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flex="1">
@@ -179,7 +174,7 @@ const SignUp = () => {
             src={logo}
             alt="FactGuard Logo"
             style={{
-              height: logoHeight,
+              height: '40px',
               width: 'auto',
               margin: '0 auto',
               display: 'block',
@@ -199,16 +194,16 @@ const SignUp = () => {
             <AlertDescription>{emailAlert}</AlertDescription>
           </Alert>
         )}
+        {usernameAlert && (
+          <Alert status="error" mb="4">
+            <AlertIcon />
+            <AlertDescription>{usernameAlert}</AlertDescription>
+          </Alert>
+        )}
         {passwordAlert && (
           <Alert status="error" mb="4">
             <AlertIcon />
             <AlertDescription>{passwordAlert}</AlertDescription>
-          </Alert>
-        )}
-        {checkboxAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{checkboxAlert}</AlertDescription>
           </Alert>
         )}
         {signingUpMessage && (
@@ -219,16 +214,17 @@ const SignUp = () => {
         )}
         <form onSubmit={handleSignUp}>
           <VStack spacing="4" align="stretch">
-            <FormControl id="name">
-              <FormLabel>Name</FormLabel>
+            <FormControl id="username">
+              <FormLabel>Username</FormLabel>
               <InputGroup>
               <InputLeftElement pointerEvents="none">
-                <FaUser style={{color:"#718096"}} />
+                <AtSignIcon color="gray.500" />
                 </InputLeftElement>
                 <Input 
                   type="text" 
-                  placeholder="Enter a name" 
-                  name="name"
+                  placeholder="Enter a username" 
+                  name="username"
+                  onBlur={handleUsernameBlur}
                 />
               </InputGroup>
             </FormControl>
@@ -240,7 +236,7 @@ const SignUp = () => {
                 </InputLeftElement>
                 <Input 
                   type="email" 
-                  placeholder="Enter an email" 
+                  placeholder="Enter your email" 
                   name="email"
                   onBlur={handleEmailBlur}
                 />
@@ -259,14 +255,6 @@ const SignUp = () => {
                   onBlur={handlePasswordBlur} 
                 />
               </InputGroup>
-            </FormControl>
-            <FormControl>
-              <Checkbox
-                isChecked={termsChecked}
-                onChange={(e) => setTermsChecked(e.target.checked)}
-              >
-                By checking this box, I agree to the <ChakraLink href="/terms" color="teal.500" isExternal>Terms & Conditions</ChakraLink> and <ChakraLink href="/privacy" color="teal.500" isExternal>Privacy Policy</ChakraLink>.
-              </Checkbox>
             </FormControl>
             <Button
               type="submit"
