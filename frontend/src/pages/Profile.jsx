@@ -64,16 +64,16 @@ const Profile = () => {
   };
 
   return (
-    <Flex minH="100vh" bg={bg}>
+    <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
       {/* Sidebar */}
       <Box
         w={{ base: "full", md: "250px" }}
         bg={cardBg}
         p="6"
         shadow="lg"
-        position="sticky"
+        position={{ base: "relative", md: "sticky" }}
         top="0"
-        h="100vh"
+        h={{ base: "auto", md: "100vh" }}
       >
         <VStack spacing="8" align="flex-start">
           <Heading size="md" color={primaryColor}>
@@ -82,8 +82,8 @@ const Profile = () => {
           <HStack>
             <Avatar name={user.username} size="lg" />
             <Box>
-              <Text fontWeight="bold">{user.username}</Text>
-              <Text fontSize="sm" color="gray.500">
+              <Text fontWeight="bold" isTruncated>{user.username}</Text>
+              <Text fontSize="sm" color="gray.500" isTruncated>
                 {user.email}
               </Text>
             </Box>
@@ -94,6 +94,7 @@ const Profile = () => {
               variant="ghost"
               justifyContent="flex-start"
               _hover={{ bg: hoverBg }}
+              size={{ base: "sm", md: "md" }}
             >
               Profile
             </Button>
@@ -102,6 +103,7 @@ const Profile = () => {
               variant="ghost"
               justifyContent="flex-start"
               _hover={{ bg: hoverBg }}
+              size={{ base: "sm", md: "md" }}
             >
               Detect Fake News
             </Button>
@@ -110,6 +112,7 @@ const Profile = () => {
               variant="ghost"
               justifyContent="flex-start"
               _hover={{ bg: hoverBg }}
+              size={{ base: "sm", md: "md" }}
             >
               Verify Claims
             </Button>
@@ -119,6 +122,7 @@ const Profile = () => {
             colorScheme="red"
             variant="solid"
             onClick={handleLogout}
+            size={{ base: "sm", md: "md" }}
           >
             Logout
           </Button>
@@ -128,7 +132,7 @@ const Profile = () => {
       {/* Main Content */}
       <Box flex="1" p="8">
         <Tabs variant="enclosed">
-          <TabList mb="4">
+          <TabList mb="4" flexWrap="wrap">
             <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
               Profile Data
             </Tab>
@@ -175,7 +179,7 @@ const Profile = () => {
                     marginBottom: "20px",
                   }}
                 ></textarea>
-                <Button colorScheme="teal">Analyze</Button>
+                <Button colorScheme="teal" size={{ base: "sm", md: "md" }}>Analyze</Button>
               </Box>
             </TabPanel>
 
@@ -199,7 +203,7 @@ const Profile = () => {
                     marginBottom: "20px",
                   }}
                 />
-                <Button colorScheme="teal">Verify</Button>
+                <Button colorScheme="teal" size={{ base: "sm", md: "md" }}>Verify</Button>
               </Box>
             </TabPanel>
           </TabPanels>

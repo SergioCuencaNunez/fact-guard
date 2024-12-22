@@ -3,7 +3,7 @@ import { Box, Heading, Text, VStack } from '@chakra-ui/react';
 
 const About = () => {
   return (
-    <Box>
+    <Box p="6" mx="auto">
       <Heading mb="4">About FactGuard</Heading>
       <VStack spacing="4" align="flex-start">
         <Text>
