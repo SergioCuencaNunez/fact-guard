@@ -99,7 +99,7 @@ const Home = () => {
         textAlign="center"
       >
         <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Empowering Truth in a World of Noise</Heading>
-        <Text fontSize={{ base: 'sm', md: 'md' }}>
+        <Text fontSize={{ base: 'sm', md: 'md' }} mb="3">
           {heroText}
         </Text>
         <a href="/signup" target="_blank" rel="noopener noreferrer">
@@ -340,7 +340,7 @@ const Home = () => {
         textAlign="center"
       >
         <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Be Part of the Solution</Heading>
-        <Text fontSize={{ base: 'sm', md: 'md' }}>
+        <Text fontSize={{ base: 'sm', md: 'md' }} mb="3">
           Empower yourself and your community by promoting factual, unbiased content.
         </Text>
         <Link to="/about">
