@@ -24,6 +24,7 @@ import {
   FaTasks,
   FaBrain
 } from 'react-icons/fa';
+import Marquee from 'react-fast-marquee';
 
 import discoverBright from '../assets/discover-bright.png';
 import discoverDark from '../assets/discover-dark.png';
@@ -61,7 +62,7 @@ const Home = () => {
   const discoverTextLg = useBreakpointValue({
     md: "With FactGuard, you’ll access real-time fact-checking capabilities, educational resources, and a global network of verification partners. Whether you’re an individual, a team, or an organization, FactGuard is here to help you navigate a world of information with confidence.",
   });
-
+  
   return (
     <VStack spacing="10" py="5" px={{ base: '0', custom: '5' }} w="100%">
       {/* Welcome Section */}
@@ -115,73 +116,83 @@ const Home = () => {
         </a>
       </Box>
 
-      {/* Moving Line Section */}
+      {/* Marquee Section */}
       <Box
-      w="100%"
-      overflow="hidden"
-      position="relative"
-      bgGradient={useColorModeValue(
+        w="100%"
+        overflow="hidden"
+        position="relative"
+        bgGradient={useColorModeValue(
           'linear(to-r, gray.100, gray.300)',
           'linear(to-r, gray.700, gray.900)'
-      )}
-      borderTop="2px solid"
-      borderBottom="2px solid"
-      borderColor={useColorModeValue('gray.300', 'gray.600')}
-      py="5"
+        )}
+        borderTop="2px solid"
+        borderBottom="2px solid"
+        borderColor={useColorModeValue('gray.300', 'gray.600')}
+        py="5"
       >
-      {/* Marquee Wrapper */}
-      <Box
-          display="flex"
-          alignItems="center"
-          style={{
-              animation: 'marquee 15s linear infinite',
-          }}
-          width="fit-content"
-      >
-          {/* Repeatable Content */}
-          {[
-          "Empowering Truth",
-          "Fact-Checking Simplified",
-          "Verify Claims Instantly",
-          "AI-Powered Verification",
-          "Promoting Media Literacy",
-          ]
-          .concat(
-              [
-              "Empowering Truth",
-              "Fact-Checking Simplified",
-              "Verify Claims Instantly",
-              "AI-Powered Verification",
-              "Promoting Media Literacy",
-              ]
-          )
-          .map((phrase, i) => (
-              <Text
-              key={i}
-              fontSize="lg"
-              fontWeight="semibold"
-              color={useColorModeValue('gray.800', 'gray.100')}
-              style={{
-                  marginRight: '40px',
-                  whiteSpace: 'nowrap',
-                  lineHeight: '1.5',
-              }}
-              >
-              {phrase}
-              </Text>
-          ))}
+        <Marquee speed={125} autoFill={true} >
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color={useColorModeValue('gray.800', 'gray.100')}
+            style={{
+              marginRight: '40px',
+              whiteSpace: 'nowrap',
+              lineHeight: '1.5',
+            }}
+          >
+            Empowering Truth
+          </Text>
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color={useColorModeValue('gray.800', 'gray.100')}
+            style={{
+              marginRight: '40px',
+              whiteSpace: 'nowrap',
+              lineHeight: '1.5',
+            }}
+          >
+            Fact-Checking Simplified
+          </Text>
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color={useColorModeValue('gray.800', 'gray.100')}
+            style={{
+              marginRight: '40px',
+              whiteSpace: 'nowrap',
+              lineHeight: '1.5',
+            }}
+          >
+            Verify Claims Instantly
+          </Text>
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color={useColorModeValue('gray.800', 'gray.100')}
+            style={{
+              marginRight: '40px',
+              whiteSpace: 'nowrap',
+              lineHeight: '1.5',
+            }}
+          >
+            AI-Powered Verification
+          </Text>
+          <Text
+            fontSize="lg"
+            fontWeight="semibold"
+            color={useColorModeValue('gray.800', 'gray.100')}
+            style={{
+              marginRight: '40px',
+              whiteSpace: 'nowrap',
+              lineHeight: '1.5',
+            }}
+          >
+            Promoting Media Literacy
+          </Text>
+        </Marquee>
       </Box>
-
-        {/* Smooth Animation */}
-        <style>
-            {`
-            @keyframes marquee {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-            }
-            `}
-        </style>
-        </Box>
         
       {/* Features Section */}
       <Heading textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
