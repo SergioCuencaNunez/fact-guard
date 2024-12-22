@@ -20,19 +20,42 @@ import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ username: "Admin", email: "admin@example.com" });
+  const [user, setUser] = useState({ username: "", email: "" });
 
   const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.700");
   const hoverBg = useColorModeValue("gray.200", "gray.600");
   const primaryColor = "#4dcfaf";
 
-  // Check login status
+  // Fetch user data
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
+      return;
     }
+
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/profile", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setUser({ username: data.username, email: data.email });
+        } else {
+          console.error("Failed to fetch user data:", data.error);
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        navigate("/login");
+      }
+    };
+
+    fetchUserData();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -128,9 +151,6 @@ const Profile = () => {
                 </Text>
                 <Text mb="2">
                   <strong>Email:</strong> {user.email}
-                </Text>
-                <Text>
-                  <strong>Role:</strong> Admin
                 </Text>
               </Box>
             </TabPanel>
