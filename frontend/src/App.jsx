@@ -18,10 +18,8 @@ import {
   MenuList,
   MenuItem,
 } from '@chakra-ui/react';
-import { SunIcon, MoonIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { SunIcon, MoonIcon, ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
 import theme from './theme';
-import Detect from './pages/Detect';
-import Verify from './pages/Verify';
 import About from './pages/About';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
@@ -29,6 +27,8 @@ import Profile from "./pages/Profile";
 import NotFound from './pages/NotFound';
 import Footer from './components/Footer';
 import Home from './components/Home';
+import Detect from './pages/Detect';
+import Verify from './pages/Verify';
 import logoBright from './assets/logo-main-bright.png';
 import logoDark from './assets/logo-main-dark.png';
 import { FiLogIn, FiUserPlus } from 'react-icons/fi';
@@ -77,16 +77,35 @@ const Navbar = () => {
         <Link to="/">
           <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: 'auto', cursor: 'pointer' }} />
         </Link>
-        {/* Links for larger screens */}
-        <HStack spacing="5" display={{ base: 'none', md: 'flex' }}>
-          <Link to="/">Home</Link>
-          <Link to="/detect">Detect</Link>
-          <Link to="/verify">Verify</Link>
-          <Link to="/about">About</Link>
-        </HStack>
-
-        {/* Buttons for larger screens */}      
+        
+        {/* Buttons, About, and Features Dropdown for larger screens */}      
         <HStack spacing="4" display={{ base: 'none', md: 'flex' }}>
+          <Menu>
+            <MenuButton
+              as={Button}
+              bg="transparent"
+              color={textColor}
+              _hover={{ color: hoverColor }}
+              size="md"
+              rightIcon={<ChevronDownIcon />}
+            >
+              Features
+            </MenuButton>
+            <MenuList>
+              <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
+              <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
+            </MenuList>
+          </Menu>
+          <Link to="/about">
+            <Button
+              bg="transparent"
+              color={textColor}
+              _hover={{ color: hoverColor }}
+              size="md"
+            >
+              About
+            </Button>
+          </Link>
           <a
             href="/login"
             target="_blank"
@@ -161,9 +180,8 @@ const Navbar = () => {
               size="md"
             />
             <MenuList>
-              <MenuItem as={Link} to="/">Home</MenuItem>
-              <MenuItem as={Link} to="/detect">Detect</MenuItem>
-              <MenuItem as={Link} to="/verify">Verify</MenuItem>
+              <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
+              <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
               <MenuItem as={Link} to="/about">About</MenuItem>
             </MenuList>
           </Menu>
@@ -305,16 +323,16 @@ function App() {
               </AuthLayout>
             }
           />
-          {/* Default Routes (Home, Detect, Verify, About, etc., with DefaultLayout) */}
+          {/* Default Routes */}
           <Route
             path="*"
             element={
               <DefaultLayout>
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
                   <Route path="/detect" element={<Detect />} />
                   <Route path="/verify" element={<Verify />} />
-                  <Route path="/about" element={<About />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </DefaultLayout>
