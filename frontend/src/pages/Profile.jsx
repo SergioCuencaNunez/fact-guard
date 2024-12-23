@@ -9,6 +9,7 @@ import {
   HStack,
   Avatar,
   useColorModeValue,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
@@ -44,6 +45,7 @@ const Profile = () => {
   const activeBg = useColorModeValue('gray.300', 'gray.500');
   const textColor = useColorModeValue('black', 'white');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
 
   // Fetch user data
   useEffect(() => {
@@ -106,7 +108,7 @@ const Profile = () => {
       >
         <VStack spacing="8" align="flex-start">
           <HStack mb="4">
-            <img src={logo} alt="FactGuard Logo" style={{ height: "50px", width: "auto" }} />
+            <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: "auto" }} />
           </HStack>
           <HStack>
             <Avatar name={user.username} size="lg" bg={avatarBgColor} />
