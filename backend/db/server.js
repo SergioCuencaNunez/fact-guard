@@ -60,7 +60,6 @@ app.get("/check-login-email", (req, res) => {
 });
 
 // Sign Up Route
-// Sign Up Route
 app.post("/signup", (req, res) => {
   const { username, email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -81,7 +80,6 @@ app.post("/signup", (req, res) => {
     });
   });
 });
-
 
 // Check Email Route
 app.get("/check-email", (req, res) => {
