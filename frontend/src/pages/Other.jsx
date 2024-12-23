@@ -8,205 +8,333 @@ import {
   VStack,
   HStack,
   Avatar,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   useColorModeValue,
+  useBreakpointValue,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
-import { FaUser, FaNewspaper, FaShieldAlt, FaSignOutAlt } from "react-icons/fa";
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import {
+  FaUser,
+  FaNewspaper,
+  FaShieldAlt,
+  FaSignOutAlt,
+  FaPlus,
+  FaChartBar,
+  FaCogs,
+  FaTasks,
+  FaUsers,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import logoBright from '../assets/logo-main-bright.png';
+import logoDark from '../assets/logo-main-dark.png';
+
+const primaryHoverLight = '#3ca790';
+const primaryHoverDark = '#4dcfaf';
+const primaryActiveLight = '#2a8073';
+const primaryActiveDark = '#77e4c4';
+const primaryColor = '#4dcfaf';
+const sidebarLight = '#c9ebdf';
+const sidebarDark = '#0b7b6b';
+const gradient = "linear-gradient(to bottom, #2a8073, #3ca790, #4dcfaf)";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ username: "Admin", email: "admin@example.com" });
+  const [user, setUser] = useState({ username: "", email: "" });
+  const [openDropdown, setOpenDropdown] = useState(null);
 
+  const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.700");
-  const hoverBg = useColorModeValue("gray.200", "gray.600");
-  const primaryColor = "#4dcfaf";
+  const textColor = useColorModeValue('black', 'white');
+  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
+  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
+  const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
+  const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
 
-  // Check login status
+  // Fetch user data
   useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-  
-      const fetchUserData = async () => {
-        try {
-          const response = await fetch("http://localhost:5001/profile", {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await response.json();
-  
-          if (response.ok) {
-            setUser({ username: data.username, email: data.email });
-          } else {
-            console.error("Failed to fetch user data:", data.error);
-            navigate("/login");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/profile", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setUser({ username: data.username, email: data.email });
+        } else {
+          console.error("Failed to fetch user data:", data.error);
           navigate("/login");
         }
-      };
-  
-      fetchUserData();
-    }, [navigate]);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        navigate("/login");
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  const toggleDropdown = (section) => {
+    setOpenDropdown(openDropdown === section ? null : section);
+  };
+
   return (
-    <Flex minH="100vh" bg={bg}>
+    <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
       {/* Sidebar */}
       <Box
-        w={{ base: "full", md: "250px" }}
-        bg={cardBg}
-        p="6"
+        w={{ base: "full", md: "275px" }}
+        bg={sidebarBgColor}
+        py="6"
+        px="6"
         shadow="lg"
-        position="sticky"
+        position={{ base: "relative", md: "sticky" }}
         top="0"
-        h="100vh"
+        h={{ base: "auto", md: "100vh" }}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        borderRightWidth="3px"
+        borderRightStyle="solid"
+        borderRightColor="transparent"
+        style={{ borderImage: gradient, borderImageSlice: 1 }}
       >
         <VStack spacing="8" align="flex-start">
-          <Heading size="md" color={primaryColor}>
-            Dashboard
-          </Heading>
+          <HStack mb="4">
+            <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: "auto" }} />
+          </HStack>
           <HStack>
-            <Avatar name={user.username} size="lg" />
+            <Avatar name={user.username} size="lg" bg={avatarBgColor} />
             <Box>
-              <Text fontWeight="bold">{user.username}</Text>
-              <Text fontSize="sm" color="gray.500">
+              <Text fontWeight="bold" isTruncated>{user.username}</Text>
+              <Text fontSize="sm" color={textColorAvatar} isTruncated>
                 {user.email}
               </Text>
             </Box>
           </HStack>
           <VStack spacing="4" align="stretch">
             <Button
-              leftIcon={<FaUser />}
+              leftIcon={<FaChartBar />}
               variant="ghost"
               justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
+              _hover={{ bg: hoverColor }}
+              _active={{ bg: activeColor }}
+              size={{ base: "sm", md: "md" }}
+              color={textColor}
             >
-              Profile
+              Dashboard
             </Button>
-            <Button
-              leftIcon={<FaNewspaper />}
-              variant="ghost"
-              justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
-            >
-              Detect Fake News
-            </Button>
-            <Button
-              leftIcon={<FaShieldAlt />}
-              variant="ghost"
-              justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
-            >
-              Verify Claims
-            </Button>
+            <Box>
+              <Button
+                leftIcon={<FaNewspaper />}
+                rightIcon={<ChevronDownIcon />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() => toggleDropdown("detect")}
+                color={textColor}
+              >
+                Detect Fake News
+              </Button>
+              {openDropdown === "detect" && (
+                <VStack align="stretch" pl="4" mt="2">
+                  <Button
+                    leftIcon={<FaPlus />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    Start New Detection
+                  </Button>
+                  <Button
+                    leftIcon={<FaTasks />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    My News Detections
+                  </Button>
+                </VStack>
+              )}
+            </Box>
+            <Box>
+              <Button
+                leftIcon={<FaShieldAlt />}
+                rightIcon={<ChevronDownIcon />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() => toggleDropdown("verify")}
+                color={textColor}
+              >
+                Verify Claims
+              </Button>
+              {openDropdown === "verify" && (
+                <VStack align="stretch" pl="4" mt="2">
+                  <Button
+                    leftIcon={<FaPlus />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    Start New Claim Check
+                  </Button>
+                  <Button
+                    leftIcon={<FaTasks />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    My Claim Checks
+                  </Button>
+                </VStack>
+              )}
+            </Box>
+            <Box>
+              <Button
+                leftIcon={<FaCogs />}
+                rightIcon={<ChevronDownIcon />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() => toggleDropdown("settings")}
+                color={textColor}
+              >
+                Settings
+              </Button>
+              {openDropdown === "settings" && (
+                <VStack align="stretch" pl="4" mt="2">
+                  <Button
+                    leftIcon={<FaUser />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    Account Details
+                  </Button>
+                </VStack>
+              )}
+            </Box>
           </VStack>
-          <Button
+        </VStack>
+        <Button
             leftIcon={<FaSignOutAlt />}
             colorScheme="red"
             variant="solid"
             onClick={handleLogout}
+            size={{ base: "sm", md: "md" }}
           >
             Logout
           </Button>
-        </VStack>
       </Box>
 
       {/* Main Content */}
       <Box flex="1" p="8">
-        <Tabs variant="enclosed">
-          <TabList mb="4">
-            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
-              Profile Data
-            </Tab>
-            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
-              Detect
-            </Tab>
-            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
-              Verify
-            </Tab>
-          </TabList>
-          <TabPanels>
-            {/* Profile Data */}
-            <TabPanel>
-              <Heading size="lg" mb="4">
-                Your Profile
-              </Heading>
-              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
-                <Text mb="2">
-                  <strong>Username:</strong> {user.username}
-                </Text>
-                <Text mb="2">
-                  <strong>Email:</strong> {user.email}
-                </Text>
-                <Text>
-                  <strong>Role:</strong> Admin
-                </Text>
-              </Box>
-            </TabPanel>
+        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+        <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
 
-            {/* Detect Page */}
-            <TabPanel>
-              <Heading size="lg" mb="4">
-                Detect Fake News
-              </Heading>
-              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
-                <Text mb="4">
-                  Enter or upload content to check for authenticity.
-                </Text>
-                <textarea
-                  placeholder="Paste the article or text here..."
-                  style={{
-                    width: "100%",
-                    height: "150px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                    border: "1px solid gray",
-                    marginBottom: "20px",
-                  }}
-                ></textarea>
-                <Button colorScheme="teal">Analyze</Button>
-              </Box>
-            </TabPanel>
+        <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
+        <Box bg={cardBg} p="4" borderRadius="md">
+          <Table variant="simple" colorScheme="gray">
+            <Thead>
+              <Tr>
+                <Th><b>Title</b></Th>
+                <Th><b>Fake</b></Th>
+                <Th><b>True</b></Th>
+                <Th><b>Date</b></Th>
+                <Th><b>Results</b></Th>
+                <Th><b>Remove</b></Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td>"Detection 1"</Td>
+                <Td>30%</Td>
+                <Td>70%</Td>
+                <Td>12/22/2024</Td>
+                <Td><Button size="sm">Results</Button></Td>
+                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+              </Tr>
+              <Tr>
+                <Td>"Detection 2"</Td>
+                <Td>60%</Td>
+                <Td>40%</Td>
+                <Td>12/20/2024</Td>
+                <Td><Button size="sm">Results</Button></Td>
+                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </Box>
 
-            {/* Verify Page */}
-            <TabPanel>
-              <Heading size="lg" mb="4">
-                Verify Claims
-              </Heading>
-              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
-                <Text mb="4">
-                  Input a claim or statement to verify its accuracy.
-                </Text>
-                <input
-                  type="text"
-                  placeholder="Enter a claim to verify..."
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    borderRadius: "8px",
-                    border: "1px solid gray",
-                    marginBottom: "20px",
-                  }}
-                />
-                <Button colorScheme="teal">Verify</Button>
-              </Box>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+        <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
+        <Box bg={cardBg} p="4" borderRadius="md">
+          <Table variant="simple" colorScheme="gray">
+            <Thead>
+              <Tr>
+                <Th><b>Title</b></Th>
+                <Th><b>Rating</b></Th>
+                <Th><b>Link</b></Th>
+                <Th><b>Date</b></Th>
+                <Th><b>Results</b></Th>
+                <Th><b>Remove</b></Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td>"Claim 1"</Td>
+                <Td>True</Td>
+                <Td><a href="#">Link</a></Td>
+                <Td>12/22/2024</Td>
+                <Td><Button size="sm">Results</Button></Td>
+                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+              </Tr>
+              <Tr>
+                <Td>"Claim 2"</Td>
+                <Td>False</Td>
+                <Td><a href="#">Link</a></Td>
+                <Td>12/20/2024</Td>
+                <Td><Button size="sm">Results</Button></Td>
+                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </Box>
       </Box>
     </Flex>
   );
