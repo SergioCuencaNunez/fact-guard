@@ -1,341 +1,234 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  VStack,
-  HStack,
-  Grid,
-  GridItem,
+  Flex,
   Heading,
   Text,
-  Image,
   Button,
+  VStack,
+  HStack,
+  Avatar,
   useColorModeValue,
-  useBreakpointValue
-} from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
 import {
+  FaUser,
+  FaNewspaper,
   FaShieldAlt,
-  FaRobot,
-  FaGlobe,
-  FaBolt,
-  FaSearch,
-  FaBookOpen,
-  FaCheckCircle,
-  FaTasks,
-  FaBrain
-} from 'react-icons/fa';
-import { Marquee } from "@devnomic/marquee";
-import "@devnomic/marquee/dist/index.css";
+  FaSignOutAlt,
+  FaPlus,
+  FaChartBar,
+  FaCogs,
+  FaChevronDown,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import logoBright from '../assets/logo-main-bright.png';
+import logoDark from '../assets/logo-main-dark.png';
 
-import discoverBright from '../assets/discover-bright.png';
-import discoverDark from '../assets/discover-dark.png';
-import benefitsBright from '../assets/benefits-bright.png';
-import benefitsDark from '../assets/benefits-dark.png';
+const Profile = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState({ username: "", email: "" });
 
-const Home = () => {
-  const primaryColor = '#4dcfaf';
-  const primaryHoverLight = '#3ca790';
-  const primaryHoverDark = '#77e4c4';
-  const primaryActiveLight = '#2a8073';
-  const primaryActiveDark = '#91edd0';
+  const bg = useColorModeValue("gray.50", "gray.800");
+  const sidebarBg = useColorModeValue("purple.700", "gray.900");
+  const cardBg = useColorModeValue("white", "gray.700");
+  const textColor = useColorModeValue("white", "gray.200");
+  const primaryColor = "#4dcfaf";
+  const logo = useColorModeValue(logoBright, logoDark);
 
-  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
-  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
-  const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://localhost:5001/profile", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
 
-  const boxBg = useColorModeValue('white', 'gray.700');
-  const boxColor = useColorModeValue('black', 'white');
+        if (response.ok) {
+          setUser({ username: data.username, email: data.email });
+        } else {
+          console.error("Failed to fetch user data:", data.error);
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        navigate("/login");
+      }
+    };
 
-  const discoverImage = useColorModeValue(discoverBright, discoverDark);
-  const benefitsImage = useColorModeValue(benefitsBright, benefitsDark);
-  
-  const heroText = useBreakpointValue({
-    base: "FactGuard supports transparency for fake news detection, claim verification, and responsible content sharing. Join a community committed to building a trustworthy and reliable media ecosystem.",
-    md: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. By leveraging Deep Learning, it is able to detect misinformation and uphold accuracy across the globe. Join a community committed to building a trustworthy and reliable media ecosystem.",
-  });
+    fetchUserData();
+  }, [navigate]);
 
-  const discoverText = useBreakpointValue({
-    base: "FactGuard combats misinformation with powerful AI tools. Leverage real-time fact-checking to promote trust.",
-    md: "Our tools are designed to combat misinformation and empower users worldwide. Leverage our advanced DL-driven solutions to promote factual content and foster trust. FactGuard is not just a tool—it’s a commitment to ensuring the credibility of online information.",
-  });
-
-  const discoverTextLg = useBreakpointValue({
-    md: "With FactGuard, you’ll access real-time fact-checking capabilities, educational resources, and a global network of verification partners. Whether you’re an individual, a team, or an organization, FactGuard is here to help you navigate a world of information with confidence.",
-  });
-
-  const phrases = [
-    "Empowering Truth",
-    "Fact-Checking Simplified",
-    "Verify Claims Instantly",
-    "AI-Powered Verification",
-    "Promoting Media Literacy",
-  ];
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
-    <VStack spacing="10" py="5" px={{ base: '0', custom: '5' }} w="100%">
-      {/* Welcome Section */}
-      <HStack
-        align="center"
-        justify="space-between"
-        w="100%"
-        flexWrap={{ base: 'wrap', md: 'nowrap' }}
-      >
-        <Box w={{ base: '100%', md: '55%' }} textAlign={{ base: 'center', md: 'left' }}>
-          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>
-            Discover the Power of FactGuard
-          </Heading>
-          <Text fontSize={{ base: 'md', md: 'lg' }}>
-            {discoverText}
-          </Text>
-          <Text fontSize={{ md: 'lg' }}>
-            {discoverTextLg}
-          </Text>
-        </Box>
-        <Image
-          src={discoverImage}
-          alt="Fake news detection illustration"
-          w={{ base: '80%', md: '35%' }}
-          mx={{ base: 'auto', md: '0' }}
-        />
-      </HStack>
-
-      {/* Hero Section */}
-      <Box
-        bgGradient={gradient}
-        color="white"
-        p={{ base: '6', md: '10' }}
-        borderRadius="md"
-        textAlign="center"
-      >
-        <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Empowering Truth in a World of Noise</Heading>
-        <Text fontSize={{ base: 'sm', md: 'md' }} mb="3">
-          {heroText}
-        </Text>
-        <a href="/signup" target="_blank" rel="noopener noreferrer">
+    <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
+      {/* Sidebar */}
+      <Box w="275px" bg={sidebarBg} color={textColor} p="6">
+        <VStack align="stretch" spacing="6">
+          <img src={logo} alt="FactGuard Logo" style={{ height: "50px" }} />
+          <Menu>
+            <MenuButton
+              as={Button}
+              leftIcon={<FaNewspaper />}
+              rightIcon={<FaChevronDown />}
+              justifyContent="flex-start"
+              bg="transparent"
+              _hover={{ bg: "gray.600" }}
+              size="sm"
+            >
+              Detect Fake News
+            </MenuButton>
+            <MenuList bg={sidebarBg}>
+              <MenuItem icon={<FaPlus />} color={textColor} _hover={{ bg: "gray.600" }}>
+                Start New Detection
+              </MenuItem>
+              <MenuItem color={textColor} _hover={{ bg: "gray.600" }}>
+                My News Detections
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          <Menu>
+            <MenuButton
+              as={Button}
+              leftIcon={<FaShieldAlt />}
+              rightIcon={<FaChevronDown />}
+              justifyContent="flex-start"
+              bg="transparent"
+              _hover={{ bg: "gray.600" }}
+              size="sm"
+            >
+              Verify Claims
+            </MenuButton>
+            <MenuList bg={sidebarBg}>
+              <MenuItem icon={<FaPlus />} color={textColor} _hover={{ bg: "gray.600" }}>
+                Start New Claim Check
+              </MenuItem>
+              <MenuItem color={textColor} _hover={{ bg: "gray.600" }}>
+                My Claim Checks
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          <Menu>
+            <MenuButton
+              as={Button}
+              leftIcon={<FaCogs />}
+              rightIcon={<FaChevronDown />}
+              justifyContent="flex-start"
+              bg="transparent"
+              _hover={{ bg: "gray.600" }}
+              size="sm"
+            >
+              Settings
+            </MenuButton>
+            <MenuList bg={sidebarBg}>
+              <MenuItem color={textColor} _hover={{ bg: "gray.600" }}>
+                Account Details
+              </MenuItem>
+            </MenuList>
+          </Menu>
           <Button
-            bg={primaryColor}
-            color="white"
-            _hover={{ bg: hoverColor }}
-            _active={{ bg: activeColor }}
-            size="md"
+            leftIcon={<FaSignOutAlt />}
+            colorScheme="red"
+            variant="solid"
+            onClick={handleLogout}
+            size="sm"
           >
-            Get Started
+            Logout
           </Button>
-        </a>
+        </VStack>
       </Box>
 
-      {/* New Marquee Section */}
-      <Box
-        w="100%"
-        overflow="hidden"
-        position="relative"
-        bgGradient={useColorModeValue(
-          'linear(to-r, gray.100, gray.300)',
-          'linear(to-r, gray.700, gray.900)'
-        )}
-        borderTop="2px solid"
-        borderBottom="2px solid"
-        borderColor={useColorModeValue('gray.300', 'gray.600')}
-        py="5"
-      >
-        <Marquee
-          speed={50}
-          direction="left"
-          gradient={false}
-          className="marquee-container"
-        >
-          {phrases.map((phrase, index) => (
-            <Text
-              key={index}
-              fontSize="lg"
-              fontWeight="semibold"
-              color={useColorModeValue('gray.800', 'gray.100')}
-              style={{
-                marginRight: '40px',
-                whiteSpace: 'nowrap',
-                lineHeight: '1.5',
-              }}
-            >
-              {phrase}
-            </Text>
-          ))}
-        </Marquee>
-      </Box>
+      {/* Main Content */}
+      <Box flex="1" p="8">
+        <Heading mb="4">Welcome, {user.username}</Heading>
+        <Box borderBottom="2px" borderColor="gray.300" mb="4"></Box>
 
-      {/* Features Section */}
-      <Heading textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
-        Why Choose FactGuard?
-      </Heading>
-      <Grid templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={8}>
-        {[
-        {
-            icon: FaShieldAlt,
-            title: 'AI-Powered Security',
-            text: 'Secure, accurate fact-checking using ML algorithms.',
-        },
-        {
-            icon: FaSearch,
-            title: 'Real-Time Fact Checking',
-            text: 'Quickly verify the authenticity of content in real time.',
-        },
-        {
-            icon: FaRobot,
-            title: 'AI Efficiency',
-            text: 'Let AI handle the heavy lifting to save you time.',
-        },
-        {
-            icon: FaGlobe,
-            title: 'Global Coverage',
-            text: 'Access a global network of fact-checking partners.',
-        },
-        {
-            icon: FaBookOpen,
-            title: 'Educational Resources',
-            text: 'Learn tools and techniques to identify misinformation.',
-        },
-        {
-            icon: FaBolt,
-            title: 'Instant Results',
-            text: 'Fast, actionable insights for media professionals.',
-        },
-        ].map((feature, index) => (
-        <GridItem key={index}>
-            <Box
-            p="5"
-            bg={boxBg}
-            color={boxColor}
-            shadow="lg"
-            borderRadius="md"
-            textAlign="center"
-            display="flex"
-            flexDirection="column"
-            height="100%"
-            _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
-            >
-            <HStack justify="center" spacing="3" mb="5">
-                <Box fontSize={{ base: 'sm', md: 'lg' }} color={primaryColor}>
-                <feature.icon />
-                </Box>
-                <Heading size={{ base: 'sm', md: 'md' }}>{feature.title}</Heading>
-            </HStack>
-            <Text fontSize={{ base: 'sm', md: 'md' }}>{feature.text}</Text>
-            </Box>
-        </GridItem>
-        ))}
-      </Grid>
+        {/* Features */}
+        <Flex wrap="wrap" gap="6">
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Detect AI Content</Heading>
+            <Text>Use tools to detect AI-generated content or plagiarism.</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">API Integration</Heading>
+            <Text>Integrate FactGuard APIs into your workflow.</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Team Management</Heading>
+            <Text>Invite team members and manage shared credits.</Text>
+          </Box>
+        </Flex>
 
-      {/* Benefits Section */}
-      <Heading textAlign="left" fontSize={{ base: '2xl', md: '3xl' }}>
-            Benefits of Using FactGuard
-      </Heading>
-      <HStack
-          align="start"
-          justify="space-between"
-          w="100%"
-          flexWrap={{ base: 'wrap', md: 'nowrap' }}
-        >
-          <Image
-            src={benefitsImage}
-            alt="FactGuard benefits illustration"
-            w={{ base: '80%', md: '38%' }}
-            mx={{ base: 'auto', md: '0' }}
-          />
-          <VStack spacing="8" w={{ base: '100%', md: '50%' }} align="start">
-            <Grid templateColumns={{ base: '1fr', md: '1fr' }} gap={6}>
-              <GridItem>
-                <Box
-                  p="5"
-                  bg={boxBg}
-                  color={boxColor}
-                  shadow="md"
-                  borderRadius="md"
-                  _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
-                >
-                  <HStack justify="start">
-                    <Box fontSize="lg" color={primaryColor}>
-                      <FaCheckCircle />
-                    </Box>
-                    <Heading size="md">Enhanced Content Trust</Heading>
-                  </HStack>
-                  <Text fontSize={{ base: 'sm', md: 'md' }}>
-                    Build trust in your brand by ensuring the authenticity of your content. 
-                    With FactGuard's tools, you can confidently share verified information with your audience.
-                  </Text>
-                </Box>
-              </GridItem>
-              <GridItem>
-                <Box
-                  p="5"
-                  bg={boxBg}
-                  color={boxColor}
-                  shadow="md"
-                  borderRadius="md"
-                  _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
-                  style={{ height: '100%' }}
-                >
-                  <HStack justify="start">
-                    <Box fontSize="lg" color={primaryColor}>
-                      <FaTasks />
-                    </Box>
-                    <Heading size="md">Comprehensive Fact-Checking</Heading>
-                  </HStack>
-                  <Text fontSize={{ base: 'sm', md: 'md' }}>
-                    Utilize advanced tools to verify claims and enhance credibility. 
-                    FactGuard provides accurate results to support your decisions and messaging.
-                  </Text>
-                </Box>
-              </GridItem>
-              <GridItem>
-                <Box
-                  p="5"
-                  bg={boxBg}
-                  color={boxColor}
-                  shadow="md"
-                  borderRadius="md"
-                  _hover={{ transform: 'scale(1.05)', transition: '0.3s ease-in-out', bg: useColorModeValue('gray.50', 'gray.600') }}
-                >
-                  <HStack justify="start">
-                    <Box fontSize="lg" color={primaryColor}>
-                      <FaBrain />
-                    </Box>
-                    <Heading size="md">AI-Powered Efficiency</Heading>
-                  </HStack>
-                  <Text fontSize={{ base: 'sm', md: 'md' }}>
-                    Save time and resources with automated fake news detection processes. 
-                    Let our intelligent systems streamline your fact-checking efforts.
-                  </Text>
-                </Box>
-              </GridItem>
-            </Grid>
+        {/* Graphs Section */}
+        <Heading size="md" my="6">This Week</Heading>
+        <Flex wrap="wrap" gap="6">
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Detections Over Time</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Claim Checks</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Usage Statistics</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+        </Flex>
+
+        {/* Recent Content Section */}
+        <Heading size="md" my="6">Recent Detections</Heading>
+        <Box bg={cardBg} p="4" borderRadius="md">
+          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
+            <Text>Title</Text>
+            <Text>Date</Text>
+          </Flex>
+          <VStack align="stretch">
+            <Flex justify="space-between">
+              <Text>"Detection 1"</Text>
+              <Text>12/22/2024</Text>
+            </Flex>
+            <Flex justify="space-between">
+              <Text>"Detection 2"</Text>
+              <Text>12/20/2024</Text>
+            </Flex>
           </VStack>
-      </HStack>
+        </Box>
 
-      {/* Call to Action */}
-      <Box
-        bgGradient={gradient}
-        color="white"
-        p="10"
-        borderRadius="md"
-        textAlign="center"
-      >
-        <Heading mb="4" fontSize={{ base: '2xl', md: '3xl' }}>Be Part of the Solution</Heading>
-        <Text fontSize={{ base: 'sm', md: 'md' }} mb="3">
-          Empower yourself and your community by promoting factual, unbiased content.
-        </Text>
-        <Link to="/about">
-          <Button
-            bg={primaryColor}
-            color="white"
-            _hover={{ bg: hoverColor }}
-            _active={{ bg: activeColor }}
-          >
-            Learn More
-          </Button>
-        </Link>
+        <Heading size="md" my="6">Claim Checks</Heading>
+        <Box bg={cardBg} p="4" borderRadius="md">
+          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
+            <Text>Claim</Text>
+            <Text>Date</Text>
+          </Flex>
+          <VStack align="stretch">
+            <Flex justify="space-between">
+              <Text>"Claim 1"</Text>
+              <Text>12/22/2024</Text>
+            </Flex>
+            <Flex justify="space-between">
+              <Text>"Claim 2"</Text>
+              <Text>12/20/2024</Text>
+            </Flex>
+          </VStack>
+        </Box>
       </Box>
-    </VStack>
+    </Flex>
   );
 };
 
-export default Home;
+export default Profile;
