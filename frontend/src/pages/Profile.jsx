@@ -21,16 +21,19 @@ import {
   FaChartBar,
   FaCogs,
   FaTasks,
+  FaUsers,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
-const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
-const primaryHoverDark = '#77e4c4';
-const sidebarBgColor = '#c9ebdf';
-const avatarBgColor = '#3ca790';
+const primaryHoverDark = '#4dcfaf';
+const primaryActiveLight = '#2a8073';
+const primaryActiveDark = '#77e4c4';
+const primaryColor = '#4dcfaf';
+const sidebarLight = '#c9ebdf';
+const sidebarDark = '#0b7b6b';
 const gradient = "linear-gradient(to bottom, #2a8073, #3ca790, #4dcfaf)";
 
 const Profile = () => {
@@ -41,11 +44,13 @@ const Profile = () => {
   const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.700");
-  const hoverBg = useColorModeValue("gray.200", "gray.600");
-  const activeBg = useColorModeValue('gray.300', 'gray.500');
   const textColor = useColorModeValue('black', 'white');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
   const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
+  const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
+  const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
 
   // Fetch user data
   useEffect(() => {
@@ -93,7 +98,8 @@ const Profile = () => {
       <Box
         w={{ base: "full", md: "275px" }}
         bg={sidebarBgColor}
-        p="6"
+        py="6"
+        px="6"
         shadow="lg"
         position={{ base: "relative", md: "sticky" }}
         top="0"
@@ -114,7 +120,7 @@ const Profile = () => {
             <Avatar name={user.username} size="lg" bg={avatarBgColor} />
             <Box>
               <Text fontWeight="bold" isTruncated>{user.username}</Text>
-              <Text fontSize="sm" color="gray.500" isTruncated>
+              <Text fontSize="sm" color={textColorAvatar} isTruncated>
                 {user.email}
               </Text>
             </Box>
@@ -124,8 +130,8 @@ const Profile = () => {
               leftIcon={<FaChartBar />}
               variant="ghost"
               justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
-              _active={{ bg: activeBg }}
+              _hover={{ bg: hoverColor }}
+              _active={{ bg: activeColor }}
               size={{ base: "sm", md: "md" }}
               color={textColor}
             >
@@ -137,8 +143,8 @@ const Profile = () => {
                 rightIcon={<ChevronDownIcon />}
                 variant="ghost"
                 justifyContent="flex-start"
-                _hover={{ bg: hoverBg }}
-                _active={{ bg: activeBg }}
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
                 size={{ base: "sm", md: "md" }}
                 onClick={() => toggleDropdown("detect")}
                 color={textColor}
@@ -176,8 +182,8 @@ const Profile = () => {
                 rightIcon={<ChevronDownIcon />}
                 variant="ghost"
                 justifyContent="flex-start"
-                _hover={{ bg: hoverBg }}
-                _active={{ bg: activeBg }}
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
                 size={{ base: "sm", md: "md" }}
                 onClick={() => toggleDropdown("verify")}
                 color={textColor}
@@ -215,8 +221,8 @@ const Profile = () => {
                 rightIcon={<ChevronDownIcon />}
                 variant="ghost"
                 justifyContent="flex-start"
-                _hover={{ bg: hoverBg }}
-                _active={{ bg: activeBg }}
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
                 size={{ base: "sm", md: "md" }}
                 onClick={() => toggleDropdown("settings")}
                 color={textColor}
@@ -253,27 +259,31 @@ const Profile = () => {
 
       {/* Main Content */}
       <Box flex="1" p="8">
-        <Heading mb="4">Welcome, {user.username}</Heading>
+        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
 
         {/* Features */}
+        <Heading size="lg" mb="4">Recent Pages</Heading>
         <Flex wrap="wrap" gap="6">
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Detect AI Content</Heading>
-            <Text>Use tools to detect AI-generated content or plagiarism.</Text>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+            <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
+            <Heading size="md" mt="4">Fake News Detection</Heading>
+            <Text mt="2">FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.</Text>
           </Box>
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">API Integration</Heading>
-            <Text>Integrate FactGuard APIs into your workflow.</Text>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+            <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
+            <Heading size="md" mt="4">Claim Check</Heading>
+            <Text mt="2">FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.</Text>
           </Box>
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Team Management</Heading>
-            <Text>Invite team members and manage shared credits.</Text>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+            <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
+            <Heading size="md" mt="4">Team Management</Heading>
+            <Text mt="2">Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.</Text>
           </Box>
         </Flex>
 
         {/* Graphs Section */}
-        <Heading size="md" my="6">This Week</Heading>
+        <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
         <Flex wrap="wrap" gap="6">
           <Box bg={cardBg} p="6" borderRadius="md" flex="1">
             <Heading size="sm">Detections Over Time</Heading>
@@ -290,7 +300,7 @@ const Profile = () => {
         </Flex>
 
         {/* Recent Content Section */}
-        <Heading size="md" my="6">Recent Detections</Heading>
+        <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
         <Box bg={cardBg} p="4" borderRadius="md">
           <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
             <Text>Title</Text>
@@ -308,7 +318,7 @@ const Profile = () => {
           </VStack>
         </Box>
 
-        <Heading size="md" my="6">Claim Checks</Heading>
+        <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
         <Box bg={cardBg} p="4" borderRadius="md">
           <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
             <Text>Claim</Text>
