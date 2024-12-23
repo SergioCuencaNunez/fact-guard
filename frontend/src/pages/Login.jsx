@@ -56,7 +56,6 @@ const Login = () => {
 
     try {
       const response = await fetch(`http://localhost:5001/check-login-email?email=${encodeURIComponent(email)}`);
-      const data = await response.json();
       if (!response.ok) {
         setEmailAlert(null); // Clear any previous email alerts
         setAlert({ type: "info", message: "User not registered. Redirecting to Sign Up..." });
