@@ -15,8 +15,18 @@ import {
   TabPanel,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaUser, FaNewspaper, FaShieldAlt, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaNewspaper,
+  FaShieldAlt,
+  FaSignOutAlt,
+  FaPlus,
+  FaChartBar,
+  FaCogs,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import logoBright from '../assets/logo-main-bright.png';
+import logoDark from '../assets/logo-main-dark.png';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -26,6 +36,7 @@ const Profile = () => {
   const cardBg = useColorModeValue("white", "gray.700");
   const hoverBg = useColorModeValue("gray.200", "gray.600");
   const primaryColor = "#4dcfaf";
+  const logo = useColorModeValue(logoBright, logoDark);
 
   // Fetch user data
   useEffect(() => {
@@ -67,7 +78,7 @@ const Profile = () => {
     <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
       {/* Sidebar */}
       <Box
-        w={{ base: "full", md: "250px" }}
+        w={{ base: "full", md: "275px" }}
         bg={cardBg}
         p="6"
         shadow="lg"
@@ -76,9 +87,9 @@ const Profile = () => {
         h={{ base: "auto", md: "100vh" }}
       >
         <VStack spacing="8" align="flex-start">
-          <Heading size="md" color={primaryColor}>
-            Dashboard
-          </Heading>
+          <HStack mb="4">
+            <img src={logo} alt="FactGuard Logo" style={{ height: "50px", width: "auto" }} />
+          </HStack>
           <HStack>
             <Avatar name={user.username} size="lg" />
             <Box>
@@ -90,13 +101,13 @@ const Profile = () => {
           </HStack>
           <VStack spacing="4" align="stretch">
             <Button
-              leftIcon={<FaUser />}
+              leftIcon={<FaChartBar />}
               variant="ghost"
               justifyContent="flex-start"
               _hover={{ bg: hoverBg }}
               size={{ base: "sm", md: "md" }}
             >
-              Profile
+              Dashboard
             </Button>
             <Button
               leftIcon={<FaNewspaper />}
@@ -115,6 +126,15 @@ const Profile = () => {
               size={{ base: "sm", md: "md" }}
             >
               Verify Claims
+            </Button>
+            <Button
+              leftIcon={<FaCogs />}
+              variant="ghost"
+              justifyContent="flex-start"
+              _hover={{ bg: hoverBg }}
+              size={{ base: "sm", md: "md" }}
+            >
+              Settings
             </Button>
           </VStack>
           <Button

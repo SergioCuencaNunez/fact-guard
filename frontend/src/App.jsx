@@ -340,11 +340,7 @@ function App() {
           />
           <Route
             path="/profile"
-            element={
-              <DefaultLayout>
-                <Profile />
-              </DefaultLayout>
-            }
+            element={<Profile />}
           />
         </Routes>
       </Router>
