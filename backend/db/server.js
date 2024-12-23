@@ -60,6 +60,7 @@ app.get("/check-login-email", (req, res) => {
 });
 
 // Sign Up Route
+// Sign Up Route
 app.post("/signup", (req, res) => {
   const { username, email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -68,9 +69,19 @@ app.post("/signup", (req, res) => {
 
   db.run(query, [username, email, hashedPassword], function (err) {
     if (err) return res.status(400).json({ error: "User already exists" });
-    res.status(201).json({ message: "User registered successfully" });
+
+    // Generate a JWT for the new user
+    const token = jwt.sign({ id: this.lastID, role: 'user' }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token, // Include the token in the response
+    });
   });
 });
+
 
 // Check Email Route
 app.get("/check-email", (req, res) => {

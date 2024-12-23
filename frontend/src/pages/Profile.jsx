@@ -8,13 +8,9 @@ import {
   VStack,
   HStack,
   Avatar,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   FaUser,
   FaNewspaper,
@@ -23,20 +19,31 @@ import {
   FaPlus,
   FaChartBar,
   FaCogs,
+  FaTasks,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
+const primaryColor = '#4dcfaf';
+const primaryHoverLight = '#3ca790';
+const primaryHoverDark = '#77e4c4';
+const sidebarBgColor = '#c9ebdf';
+const avatarBgColor = '#3ca790';
+const gradient = "linear-gradient(to bottom, #2a8073, #3ca790, #4dcfaf)";
+
 const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "", email: "" });
+  const [openDropdown, setOpenDropdown] = useState(null);
 
+  const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.700");
   const hoverBg = useColorModeValue("gray.200", "gray.600");
-  const primaryColor = "#4dcfaf";
-  const logo = useColorModeValue(logoBright, logoDark);
+  const activeBg = useColorModeValue('gray.300', 'gray.500');
+  const textColor = useColorModeValue('black', 'white');
+  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
 
   // Fetch user data
   useEffect(() => {
@@ -74,24 +81,35 @@ const Profile = () => {
     navigate("/login");
   };
 
+  const toggleDropdown = (section) => {
+    setOpenDropdown(openDropdown === section ? null : section);
+  };
+
   return (
     <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
       {/* Sidebar */}
       <Box
         w={{ base: "full", md: "275px" }}
-        bg={cardBg}
+        bg={sidebarBgColor}
         p="6"
         shadow="lg"
         position={{ base: "relative", md: "sticky" }}
         top="0"
         h={{ base: "auto", md: "100vh" }}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        borderRightWidth="3px"
+        borderRightStyle="solid"
+        borderRightColor="transparent"
+        style={{ borderImage: gradient, borderImageSlice: 1 }}
       >
         <VStack spacing="8" align="flex-start">
           <HStack mb="4">
             <img src={logo} alt="FactGuard Logo" style={{ height: "50px", width: "auto" }} />
           </HStack>
           <HStack>
-            <Avatar name={user.username} size="lg" />
+            <Avatar name={user.username} size="lg" bg={avatarBgColor} />
             <Box>
               <Text fontWeight="bold" isTruncated>{user.username}</Text>
               <Text fontSize="sm" color="gray.500" isTruncated>
@@ -105,39 +123,122 @@ const Profile = () => {
               variant="ghost"
               justifyContent="flex-start"
               _hover={{ bg: hoverBg }}
+              _active={{ bg: activeBg }}
               size={{ base: "sm", md: "md" }}
+              color={textColor}
             >
               Dashboard
             </Button>
-            <Button
-              leftIcon={<FaNewspaper />}
-              variant="ghost"
-              justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
-              size={{ base: "sm", md: "md" }}
-            >
-              Detect Fake News
-            </Button>
-            <Button
-              leftIcon={<FaShieldAlt />}
-              variant="ghost"
-              justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
-              size={{ base: "sm", md: "md" }}
-            >
-              Verify Claims
-            </Button>
-            <Button
-              leftIcon={<FaCogs />}
-              variant="ghost"
-              justifyContent="flex-start"
-              _hover={{ bg: hoverBg }}
-              size={{ base: "sm", md: "md" }}
-            >
-              Settings
-            </Button>
+            <Box>
+              <Button
+                leftIcon={<FaNewspaper />}
+                rightIcon={<ChevronDownIcon />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: hoverBg }}
+                _active={{ bg: activeBg }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() => toggleDropdown("detect")}
+                color={textColor}
+              >
+                Detect Fake News
+              </Button>
+              {openDropdown === "detect" && (
+                <VStack align="stretch" pl="4" mt="2">
+                  <Button
+                    leftIcon={<FaPlus />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    Start New Detection
+                  </Button>
+                  <Button
+                    leftIcon={<FaTasks />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    My News Detections
+                  </Button>
+                </VStack>
+              )}
+            </Box>
+            <Box>
+              <Button
+                leftIcon={<FaShieldAlt />}
+                rightIcon={<ChevronDownIcon />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: hoverBg }}
+                _active={{ bg: activeBg }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() => toggleDropdown("verify")}
+                color={textColor}
+              >
+                Verify Claims
+              </Button>
+              {openDropdown === "verify" && (
+                <VStack align="stretch" pl="4" mt="2">
+                  <Button
+                    leftIcon={<FaPlus />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    Start New Claim Check
+                  </Button>
+                  <Button
+                    leftIcon={<FaTasks />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    My Claim Checks
+                  </Button>
+                </VStack>
+              )}
+            </Box>
+            <Box>
+              <Button
+                leftIcon={<FaCogs />}
+                rightIcon={<ChevronDownIcon />}
+                variant="ghost"
+                justifyContent="flex-start"
+                _hover={{ bg: hoverBg }}
+                _active={{ bg: activeBg }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() => toggleDropdown("settings")}
+                color={textColor}
+              >
+                Settings
+              </Button>
+              {openDropdown === "settings" && (
+                <VStack align="stretch" pl="4" mt="2">
+                  <Button
+                    leftIcon={<FaUser />}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="sm"
+                    _hover={{ color: hoverColor }}
+                    color={textColor}
+                  >
+                    Account Details
+                  </Button>
+                </VStack>
+              )}
+            </Box>
           </VStack>
-          <Button
+        </VStack>
+        <Button
             leftIcon={<FaSignOutAlt />}
             colorScheme="red"
             variant="solid"
@@ -146,88 +247,82 @@ const Profile = () => {
           >
             Logout
           </Button>
-        </VStack>
       </Box>
 
       {/* Main Content */}
       <Box flex="1" p="8">
-        <Tabs variant="enclosed">
-          <TabList mb="4" flexWrap="wrap">
-            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
-              Profile Data
-            </Tab>
-            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
-              Detect
-            </Tab>
-            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
-              Verify
-            </Tab>
-          </TabList>
-          <TabPanels>
-            {/* Profile Data */}
-            <TabPanel>
-              <Heading size="lg" mb="4">
-                Your Profile
-              </Heading>
-              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
-                <Text mb="2">
-                  <strong>Username:</strong> {user.username}
-                </Text>
-                <Text mb="2">
-                  <strong>Email:</strong> {user.email}
-                </Text>
-              </Box>
-            </TabPanel>
+        <Heading mb="4">Welcome, {user.username}</Heading>
+        <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
 
-            {/* Detect Page */}
-            <TabPanel>
-              <Heading size="lg" mb="4">
-                Detect Fake News
-              </Heading>
-              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
-                <Text mb="4">
-                  Enter or upload content to check for authenticity.
-                </Text>
-                <textarea
-                  placeholder="Paste the article or text here..."
-                  style={{
-                    width: "100%",
-                    height: "150px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                    border: "1px solid gray",
-                    marginBottom: "20px",
-                  }}
-                ></textarea>
-                <Button colorScheme="teal" size={{ base: "sm", md: "md" }}>Analyze</Button>
-              </Box>
-            </TabPanel>
+        {/* Features */}
+        <Flex wrap="wrap" gap="6">
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Detect AI Content</Heading>
+            <Text>Use tools to detect AI-generated content or plagiarism.</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">API Integration</Heading>
+            <Text>Integrate FactGuard APIs into your workflow.</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Team Management</Heading>
+            <Text>Invite team members and manage shared credits.</Text>
+          </Box>
+        </Flex>
 
-            {/* Verify Page */}
-            <TabPanel>
-              <Heading size="lg" mb="4">
-                Verify Claims
-              </Heading>
-              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
-                <Text mb="4">
-                  Input a claim or statement to verify its accuracy.
-                </Text>
-                <input
-                  type="text"
-                  placeholder="Enter a claim to verify..."
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    borderRadius: "8px",
-                    border: "1px solid gray",
-                    marginBottom: "20px",
-                  }}
-                />
-                <Button colorScheme="teal" size={{ base: "sm", md: "md" }}>Verify</Button>
-              </Box>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+        {/* Graphs Section */}
+        <Heading size="md" my="6">This Week</Heading>
+        <Flex wrap="wrap" gap="6">
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Detections Over Time</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Claim Checks</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Usage Statistics</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+        </Flex>
+
+        {/* Recent Content Section */}
+        <Heading size="md" my="6">Recent Detections</Heading>
+        <Box bg={cardBg} p="4" borderRadius="md">
+          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
+            <Text>Title</Text>
+            <Text>Date</Text>
+          </Flex>
+          <VStack align="stretch">
+            <Flex justify="space-between">
+              <Text>"Detection 1"</Text>
+              <Text>12/22/2024</Text>
+            </Flex>
+            <Flex justify="space-between">
+              <Text>"Detection 2"</Text>
+              <Text>12/20/2024</Text>
+            </Flex>
+          </VStack>
+        </Box>
+
+        <Heading size="md" my="6">Claim Checks</Heading>
+        <Box bg={cardBg} p="4" borderRadius="md">
+          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
+            <Text>Claim</Text>
+            <Text>Date</Text>
+          </Flex>
+          <VStack align="stretch">
+            <Flex justify="space-between">
+              <Text>"Claim 1"</Text>
+              <Text>12/22/2024</Text>
+            </Flex>
+            <Flex justify="space-between">
+              <Text>"Claim 2"</Text>
+              <Text>12/20/2024</Text>
+            </Flex>
+          </VStack>
+        </Box>
       </Box>
     </Flex>
   );

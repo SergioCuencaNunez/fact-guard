@@ -42,11 +42,11 @@ const SignUp = () => {
   const [termsChecked, setTermsChecked] = useState(false);
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const validatePassword = (password, email, name) => {
+  const validatePassword = (password, email, username) => {
     if (password.toLowerCase() === email.split("@")[0].toLowerCase()) {
       return false;
     }
-    if (password.toLowerCase() === name.toLowerCase()) {
+    if (password.toLowerCase() === username.toLowerCase()) {
       return false;
     }
     return /(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,20}/.test(password);
@@ -64,7 +64,7 @@ const SignUp = () => {
     resetAlerts();
 
     const email = event.target.email.value;
-    const name = event.target.name.value || email.split("@")[0];
+    const username = event.target.username.value || email.split("@")[0];
     const password = event.target.password.value;
 
     if (!termsChecked) {
@@ -77,10 +77,10 @@ const SignUp = () => {
       setEmailAlert("Invalid email format.");
       return;
     }
-    if (!validatePassword(password, email, name)) {
+    if (!validatePassword(password, email, username)) {
       setPasswordValid(false);
       setPasswordAlert(
-        "Password cannot match your name or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
+        "Password cannot match your username or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
       );
       return;
     }
@@ -98,7 +98,7 @@ const SignUp = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
+          username,
           email,
           password,
         }),
@@ -144,12 +144,12 @@ const SignUp = () => {
   const handlePasswordBlur = (event) => {
     const password = event.target.value;
     const email = event.target.form.email.value;
-    const name = event.target.form.name.value || email.split("@")[0];
+    const username = event.target.form.username.value || email.split("@")[0];
     resetAlerts();
-    if (!validatePassword(password, email, name)) {
+    if (!validatePassword(password, email, username)) {
       setPasswordValid(false);
       setPasswordAlert(
-        "Password cannot match your name or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
+        "Password cannot match your username or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
       );
     } else {
       setPasswordValid(true);
@@ -219,16 +219,16 @@ const SignUp = () => {
         )}
         <form onSubmit={handleSignUp}>
           <VStack spacing="4" align="stretch">
-            <FormControl id="name">
-              <FormLabel>Name</FormLabel>
+            <FormControl id="username">
+              <FormLabel>Username</FormLabel>
               <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <FaUser style={{color:"#718096"}} />
                 </InputLeftElement>
                 <Input 
                   type="text" 
-                  placeholder="Enter a name" 
-                  name="name"
+                  placeholder="Enter a username" 
+                  name="username"
                 />
               </InputGroup>
             </FormControl>

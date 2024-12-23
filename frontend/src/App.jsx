@@ -72,7 +72,7 @@ const Navbar = () => {
         left: '0',
       }}
     >
-      <Flex justify="space-between" align="center" maxW="1250px" mx="auto" w="100%">
+      <Flex justify="space-between" align="center" mx="auto" w="100%" px={{ base: '0', custom: '5' }}>
         {/* Logo */}
         <Link to="/">
           <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: 'auto', cursor: 'pointer' }} />

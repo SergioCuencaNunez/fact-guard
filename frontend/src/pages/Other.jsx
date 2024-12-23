@@ -8,66 +8,55 @@ import {
   VStack,
   HStack,
   Avatar,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
   useColorModeValue,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
 } from "@chakra-ui/react";
-import {
-  FaUser,
-  FaNewspaper,
-  FaShieldAlt,
-  FaSignOutAlt,
-  FaPlus,
-  FaChartBar,
-  FaCogs,
-  FaChevronDown,
-} from "react-icons/fa";
+import { FaUser, FaNewspaper, FaShieldAlt, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import logoBright from '../assets/logo-main-bright.png';
-import logoDark from '../assets/logo-main-dark.png';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ username: "", email: "" });
+  const [user, setUser] = useState({ username: "Admin", email: "admin@example.com" });
 
   const bg = useColorModeValue("gray.50", "gray.800");
-  const sidebarBg = useColorModeValue("purple.700", "gray.900");
   const cardBg = useColorModeValue("white", "gray.700");
-  const textColor = useColorModeValue("white", "gray.200");
+  const hoverBg = useColorModeValue("gray.200", "gray.600");
   const primaryColor = "#4dcfaf";
-  const logo = useColorModeValue(logoBright, logoDark);
 
+  // Check login status
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("http://localhost:5001/profile", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-
-        if (response.ok) {
-          setUser({ username: data.username, email: data.email });
-        } else {
-          console.error("Failed to fetch user data:", data.error);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+  
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch("http://localhost:5001/profile", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json();
+  
+          if (response.ok) {
+            setUser({ username: data.username, email: data.email });
+          } else {
+            console.error("Failed to fetch user data:", data.error);
+            navigate("/login");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
           navigate("/login");
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        navigate("/login");
-      }
-    };
-
-    fetchUserData();
-  }, [navigate]);
+      };
+  
+      fetchUserData();
+    }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -75,77 +64,61 @@ const Profile = () => {
   };
 
   return (
-    <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
+    <Flex minH="100vh" bg={bg}>
       {/* Sidebar */}
-      <Box w="275px" bg={sidebarBg} color={textColor} p="6">
-        <VStack align="stretch" spacing="6">
-          <img src={logo} alt="FactGuard Logo" style={{ height: "50px" }} />
-          <Menu>
-            <MenuButton
-              as={Button}
-              leftIcon={<FaNewspaper />}
-              rightIcon={<FaChevronDown />}
+      <Box
+        w={{ base: "full", md: "250px" }}
+        bg={cardBg}
+        p="6"
+        shadow="lg"
+        position="sticky"
+        top="0"
+        h="100vh"
+      >
+        <VStack spacing="8" align="flex-start">
+          <Heading size="md" color={primaryColor}>
+            Dashboard
+          </Heading>
+          <HStack>
+            <Avatar name={user.username} size="lg" />
+            <Box>
+              <Text fontWeight="bold">{user.username}</Text>
+              <Text fontSize="sm" color="gray.500">
+                {user.email}
+              </Text>
+            </Box>
+          </HStack>
+          <VStack spacing="4" align="stretch">
+            <Button
+              leftIcon={<FaUser />}
+              variant="ghost"
               justifyContent="flex-start"
-              bg="transparent"
-              _hover={{ bg: "gray.600" }}
-              size="sm"
+              _hover={{ bg: hoverBg }}
+            >
+              Profile
+            </Button>
+            <Button
+              leftIcon={<FaNewspaper />}
+              variant="ghost"
+              justifyContent="flex-start"
+              _hover={{ bg: hoverBg }}
             >
               Detect Fake News
-            </MenuButton>
-            <MenuList bg={sidebarBg}>
-              <MenuItem icon={<FaPlus />} color={textColor} _hover={{ bg: "gray.600" }}>
-                Start New Detection
-              </MenuItem>
-              <MenuItem color={textColor} _hover={{ bg: "gray.600" }}>
-                My News Detections
-              </MenuItem>
-            </MenuList>
-          </Menu>
-          <Menu>
-            <MenuButton
-              as={Button}
+            </Button>
+            <Button
               leftIcon={<FaShieldAlt />}
-              rightIcon={<FaChevronDown />}
+              variant="ghost"
               justifyContent="flex-start"
-              bg="transparent"
-              _hover={{ bg: "gray.600" }}
-              size="sm"
+              _hover={{ bg: hoverBg }}
             >
               Verify Claims
-            </MenuButton>
-            <MenuList bg={sidebarBg}>
-              <MenuItem icon={<FaPlus />} color={textColor} _hover={{ bg: "gray.600" }}>
-                Start New Claim Check
-              </MenuItem>
-              <MenuItem color={textColor} _hover={{ bg: "gray.600" }}>
-                My Claim Checks
-              </MenuItem>
-            </MenuList>
-          </Menu>
-          <Menu>
-            <MenuButton
-              as={Button}
-              leftIcon={<FaCogs />}
-              rightIcon={<FaChevronDown />}
-              justifyContent="flex-start"
-              bg="transparent"
-              _hover={{ bg: "gray.600" }}
-              size="sm"
-            >
-              Settings
-            </MenuButton>
-            <MenuList bg={sidebarBg}>
-              <MenuItem color={textColor} _hover={{ bg: "gray.600" }}>
-                Account Details
-              </MenuItem>
-            </MenuList>
-          </Menu>
+            </Button>
+          </VStack>
           <Button
             leftIcon={<FaSignOutAlt />}
             colorScheme="red"
             variant="solid"
             onClick={handleLogout}
-            size="sm"
           >
             Logout
           </Button>
@@ -154,78 +127,86 @@ const Profile = () => {
 
       {/* Main Content */}
       <Box flex="1" p="8">
-        <Heading mb="4">Welcome, {user.username}</Heading>
-        <Box borderBottom="2px" borderColor="gray.300" mb="4"></Box>
+        <Tabs variant="enclosed">
+          <TabList mb="4">
+            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
+              Profile Data
+            </Tab>
+            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
+              Detect
+            </Tab>
+            <Tab _selected={{ color: primaryColor, borderColor: primaryColor }}>
+              Verify
+            </Tab>
+          </TabList>
+          <TabPanels>
+            {/* Profile Data */}
+            <TabPanel>
+              <Heading size="lg" mb="4">
+                Your Profile
+              </Heading>
+              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
+                <Text mb="2">
+                  <strong>Username:</strong> {user.username}
+                </Text>
+                <Text mb="2">
+                  <strong>Email:</strong> {user.email}
+                </Text>
+                <Text>
+                  <strong>Role:</strong> Admin
+                </Text>
+              </Box>
+            </TabPanel>
 
-        {/* Features */}
-        <Flex wrap="wrap" gap="6">
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Detect AI Content</Heading>
-            <Text>Use tools to detect AI-generated content or plagiarism.</Text>
-          </Box>
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">API Integration</Heading>
-            <Text>Integrate FactGuard APIs into your workflow.</Text>
-          </Box>
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Team Management</Heading>
-            <Text>Invite team members and manage shared credits.</Text>
-          </Box>
-        </Flex>
+            {/* Detect Page */}
+            <TabPanel>
+              <Heading size="lg" mb="4">
+                Detect Fake News
+              </Heading>
+              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
+                <Text mb="4">
+                  Enter or upload content to check for authenticity.
+                </Text>
+                <textarea
+                  placeholder="Paste the article or text here..."
+                  style={{
+                    width: "100%",
+                    height: "150px",
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid gray",
+                    marginBottom: "20px",
+                  }}
+                ></textarea>
+                <Button colorScheme="teal">Analyze</Button>
+              </Box>
+            </TabPanel>
 
-        {/* Graphs Section */}
-        <Heading size="md" my="6">This Week</Heading>
-        <Flex wrap="wrap" gap="6">
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Detections Over Time</Heading>
-            <Text>Graph Placeholder</Text>
-          </Box>
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Claim Checks</Heading>
-            <Text>Graph Placeholder</Text>
-          </Box>
-          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
-            <Heading size="sm">Usage Statistics</Heading>
-            <Text>Graph Placeholder</Text>
-          </Box>
-        </Flex>
-
-        {/* Recent Content Section */}
-        <Heading size="md" my="6">Recent Detections</Heading>
-        <Box bg={cardBg} p="4" borderRadius="md">
-          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
-            <Text>Title</Text>
-            <Text>Date</Text>
-          </Flex>
-          <VStack align="stretch">
-            <Flex justify="space-between">
-              <Text>"Detection 1"</Text>
-              <Text>12/22/2024</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text>"Detection 2"</Text>
-              <Text>12/20/2024</Text>
-            </Flex>
-          </VStack>
-        </Box>
-
-        <Heading size="md" my="6">Claim Checks</Heading>
-        <Box bg={cardBg} p="4" borderRadius="md">
-          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
-            <Text>Claim</Text>
-            <Text>Date</Text>
-          </Flex>
-          <VStack align="stretch">
-            <Flex justify="space-between">
-              <Text>"Claim 1"</Text>
-              <Text>12/22/2024</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text>"Claim 2"</Text>
-              <Text>12/20/2024</Text>
-            </Flex>
-          </VStack>
-        </Box>
+            {/* Verify Page */}
+            <TabPanel>
+              <Heading size="lg" mb="4">
+                Verify Claims
+              </Heading>
+              <Box bg={cardBg} p="6" borderRadius="md" shadow="sm">
+                <Text mb="4">
+                  Input a claim or statement to verify its accuracy.
+                </Text>
+                <input
+                  type="text"
+                  placeholder="Enter a claim to verify..."
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid gray",
+                    marginBottom: "20px",
+                  }}
+                />
+                <Button colorScheme="teal">Verify</Button>
+              </Box>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </Box>
     </Flex>
   );
