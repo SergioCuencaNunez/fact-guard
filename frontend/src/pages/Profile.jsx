@@ -7,6 +7,12 @@ import {
   Button,
   VStack,
   HStack,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
   Avatar,
   useColorModeValue,
   useBreakpointValue,
@@ -22,6 +28,7 @@ import {
   FaCogs,
   FaTasks,
   FaUsers,
+  FaTrashAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logoBright from '../assets/logo-main-bright.png';
@@ -127,119 +134,154 @@ const Profile = () => {
           </HStack>
           <VStack spacing="4" align="stretch">
             <Button
-              leftIcon={<FaChartBar />}
               variant="ghost"
-              justifyContent="flex-start"
+              justifyContent="space-between"
               _hover={{ bg: hoverColor }}
               _active={{ bg: activeColor }}
               size={{ base: "sm", md: "md" }}
               color={textColor}
+              width="100%"
             >
-              Dashboard
+              <HStack w="100%" justifyContent="space-between">
+                <HStack>
+                  <FaChartBar />
+                  <Text>Dashboard</Text>
+                </HStack>
+              </HStack>
             </Button>
             <Box>
               <Button
-                leftIcon={<FaNewspaper />}
-                rightIcon={<ChevronDownIcon />}
                 variant="ghost"
-                justifyContent="flex-start"
+                justifyContent="space-between"
                 _hover={{ bg: hoverColor }}
                 _active={{ bg: activeColor }}
                 size={{ base: "sm", md: "md" }}
                 onClick={() => toggleDropdown("detect")}
                 color={textColor}
+                width="100%"
               >
-                Detect Fake News
+                <HStack w="100%" justifyContent="space-between">
+                  <HStack>
+                    <FaNewspaper />
+                    <Text>Detect Fake News</Text>
+                  </HStack>
+                  <ChevronDownIcon />
+                </HStack>
               </Button>
               {openDropdown === "detect" && (
                 <VStack align="stretch" pl="4" mt="2">
                   <Button
-                    leftIcon={<FaPlus />}
                     variant="ghost"
                     justifyContent="flex-start"
                     size="sm"
                     _hover={{ color: hoverColor }}
                     color={textColor}
+                    width="100%"
                   >
-                    Start New Detection
+                    <HStack>
+                      <FaPlus />
+                      <Text>Start New Detection</Text>
+                    </HStack>
                   </Button>
                   <Button
-                    leftIcon={<FaTasks />}
                     variant="ghost"
                     justifyContent="flex-start"
                     size="sm"
                     _hover={{ color: hoverColor }}
                     color={textColor}
+                    width="100%"
                   >
-                    My News Detections
+                    <HStack>
+                      <FaTasks />
+                      <Text>My News Detections</Text>
+                    </HStack>
                   </Button>
                 </VStack>
               )}
             </Box>
             <Box>
               <Button
-                leftIcon={<FaShieldAlt />}
-                rightIcon={<ChevronDownIcon />}
                 variant="ghost"
-                justifyContent="flex-start"
+                justifyContent="space-between"
                 _hover={{ bg: hoverColor }}
                 _active={{ bg: activeColor }}
                 size={{ base: "sm", md: "md" }}
                 onClick={() => toggleDropdown("verify")}
                 color={textColor}
+                width="100%"
               >
-                Verify Claims
+                <HStack w="100%" justifyContent="space-between">
+                  <HStack>
+                    <FaShieldAlt />
+                    <Text>Verify Claims</Text>
+                  </HStack>
+                  <ChevronDownIcon />
+                </HStack>
               </Button>
               {openDropdown === "verify" && (
                 <VStack align="stretch" pl="4" mt="2">
                   <Button
-                    leftIcon={<FaPlus />}
                     variant="ghost"
                     justifyContent="flex-start"
                     size="sm"
                     _hover={{ color: hoverColor }}
                     color={textColor}
+                    width="100%"
                   >
-                    Start New Claim Check
+                    <HStack>
+                      <FaPlus />
+                      <Text>Start New Claim Check</Text>
+                    </HStack>
                   </Button>
                   <Button
-                    leftIcon={<FaTasks />}
                     variant="ghost"
                     justifyContent="flex-start"
                     size="sm"
                     _hover={{ color: hoverColor }}
                     color={textColor}
+                    width="100%"
                   >
-                    My Claim Checks
+                    <HStack>
+                      <FaTasks />
+                      <Text>My Claim Checks</Text>
+                    </HStack>
                   </Button>
                 </VStack>
               )}
             </Box>
             <Box>
               <Button
-                leftIcon={<FaCogs />}
-                rightIcon={<ChevronDownIcon />}
                 variant="ghost"
-                justifyContent="flex-start"
+                justifyContent="space-between"
                 _hover={{ bg: hoverColor }}
                 _active={{ bg: activeColor }}
                 size={{ base: "sm", md: "md" }}
                 onClick={() => toggleDropdown("settings")}
                 color={textColor}
+                width="100%"
               >
-                Settings
+                <HStack w="100%" justifyContent="space-between">
+                  <HStack>
+                    <FaCogs />
+                    <Text>Settings</Text>
+                  </HStack>
+                  <ChevronDownIcon />
+                </HStack>
               </Button>
               {openDropdown === "settings" && (
                 <VStack align="stretch" pl="4" mt="2">
                   <Button
-                    leftIcon={<FaUser />}
                     variant="ghost"
                     justifyContent="flex-start"
                     size="sm"
                     _hover={{ color: hoverColor }}
                     color={textColor}
+                    width="100%"
                   >
-                    Account Details
+                    <HStack>
+                      <FaUser />
+                      <Text>Account Details</Text>
+                    </HStack>
                   </Button>
                 </VStack>
               )}
@@ -252,6 +294,7 @@ const Profile = () => {
             variant="solid"
             onClick={handleLogout}
             size={{ base: "sm", md: "md" }}
+            width="100%"
           >
             Logout
           </Button>
@@ -301,39 +344,72 @@ const Profile = () => {
 
         {/* Recent Content Section */}
         <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
-        <Box bg={cardBg} p="4" borderRadius="md">
-          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
-            <Text>Title</Text>
-            <Text>Date</Text>
-          </Flex>
-          <VStack align="stretch">
-            <Flex justify="space-between">
-              <Text>"Detection 1"</Text>
-              <Text>12/22/2024</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text>"Detection 2"</Text>
-              <Text>12/20/2024</Text>
-            </Flex>
-          </VStack>
-        </Box>
+          <Box bg={cardBg} p="4" borderRadius="md">
+            <Table variant="simple" colorScheme="gray">
+              <Thead>
+                <Tr>
+                  <Th width="25%"><b>Title</b></Th>
+                  <Th width="15%"><b>Fake</b></Th>
+                  <Th width="15%"><b>True</b></Th>
+                  <Th width="15%"><b>Date</b></Th>
+                  <Th width="15%"><b>Results</b></Th>
+                  <Th width="15%"><b>Remove</b></Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Td>"Detection 1"</Td>
+                  <Td>30%</Td>
+                  <Td>70%</Td>
+                  <Td>12/22/2024</Td>
+                  <Td><Button size="sm">Results</Button></Td>
+                  <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
+                </Tr>
+                <Tr>
+                  <Td>"Detection 2"</Td>
+                  <Td>60%</Td>
+                  <Td>40%</Td>
+                  <Td>12/20/2024</Td>
+                  <Td><Button size="sm">Results</Button></Td>
+                  <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </Box>
 
         <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
         <Box bg={cardBg} p="4" borderRadius="md">
-          <Flex justify="space-between" borderBottom="1px solid" pb="2" mb="4">
-            <Text>Claim</Text>
-            <Text>Date</Text>
-          </Flex>
-          <VStack align="stretch">
-            <Flex justify="space-between">
-              <Text>"Claim 1"</Text>
-              <Text>12/22/2024</Text>
-            </Flex>
-            <Flex justify="space-between">
-              <Text>"Claim 2"</Text>
-              <Text>12/20/2024</Text>
-            </Flex>
-          </VStack>
+          <Table variant="simple" colorScheme="gray">
+            <Thead>
+                <Tr>
+                  <Th width="25%"><b>Title</b></Th>
+                  <Th width="15%"><b>Rating</b></Th>
+                  <Th width="15%"><b>Link</b></Th>
+                  <Th width="15%"><b>Date</b></Th>
+                  <Th width="15%"><b>Results</b></Th>
+                  <Th width="15%"><b>Remove</b></Th>
+                </Tr>
+              </Thead>
+
+            <Tbody>
+              <Tr>
+                <Td>"Claim 1"</Td>
+                <Td>True</Td>
+                <Td><a href="#">Link</a></Td>
+                <Td>12/22/2024</Td>
+                <Td><Button size="sm">Results</Button></Td>
+                <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
+                </Tr>
+              <Tr>
+                <Td>"Claim 2"</Td>
+                <Td>False</Td>
+                <Td><a href="#">Link</a></Td>
+                <Td>12/20/2024</Td>
+                <Td><Button size="sm">Results</Button></Td>
+                <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
+                </Tr>
+            </Tbody>
+          </Table>
         </Box>
       </Box>
     </Flex>
