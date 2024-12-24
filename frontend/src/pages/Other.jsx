@@ -7,17 +7,19 @@ import {
   Button,
   VStack,
   HStack,
-  Avatar,
-  useColorModeValue,
-  useBreakpointValue,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  Avatar,
+  useColorMode,
+  useColorModeValue,
+  useBreakpointValue,
+  IconButton,
 } from "@chakra-ui/react";
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
 import {
   FaUser,
   FaNewspaper,
@@ -28,6 +30,7 @@ import {
   FaCogs,
   FaTasks,
   FaUsers,
+  FaTrashAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import logoBright from '../assets/logo-main-bright.png';
@@ -46,6 +49,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "", email: "" });
   const [openDropdown, setOpenDropdown] = useState(null);
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue("gray.50", "gray.800");
@@ -57,6 +61,41 @@ const Profile = () => {
   const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
+
+  const getTextColor = (value, type) => {
+    if (type === "percentage") {
+      if (value >= 60) return "red.500";
+      if (value >= 30) return "orange.500";
+      return "green.500";
+    }
+    if (type === "rating") {
+      return value === "True" ? "green.500" : "red.500";
+    }
+    return "black";
+  };
+
+  // Get current date in the format: Mon Nov 4th, 2024
+  const getCurrentDate = () => {
+    const now = new Date();
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const dayName = dayNames[now.getDay()].slice(0, 3);
+    const monthName = monthNames[now.getMonth()];
+    const date = now.getDate();
+    const year = now.getFullYear();
+
+    const dateSuffix =
+      date % 10 === 1 && date !== 11
+        ? "st"
+        : date % 10 === 2 && date !== 12
+        ? "nd"
+        : date % 10 === 3 && date !== 13
+        ? "rd"
+        : "th";
+
+    return `${dayName} ${monthName} ${date}${dateSuffix}, ${year}`;
+  };
 
   // Fetch user data
   useEffect(() => {
@@ -133,123 +172,21 @@ const Profile = () => {
           </HStack>
           <VStack spacing="4" align="stretch">
             <Button
-              leftIcon={<FaChartBar />}
               variant="ghost"
-              justifyContent="flex-start"
+              justifyContent="space-between"
               _hover={{ bg: hoverColor }}
               _active={{ bg: activeColor }}
               size={{ base: "sm", md: "md" }}
               color={textColor}
+              width="100%"
             >
-              Dashboard
+              <HStack w="100%" justifyContent="space-between">
+                <HStack>
+                  <FaChartBar />
+                  <Text>Dashboard</Text>
+                </HStack>
+              </HStack>
             </Button>
-            <Box>
-              <Button
-                leftIcon={<FaNewspaper />}
-                rightIcon={<ChevronDownIcon />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size={{ base: "sm", md: "md" }}
-                onClick={() => toggleDropdown("detect")}
-                color={textColor}
-              >
-                Detect Fake News
-              </Button>
-              {openDropdown === "detect" && (
-                <VStack align="stretch" pl="4" mt="2">
-                  <Button
-                    leftIcon={<FaPlus />}
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                  >
-                    Start New Detection
-                  </Button>
-                  <Button
-                    leftIcon={<FaTasks />}
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                  >
-                    My News Detections
-                  </Button>
-                </VStack>
-              )}
-            </Box>
-            <Box>
-              <Button
-                leftIcon={<FaShieldAlt />}
-                rightIcon={<ChevronDownIcon />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size={{ base: "sm", md: "md" }}
-                onClick={() => toggleDropdown("verify")}
-                color={textColor}
-              >
-                Verify Claims
-              </Button>
-              {openDropdown === "verify" && (
-                <VStack align="stretch" pl="4" mt="2">
-                  <Button
-                    leftIcon={<FaPlus />}
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                  >
-                    Start New Claim Check
-                  </Button>
-                  <Button
-                    leftIcon={<FaTasks />}
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                  >
-                    My Claim Checks
-                  </Button>
-                </VStack>
-              )}
-            </Box>
-            <Box>
-              <Button
-                leftIcon={<FaCogs />}
-                rightIcon={<ChevronDownIcon />}
-                variant="ghost"
-                justifyContent="flex-start"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size={{ base: "sm", md: "md" }}
-                onClick={() => toggleDropdown("settings")}
-                color={textColor}
-              >
-                Settings
-              </Button>
-              {openDropdown === "settings" && (
-                <VStack align="stretch" pl="4" mt="2">
-                  <Button
-                    leftIcon={<FaUser />}
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                  >
-                    Account Details
-                  </Button>
-                </VStack>
-              )}
-            </Box>
           </VStack>
         </VStack>
         <Button
@@ -258,6 +195,7 @@ const Profile = () => {
             variant="solid"
             onClick={handleLogout}
             size={{ base: "sm", md: "md" }}
+            width="100%"
           >
             Logout
           </Button>
@@ -265,38 +203,83 @@ const Profile = () => {
 
       {/* Main Content */}
       <Box flex="1" p="8">
-        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+        <Flex justify="space-between" align="center">
+          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+          <HStack spacing="4">
+            <Text fontSize="sm" color={textColor}>{getCurrentDate()}</Text>
+            <IconButton
+              aria-label="Toggle theme"
+              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+            />
+          </HStack>
+        </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+
+        <Heading size="lg" mb="4">Recent Pages</Heading>
+        <Flex wrap="wrap" gap="6">
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+            <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
+            <Heading size="md" mt="4">Fake News Detection</Heading>
+            <Text mt="2">FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+            <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
+            <Heading size="md" mt="4">Claim Check</Heading>
+            <Text mt="2">FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+            <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
+            <Heading size="md" mt="4">Team Management</Heading>
+            <Text mt="2">Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.</Text>
+          </Box>
+        </Flex>
+
+        <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
+        <Flex wrap="wrap" gap="6">
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Detections Over Time</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Claim Checks</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+          <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+            <Heading size="sm">Usage Statistics</Heading>
+            <Text>Graph Placeholder</Text>
+          </Box>
+        </Flex>
 
         <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
         <Box bg={cardBg} p="4" borderRadius="md">
           <Table variant="simple" colorScheme="gray">
             <Thead>
               <Tr>
-                <Th><b>Title</b></Th>
-                <Th><b>Fake</b></Th>
-                <Th><b>True</b></Th>
-                <Th><b>Date</b></Th>
-                <Th><b>Results</b></Th>
-                <Th><b>Remove</b></Th>
+                <Th width="25%"><b>Title</b></Th>
+                <Th width="15%"><b>Fake</b></Th>
+                <Th width="15%"><b>True</b></Th>
+                <Th width="15%"><b>Date</b></Th>
+                <Th width="15%"><b>Results</b></Th>
+                <Th width="15%"><b>Remove</b></Th>
               </Tr>
             </Thead>
             <Tbody>
               <Tr>
                 <Td>"Detection 1"</Td>
-                <Td>30%</Td>
-                <Td>70%</Td>
+                <Td><Text color={getTextColor(30, "percentage")}>30%</Text></Td>
+                <Td><Text color={getTextColor(70, "percentage")}>70%</Text></Td>
                 <Td>12/22/2024</Td>
                 <Td><Button size="sm">Results</Button></Td>
-                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+                <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
               </Tr>
               <Tr>
                 <Td>"Detection 2"</Td>
-                <Td>60%</Td>
-                <Td>40%</Td>
+                <Td><Text color={getTextColor(60, "percentage")}>60%</Text></Td>
+                <Td><Text color={getTextColor(40, "percentage")}>40%</Text></Td>
                 <Td>12/20/2024</Td>
                 <Td><Button size="sm">Results</Button></Td>
-                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+                <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
               </Tr>
             </Tbody>
           </Table>
@@ -306,31 +289,32 @@ const Profile = () => {
         <Box bg={cardBg} p="4" borderRadius="md">
           <Table variant="simple" colorScheme="gray">
             <Thead>
-              <Tr>
-                <Th><b>Title</b></Th>
-                <Th><b>Rating</b></Th>
-                <Th><b>Link</b></Th>
-                <Th><b>Date</b></Th>
-                <Th><b>Results</b></Th>
-                <Th><b>Remove</b></Th>
-              </Tr>
-            </Thead>
+                <Tr>
+                  <Th width="25%"><b>Title</b></Th>
+                  <Th width="15%"><b>Rating</b></Th>
+                  <Th width="15%"><b>Link</b></Th>
+                  <Th width="15%"><b>Date</b></Th>
+                  <Th width="15%"><b>Results</b></Th>
+                  <Th width="15%"><b>Remove</b></Th>
+                </Tr>
+              </Thead>
+
             <Tbody>
               <Tr>
                 <Td>"Claim 1"</Td>
-                <Td>True</Td>
+                <Td><Text color={getTextColor("True", "rating")}>True</Text></Td>
                 <Td><a href="#">Link</a></Td>
                 <Td>12/22/2024</Td>
                 <Td><Button size="sm">Results</Button></Td>
-                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+                <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
               </Tr>
               <Tr>
                 <Td>"Claim 2"</Td>
-                <Td>False</Td>
+                <Td><Text color={getTextColor("False", "rating")}>False</Text></Td>
                 <Td><a href="#">Link</a></Td>
                 <Td>12/20/2024</Td>
                 <Td><Button size="sm">Results</Button></Td>
-                <Td><Button size="sm" colorScheme="red">🗑</Button></Td>
+                <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
               </Tr>
             </Tbody>
           </Table>

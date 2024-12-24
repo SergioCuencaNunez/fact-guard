@@ -14,10 +14,12 @@ import {
   Th,
   Td,
   Avatar,
+  IconButton,
+  useColorMode,
   useColorModeValue,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
 import {
   FaUser,
   FaNewspaper,
@@ -47,6 +49,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "", email: "" });
   const [openDropdown, setOpenDropdown] = useState(null);
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const logo = useColorModeValue(logoBright, logoDark);
   const bg = useColorModeValue("gray.50", "gray.800");
@@ -58,6 +61,39 @@ const Profile = () => {
   const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
+
+  const getTextColor = (value, type) => {
+    if (type === "percentage") {
+      if (value >= 60) return "red.500";
+      if (value >= 30) return "orange.500";
+      return "green.500";
+    }
+    if (type === "rating") {
+      return value === "True" ? "green.500" : "red.500";
+    }
+    return "black";
+  };
+
+  const getCurrentDate = () => {
+    const now = new Date();
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const dayName = dayNames[now.getDay()].slice(0, 3);
+    const monthName = monthNames[now.getMonth()];
+    const date = now.getDate();
+    const year = now.getFullYear();
+
+    const dateSuffix =
+      date % 10 === 1 && date !== 11
+        ? "st"
+        : date % 10 === 2 && date !== 12
+        ? "nd"
+        : date % 10 === 3 && date !== 13
+        ? "rd"
+        : "th";
+    return `${dayName} ${monthName} ${date}${dateSuffix}, ${year}`;
+  };
 
   // Fetch user data
   useEffect(() => {
@@ -302,7 +338,17 @@ const Profile = () => {
 
       {/* Main Content */}
       <Box flex="1" p="8">
-        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+        <Flex justify="space-between" align="center">
+          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+          <HStack spacing="4">
+            <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
+            <IconButton
+              aria-label="Toggle theme"
+              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+            />
+          </HStack>
+        </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
 
         {/* Features */}
@@ -345,7 +391,7 @@ const Profile = () => {
         {/* Recent Content Section */}
         <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
           <Box bg={cardBg} p="4" borderRadius="md">
-            <Table variant="simple" colorScheme="gray">
+            <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"}>
               <Thead>
                 <Tr>
                   <Th width="25%"><b>Title</b></Th>
@@ -359,16 +405,16 @@ const Profile = () => {
               <Tbody>
                 <Tr>
                   <Td>"Detection 1"</Td>
-                  <Td>30%</Td>
-                  <Td>70%</Td>
+                  <Td><Text color={getTextColor(30, "percentage")}>30%</Text></Td>
+                  <Td><Text color={getTextColor(70, "percentage")}>70%</Text></Td>
                   <Td>12/22/2024</Td>
                   <Td><Button size="sm">Results</Button></Td>
                   <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
                 </Tr>
                 <Tr>
                   <Td>"Detection 2"</Td>
-                  <Td>60%</Td>
-                  <Td>40%</Td>
+                  <Td><Text color={getTextColor(60, "percentage")}>60%</Text></Td>
+                  <Td><Text color={getTextColor(40, "percentage")}>40%</Text></Td>
                   <Td>12/20/2024</Td>
                   <Td><Button size="sm">Results</Button></Td>
                   <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
@@ -379,7 +425,7 @@ const Profile = () => {
 
         <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
         <Box bg={cardBg} p="4" borderRadius="md">
-          <Table variant="simple" colorScheme="gray">
+          <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"}>
             <Thead>
                 <Tr>
                   <Th width="25%"><b>Title</b></Th>
@@ -390,11 +436,10 @@ const Profile = () => {
                   <Th width="15%"><b>Remove</b></Th>
                 </Tr>
               </Thead>
-
             <Tbody>
               <Tr>
                 <Td>"Claim 1"</Td>
-                <Td>True</Td>
+                <Td><Text color={getTextColor("True", "rating")}>True</Text></Td>
                 <Td><a href="#">Link</a></Td>
                 <Td>12/22/2024</Td>
                 <Td><Button size="sm">Results</Button></Td>
@@ -402,7 +447,7 @@ const Profile = () => {
                 </Tr>
               <Tr>
                 <Td>"Claim 2"</Td>
-                <Td>False</Td>
+                <Td><Text color={getTextColor("False", "rating")}>False</Text></Td>
                 <Td><a href="#">Link</a></Td>
                 <Td>12/20/2024</Td>
                 <Td><Button size="sm">Results</Button></Td>
