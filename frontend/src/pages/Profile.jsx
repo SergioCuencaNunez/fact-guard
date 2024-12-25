@@ -211,6 +211,11 @@ const Profile = () => {
     }
   };
 
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
+    return date.toLocaleDateString("en-GB", options).replace(",", ""); // DD/MM/YYYY HH:MM
+  };
 
   return (
     <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
@@ -218,7 +223,7 @@ const Profile = () => {
       <Box
         w={{ base: "full", md: "275px" }}
         bg={sidebarBgColor}
-        py="6"
+        py="9"
         px="6"
         shadow="lg"
         position={{ base: "relative", md: "sticky" }}
@@ -480,31 +485,61 @@ const Profile = () => {
                       <Thead>
                         <Tr>
                           <Th width="25%"><b>Title</b></Th>
-                          <Th width="15%"><b>Fake</b></Th>
-                          <Th width="15%"><b>True</b></Th>
-                          <Th width="15%"><b>Date</b></Th>
-                          <Th width="15%"><b>Results</b></Th>
-                          <Th width="15%"><b>Remove</b></Th>
+                          <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
+                          <Th width="12.5%" textAlign="center"><b>True</b></Th>
+                          <Th width="15%" textAlign="center"><b>Date</b></Th>
+                          <Th width="15%" textAlign="center"><b>Results</b></Th>
+                          <Th width="10%" textAlign="center"><b>Remove</b></Th>
                         </Tr>
                       </Thead>
                       <Tbody>
-                        <Tr>
-                          <Td>"Detection 1"</Td>
-                          <Td><Text color={getTextColor(30, "percentage")}>30%</Text></Td>
-                          <Td><Text color={getTextColor(70, "percentage")}>70%</Text></Td>
-                          <Td>12/22/2024</Td>
-                          <Td><Button size="sm">Results</Button></Td>
-                          <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
-                        </Tr>
-                        <Tr>
-                          <Td>"Detection 2"</Td>
-                          <Td><Text color={getTextColor(60, "percentage")}>60%</Text></Td>
-                          <Td><Text color={getTextColor(40, "percentage")}>40%</Text></Td>
-                          <Td>12/20/2024</Td>
-                          <Td><Button size="sm">Results</Button></Td>
-                          <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
-                        </Tr>
-                      </Tbody>
+                        {detections.slice(-5).reverse().length > 0 ? (
+                          detections
+                            .slice(-5)
+                            .reverse()
+                            .map((detection) => (
+                              <Tr key={detection.id}>
+                                <Td>{detection.title}</Td>
+                                <Td textAlign="center">
+                                  <Text color={getTextColor(detection.fakePercentage || 70, "percentage")}>
+                                    {detection.fakePercentage || "70%"}
+                                  </Text>
+                                </Td>
+                                <Td textAlign="center">
+                                  <Text color={getTextColor(detection.truePercentage || 30, "percentage")}>
+                                    {detection.truePercentage || "30%"}
+                                  </Text>
+                                </Td>
+                                <Td textAlign="center">{formatDate(detection.date)}</Td>
+                                <Td textAlign="center">
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      navigate("/profile/detection-results", { state: { detection } })
+                                    }
+                                  >
+                                    Results
+                                  </Button>
+                                </Td>
+                                <Td textAlign="center">
+                                  <Button
+                                    size="sm"
+                                    color={primaryColor}
+                                    onClick={() => deleteDetection(detection.id)}
+                                  >
+                                    <FaTrashAlt />
+                                  </Button>
+                                </Td>
+                              </Tr>
+                            ))
+                        ) : (
+                          <Tr>
+                            <Td colSpan="6" textAlign="center">
+                              No recent detections found.
+                            </Td>
+                          </Tr>
+                        )}
+                      </Tbody>  
                     </Table>
                   </Box>
 

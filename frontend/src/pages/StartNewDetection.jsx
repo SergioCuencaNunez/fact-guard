@@ -11,6 +11,7 @@ import {
   IconButton,
   useColorMode,
   useColorModeValue,
+  useBreakpointValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -35,6 +36,7 @@ import logoDetectDark from "../assets/logo-detect-dark.png";
 
 const StartNewDetection = ({ addDetection }) => {
   const logo = useColorModeValue(logoDetectBright, logoDetectDark);
+  const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -102,11 +104,11 @@ const StartNewDetection = ({ addDetection }) => {
 
   return (
     <Box>
-      <Flex justify="space-between" align="center" mb="4">
-        <Heading>Detect Fake News</Heading>
-        <Flex direction="column" align="center">
+      <Flex direction="column">
+        <Flex justify="space-between" align="center">
+          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Detect Fake News</Heading>          
           <HStack spacing="4">
-            <img src={logo} alt="Detect Logo" style={{ height: "50px", width: "auto" }} />
+            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -114,90 +116,95 @@ const StartNewDetection = ({ addDetection }) => {
             />
           </HStack>
         </Flex>
-      </Flex>
-      <Text mb="4">Enter the title and paste/upload a news article to analyze its authenticity:</Text>
-      <Input
-        placeholder="Enter article title..."
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        mb="4"
-      />
-      <Textarea
-        placeholder="Paste your article content here..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        mb="4"
-      />
-      <Button
-        bg={primaryColor}
-        color="white"
-        _hover={{ bg: hoverColor }}
-        _active={{ bg: activeColor }}
-        size="md"
-        onClick={handleAnalyze}
-      >
-        Analyze
-      </Button>
+        <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+        <Text mb="4">Enter the title and paste/upload a news article to analyze its authenticity:</Text>
+        <Input
+          placeholder="Enter article title..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          mb="4"
+        />
+        <Textarea
+          placeholder="Paste your article content here..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          mb="4"
+        />
+        <Flex justify="center" mb="4">
+          <Button
+            bg={primaryColor}
+            color="white"
+            _hover={{ bg: hoverColor }}
+            _active={{ bg: activeColor }}
+            size="md"
+            width="fit-content"
+            px="8"
+            onClick={handleAnalyze}
+          >
+            Analyze
+          </Button>
+        </Flex>
+    
+        {/* Spinner Modal */}
+        <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalBody textAlign="center" py="6">
+              <Spinner size="xl" />
+              <Text mt="4">Analyzing News... Please wait.</Text>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
 
-      {/* Spinner Modal */}
-      <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalBody textAlign="center" py="6">
-            <Spinner size="xl" />
-            <Text mt="4">Analyzing News... Please wait.</Text>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        {/* Alert Modal */}
+        <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Missing Information</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Please fill in both the title and content fields to proceed with detecting fake news. 
+              These details are essential to analyze the authenticity of the article.
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                bg={primaryColor}
+                color="white"
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
+                size="md"
+                onClick={onAlertClose}
+              >
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
 
-      {/* Alert Modal */}
-      <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Missing Information</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Please fill in both the title and content fields to proceed with detecting fake news. 
-            These details are essential to analyze the authenticity of the article.
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              bg={primaryColor}
-              color="white"
-              _hover={{ bg: hoverColor }}
-              _active={{ bg: activeColor }}
-              size="md"
-              onClick={onAlertClose}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Error Modal */}
-      <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Error</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text>{errorMessage}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              bg={primaryColor}
-              color="white"
-              _hover={{ bg: hoverColor }}
-              _active={{ bg: activeColor }}
-              size="md"
-              onClick={onErrorClose}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        {/* Error Modal */}
+        <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Error</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>{errorMessage}</Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                bg={primaryColor}
+                color="white"
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
+                size="md"
+                onClick={onErrorClose}
+              >
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        </Flex>
     </Box>
   );
 };
