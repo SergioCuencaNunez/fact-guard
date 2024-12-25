@@ -60,7 +60,7 @@ const DetectionResults = () => {
     <Box>
       <Flex direction="column">
         <Flex justify="space-between" align="center">
-          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Detection Results: {detection.title}</Heading>                    
+          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Detection Results: #{detection.id}</Heading>                    
           <HStack spacing="4">
           <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
           <IconButton

@@ -19,7 +19,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   FaUser,
   FaNewspaper,
@@ -217,6 +217,18 @@ const Profile = () => {
     return date.toLocaleDateString("en-GB", options).replace(",", ""); // DD/MM/YYYY HH:MM
   };
 
+  const [sortOrder, setSortOrder] = useState("desc");
+  
+  const sortedDetections = [...detections].sort((a, b) => {
+    return sortOrder === "desc"
+      ? new Date(b.date) - new Date(a.date)
+      : new Date(a.date) - new Date(b.date);
+  });
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+  };
+  
   return (
     <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
       {/* Sidebar */}
@@ -481,32 +493,44 @@ const Profile = () => {
                 {/* Recent Content Section */}
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
                   <Box bg={cardBg} p="4" borderRadius="md">
-                    <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"}>
-                      <Thead>
-                        <Tr>
-                          <Th width="25%"><b>Title</b></Th>
-                          <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
-                          <Th width="12.5%" textAlign="center"><b>True</b></Th>
-                          <Th width="15%" textAlign="center"><b>Date</b></Th>
-                          <Th width="15%" textAlign="center"><b>Results</b></Th>
-                          <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {detections.slice(-5).reverse().length > 0 ? (
-                          detections
-                            .slice(-5)
-                            .reverse()
-                            .map((detection) => (
+                    {detections.length > 0 ? (
+                      <>
+                        <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                          <Thead>
+                            <Tr>
+                              <Th width="5%" textAlign="center"><b>ID</b></Th>
+                              <Th width="30%" textAlign="left"><b>Title</b></Th>
+                              <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
+                              <Th width="12.5%" textAlign="center"><b>True</b></Th>
+                              <Th width="15%" textAlign="center">
+                                <Flex align="center" justify="center">
+                                  <b>Date</b>
+                                  <IconButton
+                                    aria-label="Toggle Sort Order"
+                                    icon={sortOrder === "desc" ? <ChevronDownIcon /> : <ChevronUpIcon />}
+                                    size="xs"
+                                    variant="ghost"
+                                    onClick={toggleSortOrder}
+                                    ml="1"
+                                  />
+                                </Flex>
+                              </Th>
+                              <Th width="15%" textAlign="center"><b>Results</b></Th>
+                              <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {sortedDetections.slice(0, 5).map((detection) => (
                               <Tr key={detection.id}>
-                                <Td>{detection.title}</Td>
+                                <Td textAlign="center">#{detection.id}</Td>
+                                <Td textAlign="left">{detection.title}</Td>
                                 <Td textAlign="center">
-                                  <Text color={getTextColor(detection.fakePercentage || 70, "percentage")}>
+                                  <Text color={getTextColor(detection.fakePercentage || "70", "percentage")}>
                                     {detection.fakePercentage || "70%"}
                                   </Text>
                                 </Td>
                                 <Td textAlign="center">
-                                  <Text color={getTextColor(detection.truePercentage || 30, "percentage")}>
+                                  <Text color={getTextColor(detection.truePercentage || "30", "percentage")}>
                                     {detection.truePercentage || "30%"}
                                   </Text>
                                 </Td>
@@ -515,32 +539,31 @@ const Profile = () => {
                                   <Button
                                     size="sm"
                                     onClick={() =>
-                                      navigate("/profile/detection-results", { state: { detection } })
+                                      navigate("/profile/detection-results", {
+                                        state: { detection },
+                                      })
                                     }
                                   >
                                     Results
                                   </Button>
                                 </Td>
                                 <Td textAlign="center">
-                                  <Button
-                                    size="sm"
-                                    color={primaryColor}
-                                    onClick={() => deleteDetection(detection.id)}
-                                  >
+                                  <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
                                     <FaTrashAlt />
                                   </Button>
                                 </Td>
                               </Tr>
-                            ))
-                        ) : (
-                          <Tr>
-                            <Td colSpan="6" textAlign="center">
-                              No recent detections found.
-                            </Td>
-                          </Tr>
-                        )}
-                      </Tbody>  
-                    </Table>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </>
+                    ) : (
+                      <Flex align="center" justify="center" h="60vh">
+                        <Text fontSize="lg" color="gray.500" textAlign="center">
+                          No detections found. Start detecting fake news with FactGuard Detect by analyzing news articles to identify and prevent misinformation. Get started now!
+                        </Text>
+                      </Flex>
+                    )}
                   </Box>
 
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
