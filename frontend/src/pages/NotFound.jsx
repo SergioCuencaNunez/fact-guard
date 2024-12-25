@@ -5,10 +5,18 @@ import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 import notFoundImage from '../assets/404.png';
 
+const primaryColor = '#4dcfaf';
+const primaryHoverLight = '#3ca790';
+const primaryHoverDark = '#77e4c4';
+const primaryActiveLight = '#2a8073';
+const primaryActiveDark = '#91edd0';
+
 const NotFound = () => {
   const logo = useColorModeValue(logoBright, logoDark);
   const textColor = useColorModeValue('black', 'white');
   const subTextColor = useColorModeValue('gray.600', 'gray.300');
+  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
   return (
     <Box
@@ -49,7 +57,13 @@ const NotFound = () => {
       </VStack>
 
       <Link to="/">
-        <Button colorScheme="teal" size="lg">
+        <Button
+          bg={primaryColor}
+          color="white"
+          _hover={{ bg: hoverColor }}
+          _active={{ bg: activeColor }}
+          size="lg"
+        >
           Go Back Home
         </Button>
       </Link>

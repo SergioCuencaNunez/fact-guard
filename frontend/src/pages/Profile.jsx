@@ -37,12 +37,13 @@ import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 import StartNewDetection from "./StartNewDetection";
 import MyNewsDetections from "./MyNewsDetections";
+import DetectionResults from "./DetectionResults";
 
+const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
 const primaryHoverDark = '#4dcfaf';
 const primaryActiveLight = '#2a8073';
 const primaryActiveDark = '#77e4c4';
-const primaryColor = '#4dcfaf';
 const sidebarLight = '#c9ebdf';
 const sidebarDark = '#0b7b6b';
 const gradient = "linear-gradient(to bottom, #2a8073, #3ca790, #4dcfaf)";
@@ -136,6 +137,80 @@ const Profile = () => {
   const toggleDropdown = (section) => {
     setOpenDropdown(openDropdown === section ? null : section);
   };
+
+  const [detections, setDetections] = useState([]);
+
+  useEffect(() => {
+    const fetchDetections = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5001/detections", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setDetections(data);
+        } else {
+          console.error("Failed to fetch detections:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching detections:", error);
+      }
+    };
+
+    fetchDetections();
+  }, [navigate]);
+
+  // Add a detection to server
+  const addDetection = async (detection) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:5001/detections", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(detection),
+      });
+
+      if (response.ok) {
+        const newDetection = await response.json();
+        setDetections((prev) => [...prev, newDetection]);
+      } else {
+        console.error("Failed to add detection.");
+      }
+    } catch (error) {
+      console.error("Error adding detection:", error);
+    }
+  };
+
+  // Delete a detection from server
+  const deleteDetection = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:5001/detections/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        setDetections((prev) => prev.filter((d) => d.id !== id));
+      } else {
+        console.error("Failed to delete detection.");
+      }
+    } catch (error) {
+      console.error("Error deleting detection:", error);
+    }
+  };
+
 
   return (
     <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
@@ -469,8 +544,20 @@ const Profile = () => {
               </Flex>
             }
           />
-          <Route path="/start-new-detection" element={<StartNewDetection />} />
-          <Route path="/my-news-detections" element={<MyNewsDetections />} />
+          <Route
+            path="/start-new-detection"
+            element={<StartNewDetection addDetection={addDetection}/>}
+            />
+          <Route
+            path="/my-news-detections"
+            element={
+              <MyNewsDetections
+                detections={detections}
+                deleteDetection={deleteDetection}
+              />
+            }
+          />
+          <Route path="/detection-results" element={<DetectionResults />} />
         </Routes>
       </Box>
     </Flex>

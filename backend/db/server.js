@@ -114,6 +114,87 @@ app.get("/profile", verifyToken, (req, res) => {
   });
 });
 
+// Get all detections for a user
+app.get("/detections", verifyToken, (req, res) => {
+  const query = "SELECT * FROM detections WHERE user_id = ?";
+  db.all(query, [req.user.id], (err, rows) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch detections" });
+    res.json(rows);
+  });
+});
+
+// Add a new detection
+app.post("/detections", verifyToken, (req, res) => {
+  const { title, content, fakePercentage = "70%", truePercentage = "30%", date } = req.body;
+
+  if (!title || !content || !fakePercentage || !truePercentage || !date) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Check if the detection already exists for the user
+  const checkQuery = "SELECT * FROM detections WHERE user_id = ? AND title = ? AND content = ?";
+  const insertQuery =
+    "INSERT INTO detections (user_id, title, content, fake_percentage, true_percentage, date) VALUES (?, ?, ?, ?, ?, ?)";
+
+  db.get(checkQuery, [req.user.id, title, content], (err, row) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+
+    if (row) {
+      return res.status(409).json({ error: "Duplicate detection. Already exists." });
+    }
+
+    db.run(
+      insertQuery,
+      [req.user.id, title, content, fakePercentage, truePercentage, date],
+      function (err) {
+        if (err) return res.status(500).json({ error: "Failed to add detection" });
+
+        res.status(201).json({
+          id: this.lastID,
+          user_id: req.user.id,
+          title,
+          content,
+          fakePercentage,
+          truePercentage,
+          date,
+        });
+      }
+    );
+  });
+});
+
+const resetDetectionsSequence = () => {
+  const query = `
+    UPDATE sqlite_sequence
+    SET seq = (SELECT MAX(id) FROM detections)
+    WHERE name = 'detections';
+  `;
+
+  db.run(query, (err) => {
+    if (err) {
+      console.error("Failed to reset detections sequence:", err.message);
+    } else {
+      console.log("Sequence reset successfully for detections.");
+    }
+  });
+};
+
+// Call this function after deletions
+app.delete("/detections/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  const query = "DELETE FROM detections WHERE id = ? AND user_id = ?";
+  db.run(query, [id, req.user.id], function (err) {
+    if (err) return res.status(500).json({ error: "Failed to delete detection" });
+    if (this.changes === 0)
+      return res.status(404).json({ error: "Detection not found or not authorized" });
+
+    resetDetectionsSequence(); // Reset sequence after deletion
+    res.status(204).send();
+  });
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
