@@ -230,9 +230,9 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
             </Flex>
           </>
         ) : (
-          <Flex align="center" justify="center" h="60vh">
+          <Flex align="center" justify="center" h="15vh">
             <Text fontSize="lg" color="gray.500" textAlign="center">
-              No detections found. Start detecting fake news with FactGuard Detect by analyzing news articles to identify and prevent misinformation. Get started now!
+              No detections found. Start detecting fake news with FactGuard Detect by analyzing news articles to identify and prevent misinformation.
             </Text>
           </Flex>
         )}

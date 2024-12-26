@@ -60,7 +60,7 @@ const DetectionResults = () => {
   }
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}>
+    <Box px={{ md: 4 }} py={{ md: 6 }} minHeight="100vh">
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detection Results</Heading>                    
