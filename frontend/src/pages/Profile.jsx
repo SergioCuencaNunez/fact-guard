@@ -18,6 +18,14 @@ import {
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { SunIcon, MoonIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
@@ -217,7 +225,7 @@ const Profile = () => {
     return date.toLocaleDateString("en-GB", options).replace(",", ""); // DD/MM/YYYY HH:MM
   };
 
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder] = useState("desc");
   
   const sortedDetections = [...detections].sort((a, b) => {
     return sortOrder === "desc"
@@ -225,8 +233,38 @@ const Profile = () => {
       : new Date(a.date) - new Date(b.date);
   });
 
-  const toggleSortOrder = () => {
-    setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [detectionToDelete, setDetectionToDelete] = useState(null);
+
+  const handleDelete = (detection) => {
+    setDetectionToDelete(detection);
+    onOpen();
+  };
+
+  const confirmDelete = async () => {
+    try {
+      if (detectionToDelete) {
+        // Delete a single detection
+        await deleteDetection(detectionToDelete.id);
+      } else {
+        // Delete selected detections
+        for (const detection of selectedDetections) {
+          await deleteDetection(detection.id);
+        }
+        setSelectedDetections([]);
+      }
+      onClose();
+    } catch (error) {
+      console.error("Error deleting detection(s):", error);
+    }
+  };
+
+  const handleSelectAll = (isChecked) => {
+    if (isChecked) {
+      setSelectedDetections(detections);
+    } else {
+      setSelectedDetections([]);
+    }
   };
   
   return (
@@ -662,6 +700,27 @@ const Profile = () => {
           />
           <Route path="/detection-results" element={<DetectionResults />} />
         </Routes>
+        {/* Confirmation Modal */}
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {detectionToDelete
+                ? "Are you sure you want to delete this detection?"
+                : "Are you sure you want to delete the selected detections?"}
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="red" mr={3} onClick={confirmDelete}>
+                Delete
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </Flex>
   );
