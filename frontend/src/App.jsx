@@ -79,7 +79,7 @@ const Navbar = () => {
         </Link>
         
         {/* Buttons, About, and Features Dropdown for larger screens */}      
-        <HStack spacing="4" display={{ base: 'none', md: 'flex' }}>
+        <HStack spacing="4" display={{ base: 'none', md: 'none', lg: 'flex' }}>
           <Menu>
             <MenuButton
               as={Button}
@@ -140,7 +140,7 @@ const Navbar = () => {
         </HStack>
 
         {/* Icons for smaller screens */}
-        <HStack spacing="2" display={{ base: 'flex', md: 'none' }}>
+        <HStack spacing="2" display={{ base: 'flex', md: 'flex', lg:'none'}}>
           <a
             href="/login"
             target="_blank"

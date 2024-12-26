@@ -40,6 +40,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
 
   const logo = useColorModeValue(logoDetectBright, logoDetectDark);
   const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
+  const cardBg = useColorModeValue("white", "gray.700");
   
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -112,11 +113,11 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   };
 
   return (
-    <Box>
-      <Flex direction="column">
-        <Flex justify="space-between" align="center">
-          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "flex" }}>
+    <Box px={{ md: 4 }} py={{ md: 6 }}>
+      <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
+        <Flex justify="space-between" align="center" mb="4">
+          <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
+          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
@@ -124,7 +125,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
               onClick={toggleColorMode}
             />
           </HStack>
-          <HStack spacing="4" display={{ base: "flex", md: "none" }}>
+          <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
             <Box
                 as="img"
                 src={logo}

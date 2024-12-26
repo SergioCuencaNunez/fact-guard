@@ -4,10 +4,12 @@ import {
     Box,
     VStack,
     HStack,
+    Stack,
     Heading,
     Button,
     Text,
     Divider,
+    Badge,
     IconButton,
     useColorMode,
     useColorModeValue,
@@ -30,17 +32,18 @@ const DetectionResults = () => {
 
   const logo = useColorModeValue(logoDetectBright, logoDetectDark);
   const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
+  const cardBg = useColorModeValue("white", "gray.700");
 
   const location = useLocation();
   const { detection } = location.state || {};
 
   const { colorMode, toggleColorMode } = useColorMode();
   const textColor = useColorModeValue('black', 'white');
-  const allDetectionsBg = useColorModeValue('gray.100', 'gray.700');
-  const allDetectionsHoverBg = useColorModeValue('gray.200', 'gray.600');
-  const allDetectionsActiveBg = useColorModeValue('gray.300', 'gray.500');
-  const startNewDetectionHoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
-  const startNewDetectionActiveColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
+  const allDetectionsBg = useColorModeValue('gray.100', 'gray.600');
+  const startNewDetectionHoverBg = useColorModeValue('gray.200', 'gray.500');
+  const startNewDetectionActiveBg = useColorModeValue('gray.300', 'gray.400');
+  const allDetectionsHoverBg = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const allDetectionsActiveBg = useColorModeValue(primaryActiveLight, primaryActiveDark);
   
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -57,11 +60,11 @@ const DetectionResults = () => {
   }
 
   return (
-    <Box>
-      <Flex direction="column">
-        <Flex justify="space-between" align="center">
-          <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Detection Results: #{detection.id}</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "flex" }}>
+    <Box px={{ md: 4 }} py={{ md: 6 }}>
+      <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
+        <Flex justify="space-between" align="center" mb="4">
+          <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detection Results</Heading>                    
+          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
             aria-label="Toggle theme"
@@ -69,7 +72,7 @@ const DetectionResults = () => {
             onClick={toggleColorMode}
             />
         </HStack>
-        <HStack spacing="4" display={{ base: "flex", md: "none" }}>
+        <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
           <Box
               as="img"
               src={logo}
@@ -85,9 +88,12 @@ const DetectionResults = () => {
         {/* Article Details */}
         <Box mb="4">
             <Heading size="md" mb="2" color={textColor}>Article Summary</Heading>
-            <Text fontSize="md" mb="2"><b>Title:</b> {detection.title}</Text>
-            <Text fontSize="md" mb="2"><b>Content:</b> {detection.content}</Text>
-            <Text fontSize="md" mb="2"><b>Date Analyzed:</b> {formatDate(detection.date)}</Text>
+            <VStack align="flex-start" spacing="2">#{detection.id}
+                <Text fontSize="md"><b>Detection ID:</b> #{detection.id}</Text>
+                <Text fontSize="md"><b>Title:</b> {detection.title}</Text>
+                <Text fontSize="md"><b>Content:</b> {detection.content}</Text>
+                <Text fontSize="md"><b>Date Analyzed:</b> {formatDate(detection.date)}</Text>
+            </VStack>
         </Box>
 
         <Divider mb="4" />
@@ -95,10 +101,10 @@ const DetectionResults = () => {
         {/* Analysis Details */}
         <Box mb="4">
             <Heading size="md" mb="2" color={textColor}>Analysis</Heading>
-            <VStack align="flex-start" spacing="2">
-            <Text fontSize="md"><b>Fake Probability:</b> {detection.fakePercentage || "70%"}</Text>
-            <Text fontSize="md"><b>True Probability:</b> {detection.truePercentage || "30%"}</Text>
-            </VStack>
+            <Stack direction={{ base: "column", md: "row" }} justify="flex-start" spacing="2" flexWrap="wrap" >
+                <Badge colorScheme="red" fontSize="md" p={2} textAlign="center"><b>Fake Probability:</b> {detection.fakePercentage || "70%"}</Badge>
+                <Badge colorScheme="green" fontSize="md" p={2} textAlign="center"><b>True Probability:</b> {detection.truePercentage || "30%"}</Badge>
+            </Stack>
         </Box>
 
         <Divider mb="4" />
@@ -117,14 +123,14 @@ const DetectionResults = () => {
 
         {/* Navigation Buttons */}
         <Flex justify="center" mt="8">
-          <HStack spacing="4">
+          <Stack direction={{ base: "column", md: "row" }} spacing="4">
             <Button
               leftIcon={<ArrowBackIcon />}
               size="md"
               bg={allDetectionsBg}
               color={textColor}
-              _hover={{ bg: allDetectionsHoverBg }}
-              _active={{ bg: allDetectionsActiveBg }}
+              _hover={{ bg: startNewDetectionHoverBg }}
+              _active={{ bg: startNewDetectionActiveBg }}
               onClick={() => navigate("/profile/start-new-detection")}
             >
               Start New Detection
@@ -133,13 +139,13 @@ const DetectionResults = () => {
               size="md"
               bg={primaryColor}
               color="white"
-              _hover={{ bg: startNewDetectionHoverColor }}
-              _active={{ bg: startNewDetectionActiveColor }}
+              _hover={{ bg: allDetectionsHoverBg }}
+              _active={{ bg: allDetectionsActiveBg }}
               onClick={() => navigate("/profile/my-news-detections")}
             >
               All Detections
             </Button>
-          </HStack>
+          </Stack>
         </Flex>
       </Flex>
     </Box>

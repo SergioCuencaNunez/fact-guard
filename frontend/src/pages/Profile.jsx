@@ -258,14 +258,6 @@ const Profile = () => {
       console.error("Error deleting detection(s):", error);
     }
   };
-
-  const handleSelectAll = (isChecked) => {
-    if (isChecked) {
-      setSelectedDetections(detections);
-    } else {
-      setSelectedDetections([]);
-    }
-  };
   
   return (
     <Flex direction={{ base: "column", md: "row" }} bg={bg}>
@@ -274,7 +266,7 @@ const Profile = () => {
         w={{ base: "full", md: "275px" }}
         bg={sidebarBgColor}
         px={{ base: "4", md: "6" }}
-        py={{ base: "6", md: "9" }}      
+        py={{ base: "6", md: "10" }}      
         shadow="lg"
         position={{ base: "relative", md: "sticky" }}
         top="0"
@@ -519,7 +511,7 @@ const Profile = () => {
               <Flex direction="column">
                 <Flex justify="space-between" align="center">
                   <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
-                  <HStack spacing="4" display={{ base: "none", md: "flex" }}>
+                  <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
                     <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
                     <IconButton
                       aria-label="Toggle theme"
@@ -527,7 +519,7 @@ const Profile = () => {
                       onClick={toggleColorMode}
                     />
                   </HStack>
-                  <HStack spacing="4" display={{ base: "flex", md: "none" }}>
+                  <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
                     <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate()}</Text>
                   </HStack>
                 </Flex>
@@ -536,33 +528,36 @@ const Profile = () => {
                 {/* Features */}
                 <Heading size="lg" mb="4">Recent Pages</Heading>
                 <Flex wrap="wrap" gap="6">
-                  <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
                     <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
                     <Heading size="md" mt="4">Fake News Detection</Heading>
                     <Text mt="2">
                       {useBreakpointValue({
                         base: "Detect fake news using our DL model.",
-                        md: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
+                        md: "Detect fake news using our DL model.",
+                        lg: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
                       })}
                     </Text>
                   </Box>
-                  <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
                     <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
                     <Heading size="md" mt="4">Claim Check</Heading>
                     <Text mt="2">
                       {useBreakpointValue({
-                        base: "Validate claims using Google FactCheck Claim Search.",
-                        md: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
+                        base: "Validate claims with Google FactCheck API.",
+                        md: "Validate claims with Google FactCheck API.",
+                        lg: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
                       })}
                     </Text>
                   </Box>
-                  <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
+                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
                     <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
                     <Heading size="md" mt="4">Team Management</Heading>
                     <Text mt="2">
                       {useBreakpointValue({
                         base: "Collaborate in detecting misinformation.",
-                        md: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
+                        md: "Invite other people and collaborate in detecting misinformation.",
+                        lg: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
                       })}
                     </Text>
                   </Box>
@@ -571,15 +566,15 @@ const Profile = () => {
                 {/* Graphs Section */}
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
                 <Flex wrap="wrap" gap="6">
-                  <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
                     <Heading size="sm">Detections Over Time</Heading>
                     <Text>Graph Placeholder</Text>
                   </Box>
-                  <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
                     <Heading size="sm">Claim Checks</Heading>
                     <Text>Graph Placeholder</Text>
                   </Box>
-                  <Box bg={cardBg} p="6" borderRadius="md" flex="1">
+                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
                     <Heading size="sm">Usage Statistics</Heading>
                     <Text>Graph Placeholder</Text>
                   </Box>
@@ -587,7 +582,7 @@ const Profile = () => {
 
                 {/* Recent Content Section */}
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
-                  <Box bg={cardBg} p="4" borderRadius="md" overflowX="auto">
+                  <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
                     {detections.length > 0 ? (
                       <>
                         <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
@@ -650,7 +645,7 @@ const Profile = () => {
                   </Box>
 
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
-                <Box bg={cardBg} p="4" borderRadius="md" overflowX="auto">
+                <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
                   <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"}>
                     <Thead>
                         <Tr>

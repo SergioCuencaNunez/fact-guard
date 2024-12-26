@@ -236,7 +236,7 @@ const Home = () => {
             p="5"
             bg={boxBg}
             color={boxColor}
-            shadow="lg"
+            shadow="md"
             borderRadius="md"
             textAlign="center"
             display="flex"
