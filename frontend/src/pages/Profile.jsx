@@ -19,7 +19,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
   FaUser,
   FaNewspaper,
@@ -230,30 +230,63 @@ const Profile = () => {
   };
   
   return (
-    <Flex direction={{ base: "column", md: "row" }} minH="100vh" bg={bg}>
+    <Flex direction={{ base: "column", md: "row" }} bg={bg}>
       {/* Sidebar */}
       <Box
         w={{ base: "full", md: "275px" }}
         bg={sidebarBgColor}
-        py="9"
-        px="6"
+        px={{ base: "4", md: "6" }}
+        py={{ base: "6", md: "9" }}      
         shadow="lg"
         position={{ base: "relative", md: "sticky" }}
         top="0"
         h={{ base: "auto", md: "100vh" }}
+        overflowY="auto"
         display="flex"
         flexDirection="column"
         justifyContent="space-between"
         borderRightWidth="3px"
         borderRightStyle="solid"
         borderRightColor="transparent"
-        style={{ borderImage: gradient, borderImageSlice: 1 }}
+        style={{
+          borderImage: gradient,
+          borderImageSlice: 1,
+          borderRight: useBreakpointValue({ base: "none", md: "solid" }),
+          borderBottom: useBreakpointValue({ base: "solid", md: "none" }),
+        }}      
       >
         <VStack spacing="8" align="flex-start">
-          <HStack mb="4">
+          <HStack justifyContent={{ base: "center", md: "flex-start" }} w="100%">
             <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: "auto" }} />
           </HStack>
-          <HStack>
+
+          {/* User Info and Logout Button (Mobile only) */}
+          <HStack
+            display={{ base: "flex", md: "none" }}
+            justifyContent="space-between"
+            w="100%"
+          >
+            <HStack>
+              <Avatar name={user.username} size="lg" bg={avatarBgColor} />
+              <Box>
+                <Text fontWeight="bold" isTruncated>{user.username}</Text>
+                <Text fontSize="sm" color={textColorAvatar} isTruncated>
+                  {user.email}
+                </Text>
+              </Box>
+            </HStack>
+            <Button
+              colorScheme="red"
+              variant="solid"
+              onClick={handleLogout}
+              size="sm"
+            >
+              <FaSignOutAlt />
+            </Button>
+          </HStack>
+
+          {/* User Info (Desktop only) */}
+          <HStack display={{ base: "none", md: "flex" }}>
             <Avatar name={user.username} size="lg" bg={avatarBgColor} />
             <Box>
               <Text fontWeight="bold" isTruncated>{user.username}</Text>
@@ -262,7 +295,9 @@ const Profile = () => {
               </Text>
             </Box>
           </HStack>
-          <VStack spacing="4" align="stretch">
+
+          {/* Sidebar Buttons */}
+          <VStack spacing="4" align="stretch" w="100%">
             <Button
               variant="ghost"
               justifyContent="space-between"
@@ -421,7 +456,10 @@ const Profile = () => {
             </Box>
           </VStack>
         </VStack>
-        <Button
+        
+        {/* Logout Button (Desktop only) */}
+        <HStack display={{ base: 'none', md: 'flex' }} mt='4'>
+          <Button
             leftIcon={<FaSignOutAlt />}
             colorScheme="red"
             variant="solid"
@@ -431,10 +469,11 @@ const Profile = () => {
           >
             Logout
           </Button>
+        </HStack>
       </Box>
 
       {/* Main Content */}
-      <Box flex="1" p="8">
+      <Box flex="1" p="8" overflowY="auto">
         <Routes>
           <Route
             path="/"
@@ -442,13 +481,16 @@ const Profile = () => {
               <Flex direction="column">
                 <Flex justify="space-between" align="center">
                   <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
-                  <HStack spacing="4">
+                  <HStack spacing="4" display={{ base: "none", md: "flex" }}>
                     <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
                     <IconButton
                       aria-label="Toggle theme"
                       icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
                       onClick={toggleColorMode}
                     />
+                  </HStack>
+                  <HStack spacing="4" display={{ base: "flex", md: "none" }}>
+                    <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
                   </HStack>
                 </Flex>
                 <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
@@ -459,17 +501,32 @@ const Profile = () => {
                   <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
                     <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
                     <Heading size="md" mt="4">Fake News Detection</Heading>
-                    <Text mt="2">FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.</Text>
+                    <Text mt="2">
+                      {useBreakpointValue({
+                        base: "Detect fake news using our DL model.",
+                        md: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
+                      })}
+                    </Text>
                   </Box>
                   <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
                     <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
                     <Heading size="md" mt="4">Claim Check</Heading>
-                    <Text mt="2">FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.</Text>
+                    <Text mt="2">
+                      {useBreakpointValue({
+                        base: "Validate claims using Google FactCheck Claim Search.",
+                        md: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
+                      })}
+                    </Text>
                   </Box>
                   <Box bg={cardBg} p="6" borderRadius="md" flex="1" textAlign="center">
                     <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
                     <Heading size="md" mt="4">Team Management</Heading>
-                    <Text mt="2">Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.</Text>
+                    <Text mt="2">
+                      {useBreakpointValue({
+                        base: "Collaborate in detecting misinformation.",
+                        md: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
+                      })}
+                    </Text>
                   </Box>
                 </Flex>
 
@@ -492,7 +549,7 @@ const Profile = () => {
 
                 {/* Recent Content Section */}
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
-                  <Box bg={cardBg} p="4" borderRadius="md">
+                  <Box bg={cardBg} p="4" borderRadius="md" overflowX="auto">
                     {detections.length > 0 ? (
                       <>
                         <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
@@ -502,19 +559,7 @@ const Profile = () => {
                               <Th width="30%" textAlign="left"><b>Title</b></Th>
                               <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
                               <Th width="12.5%" textAlign="center"><b>True</b></Th>
-                              <Th width="15%" textAlign="center">
-                                <Flex align="center" justify="center">
-                                  <b>Date</b>
-                                  <IconButton
-                                    aria-label="Toggle Sort Order"
-                                    icon={sortOrder === "desc" ? <ChevronDownIcon /> : <ChevronUpIcon />}
-                                    size="xs"
-                                    variant="ghost"
-                                    onClick={toggleSortOrder}
-                                    ml="1"
-                                  />
-                                </Flex>
-                              </Th>
+                              <Th width="15%" textAlign="center"><b>Date</b></Th>
                               <Th width="15%" textAlign="center"><b>Results</b></Th>
                               <Th width="10%" textAlign="center"><b>Remove</b></Th>
                             </Tr>
@@ -567,7 +612,7 @@ const Profile = () => {
                   </Box>
 
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
-                <Box bg={cardBg} p="4" borderRadius="md">
+                <Box bg={cardBg} p="4" borderRadius="md" overflowX="auto">
                   <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"}>
                     <Thead>
                         <Tr>

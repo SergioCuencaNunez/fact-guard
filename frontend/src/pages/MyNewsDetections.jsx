@@ -116,87 +116,91 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
       <Flex direction="column">
         <Flex justify="space-between" align="center">
           <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
-          <HStack spacing="4">
-          <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
-          <IconButton
+          <HStack spacing="4" display={{ base: "none", md: "flex" }}>
+            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+            <IconButton
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
               onClick={toggleColorMode}
             />
           </HStack>
+          <HStack spacing="4" display={{ base: "flex", md: "none" }}>
+            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+          </HStack>
         </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
-
         {detections.length > 0 ? (
           <>
-            <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-              <Thead>
-                <Tr>
-                  <Th width="5%" textAlign="center"><b>ID</b></Th>
-                  <Th width="30%" textAlign="left"><b>Title</b></Th>
-                  <Th width="10%" textAlign="center"><b>Fake</b></Th>
-                  <Th width="10%" textAlign="center"><b>True</b></Th>
-                  <Th width="15%" textAlign="center">
-                    <Flex align="center" justify="center">
-                      <b>Date</b>
-                      <IconButton
-                        aria-label="Toggle Sort Order"
-                        icon={sortOrder === "desc" ? <ChevronDownIcon /> : <ChevronUpIcon />}
-                        size="xs"
-                        variant="ghost"
-                        onClick={toggleSortOrder}
-                        ml="1"
-                      />
-                    </Flex>
-                  </Th>
-                  <Th width="15%" textAlign="center"><b>Results</b></Th>
-                  <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                  <Th width="5%" textAlign="center"><b>Select</b></Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {sortedDetections.map((detection) => (
-                  <Tr key={detection.id}>
-                    <Td textAlign="center">#{detection.id}</Td>
-                    <Td textAlign="left">{detection.title}</Td>
-                    <Td textAlign="center">
-                      <Text color={getTextColor(detection.fakePercentage || "70", "percentage")}>
-                        {detection.fakePercentage || "70%"}
-                      </Text>
-                    </Td>
-                    <Td textAlign="center">
-                      <Text color={getTextColor(detection.truePercentage || "30", "percentage")}>
-                        {detection.truePercentage || "30%"}
-                      </Text>
-                    </Td>
-                    <Td textAlign="center">{formatDate(detection.date)}</Td>
-                    <Td textAlign="center">
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          navigate("/profile/detection-results", {
-                            state: { detection },
-                          })
-                        }
-                      >
-                        Results
-                      </Button>
-                    </Td>
-                    <Td textAlign="center">
-                      <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
-                        <FaTrashAlt />
-                      </Button>
-                    </Td>
-                    <Td textAlign="center">
-                      <Checkbox
-                        isChecked={selectedDetections.some((item) => item.id === detection.id)}
-                        onChange={(e) => handleSelectDetection(detection, e.target.checked)}
-                      />
-                    </Td>
+            <Box overflowX="auto">
+              <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                <Thead>
+                  <Tr>
+                    <Th width="5%" textAlign="center"><b>ID</b></Th>
+                    <Th width="30%" textAlign="left"><b>Title</b></Th>
+                    <Th width="10%" textAlign="center"><b>Fake</b></Th>
+                    <Th width="10%" textAlign="center"><b>True</b></Th>
+                    <Th width="15%" textAlign="center">
+                      <Flex align="center" justify="center">
+                        <b>Date</b>
+                        <IconButton
+                          aria-label="Toggle Sort Order"
+                          icon={sortOrder === "desc" ? <ChevronDownIcon /> : <ChevronUpIcon />}
+                          size="xs"
+                          variant="ghost"
+                          onClick={toggleSortOrder}
+                          ml="1"
+                        />
+                      </Flex>
+                    </Th>
+                    <Th width="15%" textAlign="center"><b>Results</b></Th>
+                    <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                    <Th width="5%" textAlign="center"><b>Select</b></Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
+                </Thead>
+                <Tbody>
+                  {sortedDetections.map((detection) => (
+                    <Tr key={detection.id}>
+                      <Td textAlign="center">#{detection.id}</Td>
+                      <Td textAlign="left">{detection.title}</Td>
+                      <Td textAlign="center">
+                        <Text color={getTextColor(detection.fakePercentage || "70", "percentage")}>
+                          {detection.fakePercentage || "70%"}
+                        </Text>
+                      </Td>
+                      <Td textAlign="center">
+                        <Text color={getTextColor(detection.truePercentage || "30", "percentage")}>
+                          {detection.truePercentage || "30%"}
+                        </Text>
+                      </Td>
+                      <Td textAlign="center">{formatDate(detection.date)}</Td>
+                      <Td textAlign="center">
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            navigate("/profile/detection-results", {
+                              state: { detection },
+                            })
+                          }
+                        >
+                          Results
+                        </Button>
+                      </Td>
+                      <Td textAlign="center">
+                        <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
+                          <FaTrashAlt />
+                        </Button>
+                      </Td>
+                      <Td textAlign="center">
+                        <Checkbox
+                          isChecked={selectedDetections.some((item) => item.id === detection.id)}
+                          onChange={(e) => handleSelectDetection(detection, e.target.checked)}
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
             <Flex justify="space-between" align="center" mb="4">
               <Checkbox
                 isChecked={selectedDetections.length === detections.length}

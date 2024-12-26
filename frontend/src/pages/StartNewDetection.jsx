@@ -107,13 +107,16 @@ const StartNewDetection = ({ addDetection }) => {
       <Flex direction="column">
         <Flex justify="space-between" align="center">
           <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Detect Fake News</Heading>          
-          <HStack spacing="4">
+          <HStack spacing="4" display={{ base: "none", md: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
               onClick={toggleColorMode}
             />
+          </HStack>
+          <HStack spacing="4" display={{ base: "flex", md: "none" }}>
+            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
           </HStack>
         </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
