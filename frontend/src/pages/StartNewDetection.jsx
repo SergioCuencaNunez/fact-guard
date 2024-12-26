@@ -116,7 +116,14 @@ const StartNewDetection = ({ addDetection }) => {
             />
           </HStack>
           <HStack spacing="4" display={{ base: "flex", md: "none" }}>
-            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+          <Box
+              as="img"
+              src={logo}
+              alt="Detect Logo"
+              maxHeight={logoHeight}
+              maxWidth="120px"
+              objectFit="contain"
+            />
           </HStack>
         </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>

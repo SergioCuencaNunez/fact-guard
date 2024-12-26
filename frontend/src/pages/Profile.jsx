@@ -490,7 +490,7 @@ const Profile = () => {
                     />
                   </HStack>
                   <HStack spacing="4" display={{ base: "flex", md: "none" }}>
-                    <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
+                    <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate()}</Text>
                   </HStack>
                 </Flex>
                 <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
