@@ -46,6 +46,9 @@ import logoDark from '../assets/logo-main-dark.png';
 import StartNewDetection from "./StartNewDetection";
 import MyNewsDetections from "./MyNewsDetections";
 import DetectionResults from "./DetectionResults";
+import StartNewClaimCheck from "./StartNewClaimCheck";
+import MyClaimChecks from "./MyClaimChecks";
+import ClaimCheckResults from "./ClaimCheckResults";
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
@@ -425,6 +428,7 @@ const Profile = () => {
                     _hover={{ color: hoverColor }}
                     color={textColor}
                     width="100%"
+                    onClick={() => navigate("/profile/start-new-claim-check")}
                   >
                     <HStack>
                       <FaPlus />
@@ -438,6 +442,7 @@ const Profile = () => {
                     _hover={{ color: hoverColor }}
                     color={textColor}
                     width="100%"
+                    onClick={() => navigate("/profile/my-claim-checks")}
                   >
                     <HStack>
                       <FaTasks />
@@ -698,6 +703,20 @@ const Profile = () => {
             }
           />
           <Route path="/detection-results" element={<DetectionResults />} />
+          <Route
+            path="/start-new-claim-check"
+            element={<StartNewClaimCheck addDetection={addDetection}/>}
+            />
+          <Route
+            path="/my-claim-checks"
+            element={
+              <MyClaimChecks
+                detections={detections}
+                deleteDetection={deleteDetection}
+              />
+            }
+          />
+          <Route path="/claim-check-results" element={<ClaimCheckResults />} />
         </Routes>
         {/* Confirmation Modal */}
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
