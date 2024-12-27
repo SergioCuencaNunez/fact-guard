@@ -216,27 +216,8 @@ const Profile = () => {
   }, [navigate]);
 
   // Add a detection to server
-  const addDetection = async (detection) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:5001/detections", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(detection),
-      });
-
-      if (response.ok) {
-        const newDetection = await response.json();
-        setDetections((prev) => [...prev, newDetection]);
-      } else {
-        console.error("Failed to add detection.");
-      }
-    } catch (error) {
-      console.error("Error adding detection:", error);
-    }
+  const addDetection = (newDetection) => {
+    setDetections((prev) => [...prev, newDetection]);
   };
 
   // Delete a detection from server
@@ -333,27 +314,8 @@ const Profile = () => {
   }, [navigate]);
 
   // Add a claim check to server
-  const addClaimCheck = async (claimCheck) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:5001/claims", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(claimCheck),
-      });
-
-      if (response.ok) {
-        const newClaimCheck = await response.json();
-        setClaimsChecks((prev) => [...prev, newClaimCheck]);
-      } else {
-        console.error("Failed to add claim check.");
-      }
-    } catch (error) {
-      console.error("Error adding claim check:", error);
-    }
+  const addClaimCheck = (newClaimCheck) => {
+    setClaimsChecks((prev) => [...prev, newClaimCheck]);
   };
 
   // Delete a claim check from server
