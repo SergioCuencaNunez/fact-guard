@@ -105,11 +105,15 @@ const StartNewDetection = ({ addDetection }) => {
   };  
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}>
+    <Box px={{ md: 4 }} py={{ md: 6 }}  sx={{
+      "@media screen and (min-height: 930px)": {
+        minHeight: "100vh",
+      },
+    }}>
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detect Fake News</Heading>          
-          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
@@ -117,15 +121,15 @@ const StartNewDetection = ({ addDetection }) => {
               onClick={toggleColorMode}
             />
           </HStack>
-        <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-          <Box
-              as="img"
-              src={logo}
-              alt="Detect Logo"
-              maxHeight={logoHeight}
-              maxWidth="120px"
-              objectFit="contain"
-            />
+          <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
+            <Box
+                as="img"
+                src={logo}
+                alt="Detect Logo"
+                maxHeight={logoHeight}
+                maxWidth="120px"
+                objectFit="contain"
+              />
           </HStack>
         </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>

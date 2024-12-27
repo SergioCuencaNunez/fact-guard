@@ -27,7 +27,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTrashAlt } from "react-icons/fa";
-import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 const primaryColor = "#4dcfaf";
@@ -94,14 +94,23 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   };
 
   const getTextColor = (value, type) => {
-    if (type === "percentage") {
-      if (value >= 60) return "red.500";
-      if (value >= 30) return "orange.500";
-      return "green.500";
+    const green = useColorModeValue("green.600", "green.300");
+    const orange = useColorModeValue("orange.600", "orange.300");
+    const gray = useColorModeValue("gray.600", "gray.300");
+    const red = useColorModeValue("red.600", "red.300");
+  
+    if (type === "True") {
+      if (value >= 70) return green;
+      if (value >= 40) return orange;
+      return gray;
+    } else if (type === "False") {
+      if (value >= 70) return red;
+      if (value >= 40) return orange;
+      return gray;
     }
-    return "black";
+    return gray;
   };
-
+  
   const sortedDetections = [...detections].sort((a, b) => {
     return sortOrder === "desc"
       ? new Date(b.date) - new Date(a.date)
@@ -113,11 +122,15 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   };
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}>
+    <Box px={{ md: 4 }} py={{ md: 6 }}  sx={{
+      "@media screen and (min-height: 930px)": {
+        minHeight: "100vh",
+      },
+    }}>
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
@@ -171,12 +184,12 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                       <Td textAlign="center">#{detection.id}</Td>
                       <Td textAlign="left">{detection.title}</Td>
                       <Td textAlign="center">
-                        <Text color={getTextColor(detection.fakePercentage || "70", "percentage")}>
-                          {detection.fakePercentage || "70%"}
+                        <Text fontSize="xl" color={getTextColor(detection.falsePercentage || 70, "False")}>
+                          {detection.falsePercentage || "70%"}
                         </Text>
                       </Td>
                       <Td textAlign="center">
-                        <Text color={getTextColor(detection.truePercentage || "30", "percentage")}>
+                        <Text fontSize="xl" color={getTextColor(detection.truePercentage || 30, "True")}>
                           {detection.truePercentage || "30%"}
                         </Text>
                       </Td>
@@ -230,9 +243,13 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
             </Flex>
           </>
         ) : (
-          <Flex align="center" justify="center" h="15vh">
+          <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }}>
+            <WarningIcon boxSize="6" color="gray.500" mb="2" />
             <Text fontSize="lg" color="gray.500" textAlign="center">
-              No detections found. Start detecting fake news with FactGuard Detect by analyzing news articles to identify and prevent misinformation.
+              No detections found.
+            </Text>
+            <Text fontSize="md" color="gray.400" textAlign="center">
+              Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
             </Text>
           </Flex>
         )}

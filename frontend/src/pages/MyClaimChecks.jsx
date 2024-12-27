@@ -27,19 +27,24 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTrashAlt } from "react-icons/fa";
-import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 const primaryColor = "#4dcfaf";
 
 import logoVerifyBright from "../assets/logo-verify-bright.png";
 import logoVerifyDark from "../assets/logo-verify-dark.png";
+import logoGoogleFactCheckLogoBright from "../assets/logo-google-fact-check-bright.png";
+import logoGoogleFactCheckLogoDark from "../assets/logo-google-fact-check-dark.png";
 
 const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
   const navigate = useNavigate();
 
   const logo = useColorModeValue(logoVerifyBright, logoVerifyDark);
   const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
+  const logoGoogleFactCheckLogo = useColorModeValue(logoGoogleFactCheckLogoBright, logoGoogleFactCheckLogoDark);
+  const logoGoogleFactCheckLogoHeight = useBreakpointValue({ base: '15px', md: '20px' });
+  
   const cardBg = useColorModeValue("white", "gray.700");
   
   const { colorMode, toggleColorMode } = useColorMode();
@@ -93,15 +98,27 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const getTextColor = (value, type) => {
-    if (type === "percentage") {
-      if (value >= 60) return "red.500";
-      if (value >= 30) return "orange.500";
-      return "green.500";
+  const getTextColor = (rating) => {
+    const green = useColorModeValue("green.600", "green.300");
+    const orange = useColorModeValue("orange.600", "orange.300");
+    const gray = useColorModeValue("gray.600", "gray.300");
+    const red = useColorModeValue("red.600", "red.300");
+  
+    switch (rating) {
+      case "True":
+      case "Mostly true":
+        return green;
+      case "False":
+      case "Mostly false":
+        return red;
+      case "Misleading":
+      case "Mixture":
+        return orange;
+      default:
+        return gray;
     }
-    return "black";
   };
-
+  
   const sortedClaimChecks = [...claimChecks].sort((a, b) => {
     return sortOrder === "desc"
       ? new Date(b.date) - new Date(a.date)
@@ -113,11 +130,15 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
   };
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}>
+    <Box px={{ md: 4 }} py={{ md: 6 }}  sx={{
+      "@media screen and (min-height: 930px)": {
+        minHeight: "100vh",
+      },
+    }}>
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>My Claim Checks</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
             <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
@@ -171,11 +192,15 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                       <Td textAlign="center">#{claimCheck.id}</Td>
                       <Td textAlign="left">{claimCheck.title}</Td>
                       <Td textAlign="center">
-                        <Text color={getTextColor(claimCheck.rating || "Unverified", "percentage")}>
+                        <Text fontSize="lg" color={getTextColor(claimCheck.rating || "Misleading")}>
                           {claimCheck.rating || "70%"}
                         </Text>
                       </Td>
-                      <Td textAlign="center">#{claimCheck.link}</Td>
+                      <Td textAlign="center">
+                        <Button size="sm" color={primaryColor} onClick={() => window.open(claimCheck.link, "_blank")}>
+                          <ExternalLinkIcon />
+                        </Button>
+                      </Td>
                       <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
                       <Td textAlign="center">
                         <Button
@@ -226,12 +251,33 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
             </Flex>
           </>
         ) : (
-          <Flex align="center" justify="center" h="15vh">
+          <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb={{ base: "4", md: "0" }}>
+            <WarningIcon boxSize="6" color="gray.500" mb="2" />
             <Text fontSize="lg" color="gray.500" textAlign="center">
-              No claims checks found. Start verifying claims with FactGuard Verify by fact-checking claims to prevent misinformation.
+              No claims checks found.
+            </Text>
+            <Text fontSize="md" color="gray.400" textAlign="center">
+              Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
             </Text>
           </Flex>
         )}
+
+        {/* Powered by Google Fact Check Tools API*/}
+        <HStack justify="flex-end">
+            <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
+              Powered by
+            </Text>
+            <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
+              <Box
+                as="img"
+                src={logoGoogleFactCheckLogo}
+                alt="Google Fact Check Tools API Logo"
+                height={logoGoogleFactCheckLogoHeight}
+                _hover={{ opacity: 0.8 }}
+                _active={{ transform: "scale(0.95)" }}
+              />
+            </a>
+        </HStack>
 
         {/* Confirmation Modal */}
         <Modal isOpen={isOpen} onClose={onClose} isCentered>

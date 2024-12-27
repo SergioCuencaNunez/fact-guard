@@ -16,7 +16,7 @@ import {
     useBreakpointValue,
 } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { SunIcon, MoonIcon, ArrowBackIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ArrowBackIcon, WarningTwoIcon, CheckCircleIcon } from "@chakra-ui/icons";
 
 import logoDetectBright from "../assets/logo-detect-bright.png";
 import logoDetectDark from "../assets/logo-detect-dark.png";
@@ -60,11 +60,11 @@ const DetectionResults = () => {
   }
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }} minHeight="100vh">
+    <Box px={{ md: 4 }} py={{ md: 6 }}>
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detection Results</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
             aria-label="Toggle theme"
@@ -101,11 +101,38 @@ const DetectionResults = () => {
         {/* Analysis Details */}
         <Box mb="4">
             <Heading size="md" mb="2" color={textColor}>Analysis</Heading>
-            <Stack direction={{ base: "column", md: "row" }} justify="flex-start" spacing="2" flexWrap="wrap" >
-                <Badge colorScheme="red" fontSize="md" p={2} textAlign="center"><b>Fake Probability:</b> {detection.fakePercentage || "70%"}</Badge>
-                <Badge colorScheme="green" fontSize="md" p={2} textAlign="center"><b>True Probability:</b> {detection.truePercentage || "30%"}</Badge>
+            <Stack direction={{ base: "column", md: "row" }} justify="flex-start" spacing="2" flexWrap="wrap">
+                <Badge 
+                    fontSize="md" 
+                    p={2} 
+                    textAlign="center" 
+                    display="flex" 
+                    alignItems="center" 
+                    justifyContent="center" 
+                    colorScheme="red"
+                >
+                    <Flex align="center" justify="center" direction="row" gap="2">
+                        <WarningTwoIcon color="red.500" />
+                        <Text><b>Fake Probability:</b> {detection.fakePercentage || "70%"}</Text>
+                    </Flex>
+                </Badge>
+                <Badge 
+                    fontSize="md" 
+                    p={2} 
+                    textAlign="center" 
+                    display="flex" 
+                    alignItems="center" 
+                    justifyContent="center" 
+                    colorScheme="green"
+                >
+                    <Flex align="center" justify="center" direction="row" gap="2">
+                        <CheckCircleIcon color="green.500" />
+                        <Text><b>True Probability:</b> {detection.truePercentage || "30%"}</Text>
+                    </Flex>
+                </Badge>
             </Stack>
         </Box>
+
 
         <Divider mb="4" />
 

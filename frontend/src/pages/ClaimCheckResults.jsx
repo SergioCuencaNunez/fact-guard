@@ -16,7 +16,7 @@ import {
     useBreakpointValue,
 } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { SunIcon, MoonIcon, ArrowBackIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ArrowBackIcon, CheckCircleIcon, WarningTwoIcon, WarningIcon, QuestionIcon} from "@chakra-ui/icons";
 
 import logoVerifyBright from "../assets/logo-verify-bright.png";
 import logoVerifyDark from "../assets/logo-verify-dark.png";
@@ -60,11 +60,11 @@ const ClaimCheckResults = () => {
   }
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }} minHeight="100vh">
+    <Box px={{ md: 4 }} py={{ md: 6 }}>
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>Claim Check Results</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
             <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
             aria-label="Toggle theme"
@@ -100,8 +100,29 @@ const ClaimCheckResults = () => {
         {/* Analysis Details */}
         <Box mb="4">
             <Heading size="md" mb="2" color={textColor}>Analysis</Heading>
-            <Stack direction={{ base: "column", md: "row" }} justify="flex-start" spacing="2" flexWrap="wrap" >
-                <Badge fontSize="md" p={2} textAlign="center"><b>Rating:</b> {claimCheck.rating || "Unverified"}</Badge>
+            <Stack direction={{ base: "column", md: "row" }} justify="flex-start" spacing="2" flexWrap="wrap">
+                <Badge 
+                    fontSize="md" 
+                    p={2} 
+                    textAlign="center" 
+                    colorScheme={
+                        claimCheck.rating === "True" ? "green" :
+                        claimCheck.rating === "False" || claimCheck.rating === "Mostly false" ? "red" :
+                        claimCheck.rating === "Misleading" || claimCheck.rating === "Mixture" ? "orange" :
+                        claimCheck.rating === "Mostly true" ? "green" :
+                        "gray"
+                    }
+                >
+                    <Flex align="center" justify="center" direction="row" gap="2">
+                        {
+                            claimCheck.rating === "True" || claimCheck.rating === "Mostly true" ? <CheckCircleIcon color="green.500" /> :
+                            claimCheck.rating === "False" || claimCheck.rating === "Mostly false" ? <WarningTwoIcon color="red.500" /> :
+                            claimCheck.rating === "Misleading" || claimCheck.rating === "Mixture" ? <WarningIcon color="orange.500" /> :
+                            <QuestionIcon color="gray.500" />
+                        }
+                        <Text><b>Rating:</b> {claimCheck.rating || "Misleading"}</Text>
+                    </Flex>
+                </Badge>
             </Stack>
         </Box>
 
@@ -114,8 +135,8 @@ const ClaimCheckResults = () => {
             This analysis was performed using Google Fact Check Tools API.
             </Text>
             <Text fontSize="md">
-            The probabilities indicate the likelihood of the article being fake or true based on textual analysis.
-            For further investigation, verify the article’s claims against trusted fact-checking databases.
+            The rating indicates the evaluation of the claim's accuracy based on trusted fact-checking sources. 
+            For further details, review the provided link to the fact-checking source
             </Text>
         </Box>
 

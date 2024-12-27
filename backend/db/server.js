@@ -103,6 +103,72 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+// Update User Info Endpoint
+app.post("/account-update", verifyToken, (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: "Name and email are required." });
+  }
+
+  const query = "UPDATE users SET username = ?, email = ? WHERE id = ?";
+  db.run(query, [name, email, req.user.id], function (err) {
+    if (err) return res.status(500).json({ error: "Failed to update profile." });
+    res.json({ message: "Profile updated successfully." });
+  });
+});
+
+// Reset Password Endpoint
+app.post("/reset-password", verifyToken, (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({ error: "Old and new passwords are required." });
+  }
+
+  const getUserQuery = "SELECT * FROM users WHERE id = ?";
+  db.get(getUserQuery, [req.user.id], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error." });
+    if (!user || !bcrypt.compareSync(oldPassword, user.password)) {
+      return res.status(400).json({ error: "Old password is incorrect." });
+    }
+
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    const updatePasswordQuery = "UPDATE users SET password = ? WHERE id = ?";
+    db.run(updatePasswordQuery, [hashedPassword, req.user.id], function (err) {
+      if (err) return res.status(500).json({ error: "Failed to reset password." });
+      res.json({ message: "Password reset successfully." });
+    });
+  });
+});
+
+// Delete Account Endpoint
+app.delete("/delete-account", verifyToken, (req, res) => {
+  const userId = req.user.id;
+
+  const query = "DELETE FROM users WHERE id = ?";
+  db.run(query, [userId], function (err) {
+    if (err) {
+      console.error("Error deleting account:", err.message);
+      return res.status(500).json({ error: "Failed to delete account." });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Account not found." });
+    }
+
+    const deleteClaims = "DELETE FROM claims WHERE user_id = ?";
+    const deleteDetections = "DELETE FROM detections WHERE user_id = ?";
+    db.run(deleteClaims, [userId], (err) => {
+      if (err) console.error("Failed to delete claims:", err.message);
+    });
+    db.run(deleteDetections, [userId], (err) => {
+      if (err) console.error("Failed to delete detections:", err.message);
+    });
+
+    res.status(200).json({ message: "Account deleted successfully." });
+  });
+});
+
 // Protected Route
 app.get("/profile", verifyToken, (req, res) => {
   const query = "SELECT username, email FROM users WHERE id = ?";

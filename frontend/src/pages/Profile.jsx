@@ -27,7 +27,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, WarningIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   FaUser,
   FaNewspaper,
@@ -41,14 +41,19 @@ import {
   FaTrashAlt,
 } from "react-icons/fa";
 import { useNavigate, Routes, Route } from "react-router-dom";
+
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
+import logoGoogleFactCheckLogoBright from "../assets/logo-google-fact-check-bright.png";
+import logoGoogleFactCheckLogoDark from "../assets/logo-google-fact-check-dark.png";
+
 import StartNewDetection from "./StartNewDetection";
 import MyNewsDetections from "./MyNewsDetections";
 import DetectionResults from "./DetectionResults";
 import StartNewClaimCheck from "./StartNewClaimCheck";
 import MyClaimChecks from "./MyClaimChecks";
 import ClaimCheckResults from "./ClaimCheckResults";
+import AccountDetails from "./AccountDetails";
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
@@ -66,27 +71,58 @@ const Profile = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const logo = useColorModeValue(logoBright, logoDark);
+  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
+  const logoGoogleFactCheckLogo = useColorModeValue(logoGoogleFactCheckLogoBright, logoGoogleFactCheckLogoDark);
+  const logoGoogleFactCheckLogoHeight = useBreakpointValue({ base: '15px', md: '20px' });
+
   const bg = useColorModeValue("gray.50", "gray.800");
   const cardBg = useColorModeValue("white", "gray.700");
   const textColor = useColorModeValue('black', 'white');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
-  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
   const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
 
-  const getTextColor = (value, type) => {
-    if (type === "percentage") {
-      if (value >= 60) return "red.500";
-      if (value >= 30) return "orange.500";
-      return "green.500";
-    }
-    if (type === "rating") {
-      return value === "True" ? "green.500" : "red.500";
-    }
-    return "black";
+  const colors = {
+    green: useColorModeValue("green.600", "green.300"),
+    orange: useColorModeValue("orange.600", "orange.300"),
+    gray: useColorModeValue("gray.600", "gray.300"),
+    red: useColorModeValue("red.600", "red.300"),
   };
+
+  const getDetectionTextColor = (value, type, colors) => {
+    const { green, orange, gray, red } = colors;
+  
+    if (type === "True") {
+      if (value >= 70) return green;
+      if (value >= 40) return orange;
+      return gray;
+    } else if (type === "False") {
+      if (value >= 70) return red;
+      if (value >= 40) return orange;
+      return gray;
+    }
+    return gray;
+  };
+  
+  const getClaimCheckTextColor = (rating, colors) => {
+    const { green, orange, gray, red } = colors;
+  
+    switch (rating) {
+      case "True":
+      case "Mostly true":
+        return green;
+      case "False":
+      case "Mostly false":
+        return red;
+      case "Misleading":
+      case "Mixture":
+        return orange;
+      default:
+        return gray;
+    }
+  };  
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -593,6 +629,7 @@ const Profile = () => {
                     _hover={{ color: hoverColor }}
                     color={textColor}
                     width="100%"
+                    onClick={() => navigate("/profile/account-details")}
                   >
                     <HStack>
                       <FaUser />
@@ -633,7 +670,7 @@ const Profile = () => {
               <Flex direction="column">
                 <Flex justify="space-between" align="center">
                   <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
-                  <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+                  <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
                     <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
                     <IconButton
                       aria-label="Toggle theme"
@@ -725,12 +762,12 @@ const Profile = () => {
                                 <Td textAlign="center">#{detection.id}</Td>
                                 <Td textAlign="left">{detection.title}</Td>
                                 <Td textAlign="center">
-                                  <Text color={getTextColor(detection.fakePercentage || "70", "percentage")}>
-                                    {detection.fakePercentage || "70%"}
+                                  <Text fontSize="xl" color={getDetectionTextColor(detection.falsePercentage || 70, "False", colors)}>
+                                    {detection.falsePercentage || "70%"}
                                   </Text>
                                 </Td>
                                 <Td textAlign="center">
-                                  <Text color={getTextColor(detection.truePercentage || "30", "percentage")}>
+                                  <Text fontSize="xl" color={getDetectionTextColor(detection.truePercentage || 30, "True", colors)}>
                                     {detection.truePercentage || "30%"}
                                   </Text>
                                 </Td>
@@ -758,9 +795,13 @@ const Profile = () => {
                         </Table>
                       </>
                     ) : (
-                      <Flex align="center" justify="center" h="15vh">
+                      <Flex align="center" justify="center" direction="column" h="15vh">
+                        <WarningIcon boxSize="6" color="gray.500" mb="2" />
                         <Text fontSize="lg" color="gray.500" textAlign="center">
-                          No detections found. Start detecting fake news with FactGuard Detect by analyzing news articles to identify and prevent misinformation.
+                          No detections found.
+                        </Text>
+                        <Text fontSize="md" color="gray.400" textAlign="center">
+                          Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
                         </Text>
                       </Flex>
                     )}
@@ -788,11 +829,15 @@ const Profile = () => {
                                 <Td textAlign="center">#{claimCheck.id}</Td>
                                 <Td textAlign="left">{claimCheck.title}</Td>
                                 <Td textAlign="center">
-                                  <Text color={getTextColor(claimCheck.rating || "Unverified", "percentage")}>
+                                  <Text fontSize="lg" color={getClaimCheckTextColor(claimCheck.rating || "Misleading", colors)}>
                                     {claimCheck.rating || "70%"}
                                   </Text>
                                 </Td>
-                                <Td textAlign="center">#{claimCheck.link}</Td>
+                                <Td textAlign="center">
+                                  <Button size="sm" color={primaryColor} onClick={() => window.open(claimCheck.link, "_blank")}>
+                                    <ExternalLinkIcon />
+                                  </Button>
+                                </Td>
                                 <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
                                 <Td textAlign="center">
                                   <Button
@@ -817,12 +862,32 @@ const Profile = () => {
                         </Table>
                       </>
                     ) : (
-                      <Flex align="center" justify="center" h="15vh">
+                      <Flex align="center" justify="center" direction="column" h="15vh">
+                        <WarningIcon boxSize="6" color="gray.500" mb="2" />
                         <Text fontSize="lg" color="gray.500" textAlign="center">
-                          No claims checks found. Start verifying claims with FactGuard Verify by fact-checking claims to prevent misinformation.
+                          No claims checks found.
+                        </Text>
+                        <Text fontSize="md" color="gray.400" textAlign="center">
+                          Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
                         </Text>
                       </Flex>
                     )}
+                    {/* Powered by Google Fact Check Tools API*/}
+                    <HStack justify="flex-end">
+                        <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
+                          Powered by
+                        </Text>
+                        <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
+                          <Box
+                            as="img"
+                            src={logoGoogleFactCheckLogo}
+                            alt="Google Fact Check Tools API Logo"
+                            height={logoGoogleFactCheckLogoHeight}
+                            _hover={{ opacity: 0.8 }}
+                            _active={{ transform: "scale(0.95)" }}
+                          />
+                        </a>
+                    </HStack>
                   </Box>
               </Flex>
             }
@@ -855,6 +920,7 @@ const Profile = () => {
             }
           />
           <Route path="/claim-check-results" element={<ClaimCheckResults />} />
+          <Route path="/account-details" element={<AccountDetails />} />
         </Routes>
 
         {/* Detections Confirmation Modal */}
