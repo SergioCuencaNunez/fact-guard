@@ -98,12 +98,12 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const getTextColor = (rating) => {
-    const green = useColorModeValue("green.600", "green.300");
-    const orange = useColorModeValue("orange.600", "orange.300");
-    const gray = useColorModeValue("gray.600", "gray.300");
-    const red = useColorModeValue("red.600", "red.300");
-  
+  const green = useColorModeValue("green.600", "green.300");
+  const orange = useColorModeValue("orange.600", "orange.300");
+  const gray = useColorModeValue("gray.600", "gray.300");
+  const red = useColorModeValue("red.600", "red.300");
+
+  const getTextColor = (rating) => {  
     switch (rating) {
       case "True":
       case "Mostly true":

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -18,6 +18,8 @@ import {
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { EmailIcon, LockIcon } from '@chakra-ui/icons';
+import { motion, AnimatePresence } from "framer-motion";
+
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
@@ -45,24 +47,39 @@ const Login = () => {
     setPasswordValid(true);
   };
 
+  useEffect(() => {
+      if (emailAlert) {
+        const timer = setTimeout(() => setEmailAlert(null), 3000);
+        return () => clearTimeout(timer);
+      }
+    }, [emailAlert]);
+  
+  useEffect(() => {
+    if (passwordAlert) {
+      const timer = setTimeout(() => setPasswordAlert(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [passwordAlert]);
+
   const handleEmailBlur = async (event) => {
     const email = event.target.value;
     resetAlerts();
     if (!validateEmail(email)) {
       setEmailValid(false);
       setEmailAlert("Invalid email format.");
+      setTimeout(() => setEmailAlert(null), 3000);
       return;
     }
 
     try {
       const response = await fetch(`http://localhost:5001/check-login-email?email=${encodeURIComponent(email)}`);
       if (!response.ok) {
-        setEmailAlert(null); // Clear any previous email alerts
+        setEmailAlert(null);
         setAlert({ type: "info", message: "User not registered. Redirecting to Sign Up..." });
         setTimeout(() => {
           resetAlerts();
           navigate("/signup");
-        }, 2500);
+        }, 3000);
       } else {
         setEmailValid(true);
         setEmailAlert(null);
@@ -70,6 +87,7 @@ const Login = () => {
     } catch (error) {
       console.error("Error checking email:", error);
       setAlert({ type: "error", message: "Error checking email. Please try again." });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -83,6 +101,7 @@ const Login = () => {
     if (!validateEmail(email)) {
       setEmailValid(false);
       setEmailAlert("Invalid email format. Please provide a valid email.");
+      setTimeout(() => setAlert(null), 3000);
       return;
     }
 
@@ -100,23 +119,24 @@ const Login = () => {
           resetAlerts();
           localStorage.setItem("token", data.token);
           navigate("/profile");
-        }, 2500);
+        }, 3000);
       } else {
         if (data.error === "User not found") {
           setAlert({ type: "info", message: "User not registered. Redirecting to Sign Up..." });
           setTimeout(() => {
             resetAlerts();
             navigate("/signup");
-          }, 2500);
+          }, 3000);
         } else if (data.error === "Invalid credentials") {
           setPasswordValid(false);
           setPasswordAlert("The email or password you entered is incorrect. Please try again.");
+          setTimeout(() => setAlert(null), 3000);
         }
       }
     } catch (error) {
       console.error("Login error:", error);
-      setAlert({ type: "error", message: "Login failed! Please try again." });
-      setTimeout(() => resetAlerts(), 2500);
+      setAlert({ type: "error", message: "Login failed. Please try again." });
+      setTimeout(() => resetAlerts(), 3000);
     }
   };
 
@@ -150,24 +170,63 @@ const Login = () => {
         />
       </Box>
       <Heading mb="6" textAlign="center">Login</Heading>
-      {alert && (
-        <Alert status={alert.type} mb="4">
-          <AlertIcon />
-          <AlertDescription>{alert.message}</AlertDescription>
-        </Alert>
-      )}
-      {emailAlert && (
-        <Alert status="error" mb="4">
-          <AlertIcon />
-          <AlertDescription>{emailAlert}</AlertDescription>
-        </Alert>
-      )}
-      {passwordAlert && (
-        <Alert status="error" mb="4">
-          <AlertIcon />
-          <AlertDescription>{passwordAlert}</AlertDescription>
-        </Alert>
-      )}
+      <motion.div
+        initial={{ height: 0 }}
+        animate={{
+          height: alert || emailAlert || passwordAlert ? "auto" : 0,
+        }}
+        exit={{ height: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ overflow: "hidden" }}
+      >
+        <AnimatePresence>
+          {alert && (
+            <motion.div
+              key="alert"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              style={{ marginBottom: '16px' }}
+            >
+              <Alert status={alert.type}>
+                <AlertIcon />
+                <AlertDescription>{alert.message}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+          {emailAlert && (
+            <motion.div
+              key="emailAlert"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              style={{ marginBottom: '16px' }}
+            >
+              <Alert status="error">
+                <AlertIcon />
+                <AlertDescription>{emailAlert}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+          {passwordAlert && (
+            <motion.div
+              key="passwordAlert"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              style={{ marginBottom: '16px' }}
+            >
+              <Alert status="error">
+                <AlertIcon />
+                <AlertDescription>{passwordAlert}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
       <form onSubmit={handleLogin}>
         <VStack spacing="4" align="stretch">
           <FormControl id="email" isRequired isInvalid={!emailValid}>

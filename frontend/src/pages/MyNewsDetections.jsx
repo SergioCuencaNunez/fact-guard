@@ -93,12 +93,12 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const getTextColor = (value, type) => {
-    const green = useColorModeValue("green.600", "green.300");
-    const orange = useColorModeValue("orange.600", "orange.300");
-    const gray = useColorModeValue("gray.600", "gray.300");
-    const red = useColorModeValue("red.600", "red.300");
-  
+  const green = useColorModeValue("green.600", "green.300");
+  const orange = useColorModeValue("orange.600", "orange.300");
+  const gray = useColorModeValue("gray.600", "gray.300");
+  const red = useColorModeValue("red.600", "red.300");
+
+  const getTextColor = (value, type) => {  
     if (type === "True") {
       if (value >= 70) return green;
       if (value >= 40) return orange;
@@ -130,7 +130,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
-          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
+          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
             <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"

@@ -138,6 +138,7 @@ const AccountDetails = () => {
         type: "error",
         message: "Please fill in all the password fields.",
       });
+      resetAlert();
       return;
     }
 
@@ -146,11 +147,13 @@ const AccountDetails = () => {
         type: "error",
         message: "The new password cannot be the same as the current password.",
       });
+      resetAlert();
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setAlert({ type: "error", message: "Passwords do not match." });
+      resetAlert();
       setPasswordValid(false);
       setConfirmPasswordValid(false);
       return;
@@ -172,16 +175,21 @@ const AccountDetails = () => {
     if (response.ok) {
       setAlert({ type: "success", message: "Password reset successfully." });
       resetAlert();
+
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      setPasswordStrength(0);
+      setConfirmPasswordStrength(0);
       setPasswordValid(true);
       setOldPasswordValid(true);
+  
     } else {
       setAlert({
         type: "error",
         message: "Incorrect current password. Please try again.",
       });
+      resetAlert();
       setOldPasswordValid(false);
     }
   };
@@ -295,7 +303,6 @@ const AccountDetails = () => {
                 )}
             </AnimatePresence>
         </motion.div>
-
         <VStack spacing="4" align="stretch">
           <Flex
             direction={{ base: "column", lg: "row" }}
@@ -402,6 +409,7 @@ const AccountDetails = () => {
               onClick={handleSaveChanges}
               _hover={{ bg: hoverColor }}
               _active={{ bg: activeColor }}
+              whiteSpace="normal"
             >
               Save Changes
             </Button>
@@ -411,6 +419,7 @@ const AccountDetails = () => {
               onClick={handleResetPassword}
               _hover={{ bg: hoverColor }}
               _active={{ bg: activeColor }}
+              whiteSpace="normal"
             >
               Reset Password
             </Button>
@@ -418,6 +427,7 @@ const AccountDetails = () => {
               colorScheme="red"
               variant="solid"
               onClick={() => setIsDeleting(true)}
+              whiteSpace="normal"
             >
               Delete Account
             </Button>

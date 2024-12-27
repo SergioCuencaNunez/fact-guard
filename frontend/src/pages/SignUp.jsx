@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -21,6 +21,8 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { EmailIcon, LockIcon } from '@chakra-ui/icons';
+import { motion, AnimatePresence } from "framer-motion";
+
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
@@ -59,6 +61,20 @@ const SignUp = () => {
     setCheckboxAlert(null);
   };
 
+  useEffect(() => {
+    if (emailAlert) {
+      const timer = setTimeout(() => setEmailAlert(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailAlert]);
+
+  useEffect(() => {
+    if (passwordAlert) {
+      const timer = setTimeout(() => setPasswordAlert(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [passwordAlert]);
+
   const handleSignUp = async (event) => {
     event.preventDefault();
     resetAlerts();
@@ -69,12 +85,14 @@ const SignUp = () => {
 
     if (!termsChecked) {
       setCheckboxAlert("You must agree to the Privacy Policy and Terms & Conditions.");
+      setTimeout(() => setCheckboxAlert(null), 3000);
       return;
     }
 
     if (!validateEmail(email)) {
       setEmailValid(false);
       setEmailAlert("Invalid email format.");
+      setTimeout(() => setEmailAlert(null), 3000);
       return;
     }
     if (!validatePassword(password, email, username)) {
@@ -82,6 +100,7 @@ const SignUp = () => {
       setPasswordAlert(
         "Password cannot match your username or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
       );
+      setTimeout(() => setPasswordAlert(null), 3000);
       return;
     }
 
@@ -90,7 +109,7 @@ const SignUp = () => {
       const emailData = await emailResponse.json();
       if (emailData.exists) {
         setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
-        setTimeout(() => navigate("/login"), 2500);
+        setTimeout(() => navigate("/login"), 3000);
         return;
       }
 
@@ -113,10 +132,12 @@ const SignUp = () => {
         }, 2500);
       } else {
         setAlert({ type: "error", message: "Error signing up. If the issue persists, please contact the administrator." });
+        setTimeout(() => setAlert(null), 3000);
       }
     } catch (error) {
       console.error("Sign-up error:", error);
       setAlert({ type: "error", message: "Error signing up. If the issue persists, please contact the administrator." });
+      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -133,7 +154,7 @@ const SignUp = () => {
         const data = await response.json();
         if (data.exists) {
           setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
-          setTimeout(() => navigate("/login"), 2500);
+          setTimeout(() => navigate("/login"), 3000);
         }
       } catch (error) {
         console.error("Error checking email:", error);
@@ -187,36 +208,93 @@ const SignUp = () => {
           />
         </Box>
         <Heading mb="6" textAlign="center">Sign Up</Heading>
-        {alert && (
-          <Alert status={alert.type} mb="4">
-            <AlertIcon />
-            <AlertDescription>{alert.message}</AlertDescription>
-          </Alert>
-        )}
-        {emailAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{emailAlert}</AlertDescription>
-          </Alert>
-        )}
-        {passwordAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{passwordAlert}</AlertDescription>
-          </Alert>
-        )}
-        {checkboxAlert && (
-          <Alert status="error" mb="4">
-            <AlertIcon />
-            <AlertDescription>{checkboxAlert}</AlertDescription>
-          </Alert>
-        )}
-        {signingUpMessage && (
-          <Alert status="success" mb="4">
-            <AlertIcon />
-            <AlertDescription>{signingUpMessage}</AlertDescription>
-          </Alert>
-        )}
+        <motion.div
+          initial={{ height: 0 }}
+          animate={{
+            height: alert || emailAlert || passwordAlert || checkboxAlert || signingUpMessage ? "auto" : 0,
+          }}
+          exit={{ height: 0 }}
+          transition={{ duration: 0.3 }}
+          style={{ overflow: "hidden" }}
+        >
+          <AnimatePresence>
+            {alert && (
+              <motion.div
+                key="alert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                style={{ marginBottom: "8px" }}
+              >
+                <Alert status={alert.type}>
+                  <AlertIcon />
+                  <AlertDescription>{alert.message}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+            {emailAlert && (
+              <motion.div
+                key="emailAlert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                style={{ marginBottom: "8px" }}
+              >
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertDescription>{emailAlert}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+            {passwordAlert && (
+              <motion.div
+                key="passwordAlert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                style={{ marginBottom: "8px" }}
+              >
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertDescription>{passwordAlert}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+            {checkboxAlert && (
+              <motion.div
+                key="checkboxAlert"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                style={{ marginBottom: "8px" }}
+              >
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertDescription>{checkboxAlert}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+            {signingUpMessage && (
+              <motion.div
+                key="signingUpMessage"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                style={{ marginBottom: "8px" }}
+              >
+                <Alert status="success">
+                  <AlertIcon />
+                  <AlertDescription>{signingUpMessage}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
         <form onSubmit={handleSignUp}>
           <VStack spacing="4" align="stretch">
             <FormControl id="username">
@@ -265,7 +343,7 @@ const SignUp = () => {
                 isChecked={termsChecked}
                 onChange={(e) => setTermsChecked(e.target.checked)}
               >
-                By checking this box, I agree to the <ChakraLink href="/terms" color="teal.500" isExternal>Terms & Conditions</ChakraLink> and <ChakraLink href="/privacy" color="teal.500" isExternal>Privacy Policy</ChakraLink>.
+                By checking this box, I agree to the <ChakraLink href="/terms" color={primaryColor} isExternal>Terms & Conditions</ChakraLink> and <ChakraLink href="/privacy" color={primaryColor} isExternal>Privacy Policy</ChakraLink>.
               </Checkbox>
             </FormControl>
             <Button
