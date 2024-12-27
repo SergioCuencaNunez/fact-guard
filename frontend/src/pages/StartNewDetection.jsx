@@ -140,9 +140,9 @@ const StartNewDetection = ({ addDetection }) => {
           placeholder="Paste your article content here..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          mb="4"
+          mb="6"
         />
-        <Flex justify="center" mb="4">
+        <Flex justify="center">
           <Button
             bg={primaryColor}
             color="white"

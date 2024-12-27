@@ -236,15 +236,19 @@ const Profile = () => {
       : new Date(a.date) - new Date(b.date);
   });
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDetectionModalOpen,
+    onOpen: onDetectionModalOpen,
+    onClose: onDetectionModalClose,
+  } = useDisclosure();
   const [detectionToDelete, setDetectionToDelete] = useState(null);
 
-  const handleDelete = (detection) => {
+  const handleDeleteDetection = (detection) => {
     setDetectionToDelete(detection);
-    onOpen();
+    onDetectionModalOpen();
   };
 
-  const confirmDelete = async () => {
+  const confirmDeleteDetection = async () => {
     try {
       if (detectionToDelete) {
         // Delete a single detection
@@ -256,9 +260,118 @@ const Profile = () => {
         }
         setSelectedDetections([]);
       }
-      onClose();
+      onDetectionModalClose();
     } catch (error) {
       console.error("Error deleting detection(s):", error);
+    }
+  };
+
+  const [claimChecks, setClaimsChecks] = useState([]);
+
+  useEffect(() => {
+    const fetchClaimsCheck = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5001/claims", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setClaimsChecks(data);
+        } else {
+          console.error("Failed to fetch claim checks:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching claim checks:", error);
+      }
+    };
+
+    fetchClaimsCheck();
+  }, [navigate]);
+
+  // Add a claim check to server
+  const addClaimCheck = async (claimCheck) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("http://localhost:5001/claims", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(claimCheck),
+      });
+
+      if (response.ok) {
+        const newClaimCheck = await response.json();
+        setClaimsChecks((prev) => [...prev, newClaimCheck]);
+      } else {
+        console.error("Failed to add claim check.");
+      }
+    } catch (error) {
+      console.error("Error adding claim check:", error);
+    }
+  };
+
+  // Delete a claim check from server
+  const deleteClaimCheck = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:5001/claims/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        setClaimsChecks((prev) => prev.filter((d) => d.id !== id));
+      } else {
+        console.error("Failed to delete claim check.");
+      }
+    } catch (error) {
+      console.error("Error deleting claim check:", error);
+    }
+  };
+
+  const sortedClaimChecks = [...claimChecks].sort((a, b) => {
+    return sortOrder === "desc"
+      ? new Date(b.date) - new Date(a.date)
+      : new Date(a.date) - new Date(b.date);
+  });
+
+  const {
+    isOpen: isClaimModalOpen,
+    onOpen: onClaimModalOpen,
+    onClose: onClaimModalClose,
+  } = useDisclosure();
+  const [claimCheckToDelete, setClaimCheckToDelete] = useState(null);
+
+  const handleDeleteClaimCheck = (claimCheck) => {
+    setClaimCheckToDelete(claimCheck);
+    onClaimModalOpen();
+  };
+
+  const confirmDeleteClaimCheck = async () => {
+    try {
+      if (claimCheckToDelete) {
+        // Delete a single claim checks
+        await deleteClaimCheck(claimCheckToDelete.id);
+      } else {
+        // Delete selected claim checks
+        for (const claimCheck of selectedClaimChecks) {
+          await deleteClaimCheck(claimCheck.id);
+        }
+        setSelectedClaimChecks([]);
+      }
+      onClaimModalClose();
+    } catch (error) {
+      console.error("Error deleting claim check(s):", error);
     }
   };
   
@@ -269,7 +382,7 @@ const Profile = () => {
         w={{ base: "full", md: "275px" }}
         bg={sidebarBgColor}
         px={{ base: "4", md: "6" }}
-        py={{ base: "6", md: "10" }}      
+        py={{ base: "6", md: "8" }}      
         shadow="lg"
         position={{ base: "relative", md: "sticky" }}
         top="0"
@@ -493,7 +606,7 @@ const Profile = () => {
         </VStack>
         
         {/* Logout Button (Desktop only) */}
-        <HStack display={{ base: 'none', md: 'flex' }} mt='4'>
+        <HStack display={{ base: 'none', md: 'flex' }}>
           <Button
             leftIcon={<FaSignOutAlt />}
             colorScheme="red"
@@ -635,7 +748,7 @@ const Profile = () => {
                                   </Button>
                                 </Td>
                                 <Td textAlign="center">
-                                  <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
+                                  <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
                                     <FaTrashAlt />
                                   </Button>
                                 </Td>
@@ -655,37 +768,62 @@ const Profile = () => {
 
                 <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
                 <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                  <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"}>
-                    <Thead>
-                        <Tr>
-                          <Th width="25%"><b>Title</b></Th>
-                          <Th width="15%"><b>Rating</b></Th>
-                          <Th width="15%"><b>Link</b></Th>
-                          <Th width="15%"><b>Date</b></Th>
-                          <Th width="15%"><b>Results</b></Th>
-                          <Th width="15%"><b>Remove</b></Th>
-                        </Tr>
-                      </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td>"Claim 1"</Td>
-                        <Td><Text color={getTextColor("True", "rating")}>True</Text></Td>
-                        <Td><a href="#">Link</a></Td>
-                        <Td>12/22/2024</Td>
-                        <Td><Button size="sm">Results</Button></Td>
-                        <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
-                        </Tr>
-                      <Tr>
-                        <Td>"Claim 2"</Td>
-                        <Td><Text color={getTextColor("False", "rating")}>False</Text></Td>
-                        <Td><a href="#">Link</a></Td>
-                        <Td>12/20/2024</Td>
-                        <Td><Button size="sm">Results</Button></Td>
-                        <Td><Button size="sm" color={primaryColor}><FaTrashAlt /></Button></Td>
-                        </Tr>
-                    </Tbody>
-                  </Table>
-                </Box>
+                    {claimChecks.length > 0 ? (
+                      <>
+                        <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                          <Thead>
+                            <Tr>
+                              <Th width="5%" textAlign="center"><b>ID</b></Th>
+                              <Th width="30%" textAlign="left"><b>Title</b></Th>
+                              <Th width="12.5%" textAlign="center"><b>Rating</b></Th>
+                              <Th width="12.5%" textAlign="center"><b>Link</b></Th>
+                              <Th width="15%" textAlign="center"><b>Date</b></Th>
+                              <Th width="15%" textAlign="center"><b>Results</b></Th>
+                              <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
+                              <Tr key={claimCheck.id}>
+                                <Td textAlign="center">#{claimCheck.id}</Td>
+                                <Td textAlign="left">{claimCheck.title}</Td>
+                                <Td textAlign="center">
+                                  <Text color={getTextColor(claimCheck.rating || "Unverified", "percentage")}>
+                                    {claimCheck.rating || "70%"}
+                                  </Text>
+                                </Td>
+                                <Td textAlign="center">#{claimCheck.link}</Td>
+                                <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
+                                <Td textAlign="center">
+                                  <Button
+                                    size="sm"
+                                    onClick={() =>
+                                      navigate("/profile/claim-check-results", {
+                                        state: { claimCheck },
+                                      })
+                                    }
+                                  >
+                                    Results
+                                  </Button>
+                                </Td>
+                                <Td textAlign="center">
+                                  <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
+                                    <FaTrashAlt />
+                                  </Button>
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </>
+                    ) : (
+                      <Flex align="center" justify="center" h="15vh">
+                        <Text fontSize="lg" color="gray.500" textAlign="center">
+                          No claims checks found. Start verifying claims with FactGuard Verify by fact-checking claims to prevent misinformation.
+                        </Text>
+                      </Flex>
+                    )}
+                  </Box>
               </Flex>
             }
           />
@@ -705,21 +843,22 @@ const Profile = () => {
           <Route path="/detection-results" element={<DetectionResults />} />
           <Route
             path="/start-new-claim-check"
-            element={<StartNewClaimCheck addDetection={addDetection}/>}
+            element={<StartNewClaimCheck addClaimCheck={addClaimCheck}/>}
             />
           <Route
             path="/my-claim-checks"
             element={
               <MyClaimChecks
-                detections={detections}
-                deleteDetection={deleteDetection}
+                claimChecks={claimChecks}
+                deleteClaimCheck={deleteClaimCheck}
               />
             }
           />
           <Route path="/claim-check-results" element={<ClaimCheckResults />} />
         </Routes>
-        {/* Confirmation Modal */}
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+
+        {/* Detections Confirmation Modal */}
+        <Modal isOpen={isDetectionModalOpen} onClose={onDetectionModalClose} isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Confirm Deletion</ModalHeader>
@@ -730,10 +869,32 @@ const Profile = () => {
                 : "Are you sure you want to delete the selected detections?"}
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="red" mr={3} onClick={confirmDelete}>
+              <Button colorScheme="red" mr={3} onClick={confirmDeleteDetection}>
                 Delete
               </Button>
-              <Button variant="ghost" onClick={onClose}>
+              <Button variant="ghost" onClick={onDetectionModalClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        {/* Claim Checks Confirmation Modal */}
+        <Modal isOpen={isClaimModalOpen} onClose={onClaimModalClose} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {claimCheckToDelete
+                ? "Are you sure you want to delete this claim check?"
+                : "Are you sure you want to delete the selected claim checks?"}
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="red" mr={3} onClick={confirmDeleteClaimCheck}>
+                Delete
+              </Button>
+              <Button variant="ghost" onClick={onClaimModalClose}>
                 Cancel
               </Button>
             </ModalFooter>

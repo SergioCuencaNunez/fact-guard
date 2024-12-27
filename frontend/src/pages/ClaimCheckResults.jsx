@@ -35,15 +35,15 @@ const ClaimCheckResults = () => {
   const cardBg = useColorModeValue("white", "gray.700");
 
   const location = useLocation();
-  const { detection } = location.state || {};
+  const { claimCheck } = location.state || {};
 
   const { colorMode, toggleColorMode } = useColorMode();
   const textColor = useColorModeValue('black', 'white');
-  const allDetectionsBg = useColorModeValue('gray.100', 'gray.600');
-  const startNewDetectionHoverBg = useColorModeValue('gray.200', 'gray.500');
-  const startNewDetectionActiveBg = useColorModeValue('gray.300', 'gray.400');
-  const allDetectionsHoverBg = useColorModeValue(primaryHoverLight, primaryHoverDark);
-  const allDetectionsActiveBg = useColorModeValue(primaryActiveLight, primaryActiveDark);
+  const allClaimChecksBg = useColorModeValue('gray.100', 'gray.600');
+  const startNewClaimCheckHoverBg = useColorModeValue('gray.200', 'gray.500');
+  const startNewClaimCheckActiveBg = useColorModeValue('gray.300', 'gray.400');
+  const allClaimChecksHoverBg = useColorModeValue(primaryHoverLight, primaryHoverDark);
+  const allClaimChecksActiveBg = useColorModeValue(primaryActiveLight, primaryActiveDark);
   
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -51,10 +51,10 @@ const ClaimCheckResults = () => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  if (!detection) {
+  if (!claimCheck) {
     return (
       <Flex align="center" justify="center" h="100vh">        
-        <Text fontSize="lg" color="gray.500" textAlign="center">No detection found.</Text>
+        <Text fontSize="lg" color="gray.500" textAlign="center">No claim check found.</Text>
       </Flex>
     );
   }
@@ -63,9 +63,9 @@ const ClaimCheckResults = () => {
     <Box px={{ md: 4 }} py={{ md: 6 }} minHeight="100vh">
       <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
         <Flex justify="space-between" align="center" mb="4">
-          <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detection Results</Heading>                    
+          <Heading fontSize={{ base: '3xl', md: '4xl' }}>Claim Check Results</Heading>                    
           <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
-            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+            <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
             aria-label="Toggle theme"
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -76,7 +76,7 @@ const ClaimCheckResults = () => {
           <Box
               as="img"
               src={logo}
-              alt="Detect Logo"
+              alt="Verify Logo"
               maxHeight={logoHeight}
               maxWidth="120px"
               objectFit="contain"
@@ -85,14 +85,13 @@ const ClaimCheckResults = () => {
         </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
 
-        {/* Article Details */}
+        {/* Claim Details */}
         <Box mb="4">
-            <Heading size="md" mb="2" color={textColor}>Article Summary</Heading>
-            <VStack align="flex-start" spacing="2">#{detection.id}
-                <Text fontSize="md"><b>Detection ID:</b> #{detection.id}</Text>
-                <Text fontSize="md"><b>Title:</b> {detection.title}</Text>
-                <Text fontSize="md"><b>Content:</b> {detection.content}</Text>
-                <Text fontSize="md"><b>Date Analyzed:</b> {formatDate(detection.date)}</Text>
+            <Heading size="md" mb="2" color={textColor}>Claim Summary</Heading>
+            <VStack align="flex-start" spacing="2">#{claimCheck.id}
+                <Text fontSize="md"><b>Claim Check ID:</b> #{claimCheck.id}</Text>
+                <Text fontSize="md"><b>Title:</b> {claimCheck.title}</Text>
+                <Text fontSize="md"><b>Date Analyzed:</b> {formatDate(claimCheck.date)}</Text>
             </VStack>
         </Box>
 
@@ -102,8 +101,7 @@ const ClaimCheckResults = () => {
         <Box mb="4">
             <Heading size="md" mb="2" color={textColor}>Analysis</Heading>
             <Stack direction={{ base: "column", md: "row" }} justify="flex-start" spacing="2" flexWrap="wrap" >
-                <Badge colorScheme="red" fontSize="md" p={2} textAlign="center"><b>Fake Probability:</b> {detection.fakePercentage || "70%"}</Badge>
-                <Badge colorScheme="green" fontSize="md" p={2} textAlign="center"><b>True Probability:</b> {detection.truePercentage || "30%"}</Badge>
+                <Badge fontSize="md" p={2} textAlign="center"><b>Rating:</b> {claimCheck.rating || "Unverified"}</Badge>
             </Stack>
         </Box>
 
@@ -113,7 +111,7 @@ const ClaimCheckResults = () => {
         <Box>
             <Heading size="md" mb="2" color={textColor}>Insights</Heading>
             <Text fontSize="md" mb="2">
-            This analysis was performed using an advanced fake news detection model.
+            This analysis was performed using Google Fact Check Tools API.
             </Text>
             <Text fontSize="md">
             The probabilities indicate the likelihood of the article being fake or true based on textual analysis.
@@ -127,23 +125,23 @@ const ClaimCheckResults = () => {
             <Button
               leftIcon={<ArrowBackIcon />}
               size="md"
-              bg={allDetectionsBg}
+              bg={allClaimChecksBg}
               color={textColor}
-              _hover={{ bg: startNewDetectionHoverBg }}
-              _active={{ bg: startNewDetectionActiveBg }}
-              onClick={() => navigate("/profile/start-new-detection")}
+              _hover={{ bg: startNewClaimCheckHoverBg }}
+              _active={{ bg: startNewClaimCheckActiveBg }}
+              onClick={() => navigate("/profile/start-new-claim-check")}
             >
-              Start New Detection
+              Start New Claim Check
             </Button>
             <Button
               size="md"
               bg={primaryColor}
               color="white"
-              _hover={{ bg: allDetectionsHoverBg }}
-              _active={{ bg: allDetectionsActiveBg }}
-              onClick={() => navigate("/profile/my-news-detections")}
+              _hover={{ bg: allClaimChecksHoverBg }}
+              _active={{ bg: allClaimChecksActiveBg }}
+              onClick={() => navigate("/profile/my-claim-checks")}
             >
-              All Detections
+              All Claim Checks
             </Button>
           </Stack>
         </Flex>

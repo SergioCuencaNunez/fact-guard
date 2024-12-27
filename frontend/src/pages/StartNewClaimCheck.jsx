@@ -6,7 +6,6 @@ import {
   Heading,
   Text,
   Input,
-  Textarea,
   Button,
   IconButton,
   useColorMode,
@@ -34,7 +33,7 @@ const primaryActiveDark = "#91edd0";
 import logoVerifyBright from "../assets/logo-verify-bright.png";
 import logoVerifyDark from "../assets/logo-verify-dark.png";
 
-const StartNewClaimCheck = ({ addDetection }) => {
+const StartNewClaimCheck = ({ addClaimCheck }) => {
   const logo = useColorModeValue(logoVerifyBright, logoVerifyDark);
   const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
   const cardBg = useColorModeValue("white", "gray.700");
@@ -46,14 +45,13 @@ const StartNewClaimCheck = ({ addDetection }) => {
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { isOpen: isSpinnerOpen, onOpen: onSpinnerOpen, onClose: onSpinnerClose } = useDisclosure();
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
   const { isOpen: isErrorOpen, onOpen: onErrorOpen, onClose: onErrorClose } = useDisclosure();
 
-  const handleAnalyze = () => {
-    if (!title || !content) {
+  const handleVerify = () => {
+    if (!title) {
       onAlertOpen();
       return;
     }
@@ -64,39 +62,38 @@ const StartNewClaimCheck = ({ addDetection }) => {
       try {
         const token = localStorage.getItem("token");
   
-        const detection = {
+        const claim = {
           title,
-          content,
-          fakePercentage: "70%", // Placeholder
-          truePercentage: "30%", // Placeholder
+          rating: "Unverified", // Placeholder
+          link: "https://example.com", // Placeholder
           date: new Date().toISOString(),
         };
   
-        const response = await fetch("http://localhost:5001/detections", {
+        const response = await fetch("http://localhost:5001/claims", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(detection),
+          body: JSON.stringify(claim),
         });
   
         if (response.ok) {
-          const newDetection = await response.json();
-          addDetection(newDetection); // Add detection to parent state
-          navigate("/profile/detection-results", { state: { detection: newDetection } });
+          const newClaimCheck = await response.json();
+          addClaimCheck(newClaimCheck); // Add claim to parent state
+          navigate("/profile/claim-check-results", { state: { claimCheck: newClaimCheck } });
         } else if (response.status === 409) {
-          console.warn("Duplicate detection.");
-          setErrorMessage("This detection already exists. Please check your list of detections.");
+          console.warn("Duplicate claim.");
+          setErrorMessage("This claim check already exists. Please check your list of claim checks.");
           onErrorOpen();
         } else {
-          console.error("Failed to analyze detection:", await response.text());
-          setErrorMessage(`Failed to analyze detection: ${await response.text()}`);
+          console.error("Failed to verify claim:", await response.text());
+          setErrorMessage(`Failed to verify claim: ${await response.text()}`);
           onErrorOpen();
         }
       } catch (error) {
-        console.error("Error during detection analysis:", error);
-        setErrorMessage(`Error during detection analysis: ${error.message}`);
+        console.error("Error during verifying analysis:", error);
+        setErrorMessage(`Error during verifying analysis: ${error.message}`);
         onErrorOpen();
       } finally {
         onSpinnerClose();
@@ -110,7 +107,7 @@ const StartNewClaimCheck = ({ addDetection }) => {
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>Verify Claims</Heading>          
           <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
-            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+            <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -121,7 +118,7 @@ const StartNewClaimCheck = ({ addDetection }) => {
           <Box
               as="img"
               src={logo}
-              alt="Detect Logo"
+              alt="Verify Logo"
               maxHeight={logoHeight}
               maxWidth="120px"
               objectFit="contain"
@@ -134,9 +131,9 @@ const StartNewClaimCheck = ({ addDetection }) => {
           placeholder="Enter a claim..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          mb="4"
+          mb="6"
         />
-        <Flex justify="center" mb="4">
+        <Flex justify="center">
           <Button
             bg={primaryColor}
             color="white"
@@ -145,7 +142,7 @@ const StartNewClaimCheck = ({ addDetection }) => {
             size="md"
             width="fit-content"
             px="8"
-            onClick={handleAnalyze}
+            onClick={handleVerify}
           >
             Verify
           </Button>
@@ -157,7 +154,7 @@ const StartNewClaimCheck = ({ addDetection }) => {
           <ModalContent>
             <ModalBody textAlign="center" py="6">
               <Spinner size="xl" />
-              <Text mt="4">Analyzing News... Please wait.</Text>
+              <Text mt="4">Verifying Claim... Please wait.</Text>
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -169,8 +166,8 @@ const StartNewClaimCheck = ({ addDetection }) => {
             <ModalHeader>Missing Information</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              Please fill in both the title and content fields to proceed with detecting fake news. 
-              These details are essential to analyze the authenticity of the article.
+              Please fill in the title field to proceed with verifying the claim. 
+              This detail is essential to verify the veracity of the claim.
             </ModalBody>
             <ModalFooter>
               <Button

@@ -179,7 +179,7 @@ const resetDetectionsSequence = () => {
   });
 };
 
-// Call this function after deletions
+// Delete a detection
 app.delete("/detections/:id", verifyToken, (req, res) => {
   const { id } = req.params;
 
@@ -190,6 +190,85 @@ app.delete("/detections/:id", verifyToken, (req, res) => {
       return res.status(404).json({ error: "Detection not found or not authorized" });
 
     resetDetectionsSequence(); // Reset sequence after deletion
+    res.status(204).send();
+  });
+});
+
+// Get all claims for a user
+app.get("/claims", verifyToken, (req, res) => {
+  const query = "SELECT * FROM claims WHERE user_id = ?";
+  db.all(query, [req.user.id], (err, rows) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch claims" });
+    res.json(rows);
+  });
+});
+
+// Add a new claim
+app.post("/claims", verifyToken, (req, res) => {
+  const { title, rating, link, date } = req.body;
+
+  if (!title || !rating || !link || !date) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Check if the detection already exists for the user
+  const checkQuery = "SELECT * FROM claims WHERE user_id = ? AND title = ?";
+  const insertQuery =
+    "INSERT INTO claims (user_id, title, rating, link, date) VALUES (?, ?, ?, ?, ?)";
+
+  db.get(checkQuery, [req.user.id, title], (err, row) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+
+    if (row) {
+      return res.status(409).json({ error: "Duplicate claim. Already exists." });
+    }
+
+    db.run(
+      insertQuery,
+      [req.user.id, title, rating, link, date],
+      function (err) {
+        if (err) return res.status(500).json({ error: "Failed to add claim" });
+
+        res.status(201).json({
+          id: this.lastID,
+          user_id: req.user.id,
+          title,
+          rating,
+          link,
+          date,
+        });
+      }
+    );
+  });
+});
+
+const resetClaimsSequence = () => {
+  const query = `
+    UPDATE sqlite_sequence
+    SET seq = (SELECT MAX(id) FROM claims)
+    WHERE name = 'claims';
+  `;
+
+  db.run(query, (err) => {
+    if (err) {
+      console.error("Failed to reset claims sequence:", err.message);
+    } else {
+      console.log("Sequence reset successfully for claims.");
+    }
+  });
+};
+
+// Delete a claim
+app.delete("/claims/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  const query = "DELETE FROM claims WHERE id = ? AND user_id = ?";
+  db.run(query, [id, req.user.id], function (err) {
+    if (err) return res.status(500).json({ error: "Failed to delete claim" });
+    if (this.changes === 0)
+      return res.status(404).json({ error: "Claim not found or not authorized" });
+
+    resetClaimsSequence(); // Reset sequence after deletion
     res.status(204).send();
   });
 });

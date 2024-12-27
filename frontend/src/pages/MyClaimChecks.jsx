@@ -35,7 +35,7 @@ const primaryColor = "#4dcfaf";
 import logoVerifyBright from "../assets/logo-verify-bright.png";
 import logoVerifyDark from "../assets/logo-verify-dark.png";
 
-const MyClaimChecks = ({ detections, deleteDetection }) => {
+const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
   const navigate = useNavigate();
 
   const logo = useColorModeValue(logoVerifyBright, logoVerifyDark);
@@ -44,46 +44,46 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
   
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [detectionToDelete, setDetectionToDelete] = useState(null);
-  const [selectedDetections, setSelectedDetections] = useState([]);
+  const [claimCheckToDelete, setClaimCheckToDelete] = useState(null);
+  const [selectedClaimChecks, setSelectedClaimChecks] = useState([]);
   const [sortOrder, setSortOrder] = useState("desc");
 
-  const handleDelete = (detection) => {
-    setDetectionToDelete(detection);
+  const handleDelete = (claimCheck) => {
+    setClaimCheckToDelete(claimCheck);
     onOpen();
   };
 
   const confirmDelete = async () => {
     try {
-      if (detectionToDelete) {
-        // Delete a single detection
-        await deleteDetection(detectionToDelete.id);
+      if (claimCheckToDelete) {
+        // Delete a single claim check
+        await deleteClaimCheck(claimCheckToDelete.id);
       } else {
-        // Delete selected detections
-        for (const detection of selectedDetections) {
-          await deleteDetection(detection.id);
+        // Delete selected claim check
+        for (const claimCheck of selectedClaimChecks) {
+          await deleteClaimCheck(claimCheck.id);
         }
-        setSelectedDetections([]);
+        setSelectedClaimChecks([]);
       }
       onClose();
     } catch (error) {
-      console.error("Error deleting detection(s):", error);
+      console.error("Error deleting claim check(s):", error);
     }
   };
 
   const handleSelectAll = (isChecked) => {
     if (isChecked) {
-      setSelectedDetections(detections);
+      setSelectedClaimChecks(claimChecks);
     } else {
-      setSelectedDetections([]);
+      setSelectedClaimChecks([]);
     }
   };
 
-  const handleSelectDetection = (detection, isChecked) => {
+  const handleSelectClaimCheck = (claimCheck, isChecked) => {
     if (isChecked) {
-      setSelectedDetections((prev) => [...prev, detection]);
+      setSelectedClaimChecks((prev) => [...prev, claimCheck]);
     } else {
-      setSelectedDetections((prev) => prev.filter((item) => item.id !== detection.id));
+      setSelectedClaimChecks((prev) => prev.filter((item) => item.id !== claimCheck.id));
     }
   };
 
@@ -102,7 +102,7 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
     return "black";
   };
 
-  const sortedDetections = [...detections].sort((a, b) => {
+  const sortedClaimChecks = [...claimChecks].sort((a, b) => {
     return sortOrder === "desc"
       ? new Date(b.date) - new Date(a.date)
       : new Date(a.date) - new Date(b.date);
@@ -118,7 +118,7 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
         <Flex justify="space-between" align="center" mb="4">
           <Heading fontSize={{ base: '3xl', md: '4xl' }}>My Claim Checks</Heading>                    
           <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
-            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+            <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
             <IconButton
               aria-label="Toggle theme"
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -129,7 +129,7 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
             <Box
                 as="img"
                 src={logo}
-                alt="Detect Logo"
+                alt="Verify Logo"
                 maxHeight={logoHeight}
                 maxWidth="120px"
                 objectFit="contain"
@@ -137,7 +137,7 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
           </HStack>
         </Flex>
         <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
-        {detections.length > 0 ? (
+        {claimChecks.length > 0 ? (
           <>
             <Box overflowX="auto">
               <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
@@ -166,27 +166,23 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {sortedDetections.map((detection) => (
-                    <Tr key={detection.id}>
-                      <Td textAlign="center">#{detection.id}</Td>
-                      <Td textAlign="left">{detection.title}</Td>
+                  {sortedClaimChecks.map((claimCheck) => (
+                    <Tr key={claimCheck.id}>
+                      <Td textAlign="center">#{claimCheck.id}</Td>
+                      <Td textAlign="left">{claimCheck.title}</Td>
                       <Td textAlign="center">
-                        <Text color={getTextColor(detection.fakePercentage || "70", "percentage")}>
-                          {detection.fakePercentage || "70%"}
+                        <Text color={getTextColor(claimCheck.rating || "Unverified", "percentage")}>
+                          {claimCheck.rating || "70%"}
                         </Text>
                       </Td>
-                      <Td textAlign="center">
-                        <Text color={getTextColor(detection.truePercentage || "30", "percentage")}>
-                          {detection.truePercentage || "30%"}
-                        </Text>
-                      </Td>
-                      <Td textAlign="center">{formatDate(detection.date)}</Td>
+                      <Td textAlign="center">#{claimCheck.link}</Td>
+                      <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
                       <Td textAlign="center">
                         <Button
                           size="sm"
                           onClick={() =>
-                            navigate("/profile/detection-results", {
-                              state: { detection },
+                            navigate("/profile/claim-check-results", {
+                              state: { claimCheck },
                             })
                           }
                         >
@@ -194,14 +190,14 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
                         </Button>
                       </Td>
                       <Td textAlign="center">
-                        <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
+                        <Button size="sm" color={primaryColor} onClick={() => handleDelete(claimCheck)}>
                           <FaTrashAlt />
                         </Button>
                       </Td>
                       <Td textAlign="center">
                         <Checkbox
-                          isChecked={selectedDetections.some((item) => item.id === detection.id)}
-                          onChange={(e) => handleSelectDetection(detection, e.target.checked)}
+                          isChecked={selectedClaimChecks.some((item) => item.id === claimCheck.id)}
+                          onChange={(e) => handleSelectClaimCheck(claimCheck, e.target.checked)}
                         />
                       </Td>
                     </Tr>
@@ -211,7 +207,7 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
             </Box>
             <Flex justify="space-between" align="center" mb="4">
               <Checkbox
-                isChecked={selectedDetections.length === detections.length}
+                isChecked={selectedClaimChecks.length === claimChecks.length}
                 onChange={(e) => handleSelectAll(e.target.checked)}
               >
                 Select All
@@ -219,11 +215,11 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
               <Button
                 colorScheme="red"
                 onClick={() => {
-                  setDetectionToDelete(null);
+                  setClaimCheckToDelete(null);
                   onOpen();
                 }}
-                isDisabled={selectedDetections.length === 0}
-                visibility={selectedDetections.length > 0 ? "visible" : "hidden"}
+                isDisabled={selectedClaimChecks.length === 0}
+                visibility={selectedClaimChecks.length > 0 ? "visible" : "hidden"}
               >
                 Delete Selected
               </Button>
@@ -232,7 +228,7 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
         ) : (
           <Flex align="center" justify="center" h="15vh">
             <Text fontSize="lg" color="gray.500" textAlign="center">
-              No claims found. Start verifying claims with FactGuard Verify by fact-checking claims to prevent misinformation.
+              No claims checks found. Start verifying claims with FactGuard Verify by fact-checking claims to prevent misinformation.
             </Text>
           </Flex>
         )}
@@ -244,9 +240,9 @@ const MyClaimChecks = ({ detections, deleteDetection }) => {
             <ModalHeader>Confirm Deletion</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              {detectionToDelete
-                ? "Are you sure you want to delete this detection?"
-                : "Are you sure you want to delete the selected detections?"}
+              {claimCheckToDelete
+                ? "Are you sure you want to delete this claim check?"
+                : "Are you sure you want to delete the selected claim checks?"}
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="red" mr={3} onClick={confirmDelete}>
