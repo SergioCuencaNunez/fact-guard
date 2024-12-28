@@ -41,6 +41,7 @@ import {
   FaTrashAlt,
 } from "react-icons/fa";
 import { useNavigate, Routes, Route } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
@@ -57,7 +58,7 @@ import AccountDetails from "./AccountDetails";
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
-const primaryHoverDark = '#4dcfaf';
+const primaryHoverDark = '#77e4c4';
 const primaryActiveLight = '#2a8073';
 const primaryActiveDark = '#77e4c4';
 const sidebarLight = '#c9ebdf';
@@ -459,6 +460,8 @@ const Profile = () => {
                 </HStack>
               </HStack>
             </Button>
+            
+            {/* Detect Fake News Dropdown */}
             <Box>
               <Button
                 variant="ghost"
@@ -477,40 +480,52 @@ const Profile = () => {
                   </HStack>
                   <ChevronDownIcon />
                 </HStack>
-              </Button>
-              {openDropdown === "detect" && (
-                <VStack align="stretch" pl="4" mt="2">
-                  <Button
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                    width="100%"
-                    onClick={() => navigate("/profile/start-new-detection")}
+              </Button> 
+              <AnimatePresence initial={false}>             
+                {openDropdown === "detect" && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ overflow: "hidden" }}
                   >
-                    <HStack>
-                      <FaPlus />
-                      <Text>Start New Detection</Text>
-                    </HStack>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                    width="100%"
-                    onClick={() => navigate("/profile/my-news-detections")}
-                  >
-                    <HStack>
-                      <FaTasks />
-                      <Text>My News Detections</Text>
-                    </HStack>
-                  </Button>
-                </VStack>
-              )}
+                  <VStack align="stretch" pl="4" mt="2">
+                    <Button
+                      variant="ghost"
+                      justifyContent="flex-start"
+                      size="sm"
+                      _hover={{ color: hoverColor }}
+                      color={textColor}
+                      width="100%"
+                      onClick={() => navigate("/profile/start-new-detection")}
+                    >
+                      <HStack>
+                        <FaPlus />
+                        <Text>Start New Detection</Text>
+                      </HStack>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      justifyContent="flex-start"
+                      size="sm"
+                      _hover={{ color: hoverColor }}
+                      color={textColor}
+                      width="100%"
+                      onClick={() => navigate("/profile/my-news-detections")}
+                    >
+                      <HStack>
+                        <FaTasks />
+                        <Text>My News Detections</Text>
+                      </HStack>
+                    </Button>
+                  </VStack>
+                </motion.div>
+                )}
+              </AnimatePresence>
             </Box>
+
+            {/* Verify Claims Dropdown */}
             <Box>
               <Button
                 variant="ghost"
@@ -530,39 +545,52 @@ const Profile = () => {
                   <ChevronDownIcon />
                 </HStack>
               </Button>
-              {openDropdown === "verify" && (
-                <VStack align="stretch" pl="4" mt="2">
-                  <Button
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                    width="100%"
-                    onClick={() => navigate("/profile/start-new-claim-check")}
+
+              <AnimatePresence initial={false}>
+                {openDropdown === "verify" && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ overflow: "hidden" }}
                   >
-                    <HStack>
-                      <FaPlus />
-                      <Text>Start New Claim Check</Text>
-                    </HStack>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                    width="100%"
-                    onClick={() => navigate("/profile/my-claim-checks")}
-                  >
-                    <HStack>
-                      <FaTasks />
-                      <Text>My Claim Checks</Text>
-                    </HStack>
-                  </Button>
-                </VStack>
-              )}
+                  <VStack align="stretch" pl="4" mt="2">
+                    <Button
+                      variant="ghost"
+                      justifyContent="flex-start"
+                      size="sm"
+                      _hover={{ color: hoverColor }}
+                      color={textColor}
+                      width="100%"
+                      onClick={() => navigate("/profile/start-new-claim-check")}
+                    >
+                      <HStack>
+                        <FaPlus />
+                        <Text>Start New Claim Check</Text>
+                      </HStack>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      justifyContent="flex-start"
+                      size="sm"
+                      _hover={{ color: hoverColor }}
+                      color={textColor}
+                      width="100%"
+                      onClick={() => navigate("/profile/my-claim-checks")}
+                    >
+                      <HStack>
+                        <FaTasks />
+                        <Text>My Claim Checks</Text>
+                      </HStack>
+                    </Button>
+                  </VStack>
+                </motion.div>
+                )}
+              </AnimatePresence>
             </Box>
+
+            {/* Settings Dropdown */}
             <Box>
               <Button
                 variant="ghost"
@@ -582,24 +610,34 @@ const Profile = () => {
                   <ChevronDownIcon />
                 </HStack>
               </Button>
-              {openDropdown === "settings" && (
-                <VStack align="stretch" pl="4" mt="2">
-                  <Button
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    size="sm"
-                    _hover={{ color: hoverColor }}
-                    color={textColor}
-                    width="100%"
-                    onClick={() => navigate("/profile/account-details")}
+              <AnimatePresence initial={false}>
+                {openDropdown === "settings" && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ overflow: "hidden" }}
                   >
-                    <HStack>
-                      <FaUser />
-                      <Text>Account Details</Text>
-                    </HStack>
-                  </Button>
-                </VStack>
-              )}
+                    <VStack align="stretch" pl="4" mt="2">
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/profile/account-details")}
+                      >
+                        <HStack>
+                          <FaUser />
+                          <Text>Account Details</Text>
+                        </HStack>
+                      </Button>
+                    </VStack>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </Box>
           </VStack>
         </VStack>
@@ -618,7 +656,7 @@ const Profile = () => {
           </Button>
         </HStack>
       </Box>
-
+      
       {/* Main Content */}
       <Box 
         flex="1"
@@ -630,227 +668,300 @@ const Profile = () => {
             path="/"
             element={
               <Flex direction="column">
-                <Flex justify="space-between" align="center">
-                  <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
-                  <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-                    <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
-                    <IconButton
-                      aria-label="Toggle theme"
-                      icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                      onClick={toggleColorMode}
-                    />
-                  </HStack>
-                  <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-                    <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate()}</Text>
-                  </HStack>
-                </Flex>
-                <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -50 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Flex justify="space-between" align="center">
+                    <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+                    <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
+                      <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
+                      <IconButton
+                        aria-label="Toggle theme"
+                        icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                        onClick={toggleColorMode}
+                      />
+                    </HStack>
+                    <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
+                      <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate()}</Text>
+                    </HStack>
+                  </Flex>
+                  <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+                </motion.div>
 
                 {/* Features */}
-                <Heading size="lg" mb="4">Recent Pages</Heading>
-                <Flex wrap="wrap" gap="6">
-                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
-                    <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
-                    <Heading size="md" mt="4">Fake News Detection</Heading>
-                    <Text mt="2">
-                      {useBreakpointValue({
-                        base: "Detect fake news using our DL model.",
-                        md: "Detect fake news using our DL model.",
-                        lg: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
-                      })}
-                    </Text>
-                  </Box>
-                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
-                    <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
-                    <Heading size="md" mt="4">Claim Check</Heading>
-                    <Text mt="2">
-                      {useBreakpointValue({
-                        base: "Validate claims with Google FactCheck API.",
-                        md: "Validate claims with Google FactCheck API.",
-                        lg: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
-                      })}
-                    </Text>
-                  </Box>
-                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
-                    <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
-                    <Heading size="md" mt="4">Team Management</Heading>
-                    <Text mt="2">
-                      {useBreakpointValue({
-                        base: "Collaborate in detecting misinformation.",
-                        md: "Invite other people and collaborate in detecting misinformation.",
-                        lg: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
-                      })}
-                    </Text>
-                  </Box>
-                </Flex>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                  <Heading size="lg" mb="4">Recent Pages</Heading>
+                  <Flex wrap="wrap" gap="6">
+                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
+                      <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
+                      <Heading size="md" mt="4">Fake News Detection</Heading>
+                      <Text mt="2">
+                        {useBreakpointValue({
+                          base: "Detect fake news using our DL model.",
+                          md: "Detect fake news using our DL model.",
+                          lg: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
+                        })}
+                      </Text>
+                    </Box>
+                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
+                      <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
+                      <Heading size="md" mt="4">Claim Check</Heading>
+                      <Text mt="2">
+                        {useBreakpointValue({
+                          base: "Validate claims with Google FactCheck API.",
+                          md: "Validate claims with Google FactCheck API.",
+                          lg: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
+                        })}
+                      </Text>
+                    </Box>
+                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
+                      <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
+                      <Heading size="md" mt="4">Team Management</Heading>
+                      <Text mt="2">
+                        {useBreakpointValue({
+                          base: "Collaborate in detecting misinformation.",
+                          md: "Invite other people and collaborate in detecting misinformation.",
+                          lg: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
+                        })}
+                      </Text>
+                    </Box>
+                  </Flex>
+                </motion.div>
 
                 {/* Graphs Section */}
-                <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
-                <Flex wrap="wrap" gap="6">
-                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
-                    <Heading size="sm">Detections Over Time</Heading>
-                    <Text>Graph Placeholder</Text>
-                  </Box>
-                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
-                    <Heading size="sm">Claim Checks</Heading>
-                    <Text>Graph Placeholder</Text>
-                  </Box>
-                  <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
-                    <Heading size="sm">Usage Statistics</Heading>
-                    <Text>Graph Placeholder</Text>
-                  </Box>
-                </Flex>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
+                  <Flex wrap="wrap" gap="6">
+                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
+                      <Heading size="sm">Detections Over Time</Heading>
+                      <Text>Graph Placeholder</Text>
+                    </Box>
+                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
+                      <Heading size="sm">Claim Checks</Heading>
+                      <Text>Graph Placeholder</Text>
+                    </Box>
+                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
+                      <Heading size="sm">Usage Statistics</Heading>
+                      <Text>Graph Placeholder</Text>
+                    </Box>
+                  </Flex>
+                </motion.div>
 
                 {/* Recent Content Section */}
-                <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
-                  <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                    {detections.length > 0 ? (
-                      <>
-                        <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                          <Thead>
-                            <Tr>
-                              <Th width="5%" textAlign="center"><b>ID</b></Th>
-                              <Th width="30%" textAlign="left"><b>Title</b></Th>
-                              <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
-                              <Th width="12.5%" textAlign="center"><b>True</b></Th>
-                              <Th width="15%" textAlign="center"><b>Date</b></Th>
-                              <Th width="15%" textAlign="center"><b>Results</b></Th>
-                              <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {sortedDetections.slice(0, 5).map((detection) => (
-                              <Tr key={detection.id}>
-                                <Td textAlign="center">#{detection.id}</Td>
-                                <Td textAlign="left">{detection.title}</Td>
-                                <Td textAlign="center">
-                                  <Text fontSize="xl" color={getDetectionTextColor(detection.falsePercentage || 70, "False", colors)}>
-                                    {detection.falsePercentage || "70%"}
-                                  </Text>
-                                </Td>
-                                <Td textAlign="center">
-                                  <Text fontSize="xl" color={getDetectionTextColor(detection.truePercentage || 30, "True", colors)}>
-                                    {detection.truePercentage || "30%"}
-                                  </Text>
-                                </Td>
-                                <Td textAlign="center">{formatDate(detection.date)}</Td>
-                                <Td textAlign="center">
-                                  <Button
-                                    size="sm"
-                                    onClick={() =>
-                                      navigate("/profile/detection-results", {
-                                        state: { detection },
-                                      })
-                                    }
-                                  >
-                                    Results
-                                  </Button>
-                                </Td>
-                                <Td textAlign="center">
-                                  <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
-                                    <FaTrashAlt />
-                                  </Button>
-                                </Td>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                >
+                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
+                    <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
+                      {detections.length > 0 ? (
+                        <>
+                          <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                            <Thead>
+                              <Tr>
+                                <Th width="5%" textAlign="center"><b>ID</b></Th>
+                                <Th width="30%" textAlign="left"><b>Title</b></Th>
+                                <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
+                                <Th width="12.5%" textAlign="center"><b>True</b></Th>
+                                <Th width="15%" textAlign="center"><b>Date</b></Th>
+                                <Th width="15%" textAlign="center"><b>Results</b></Th>
+                                <Th width="10%" textAlign="center"><b>Remove</b></Th>
                               </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      </>
-                    ) : (
-                      <Flex align="center" justify="center" direction="column" h="15vh">
-                        <WarningIcon boxSize="6" color="gray.500" mb="2" />
-                        <Text fontSize="lg" color="gray.500" textAlign="center">
-                          No detections found.
-                        </Text>
-                        <Text fontSize="md" color="gray.400" textAlign="center">
-                          Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
-                        </Text>
-                      </Flex>
-                    )}
-                  </Box>
+                            </Thead>
+                            <Tbody as={motion.tbody}>
+                              <AnimatePresence>
+                                {sortedDetections.slice(0, 5).map((detection) => (
+                                  <motion.tr
+                                    key={detection.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -50 }}
+                                    transition={{ duration: 0.5 }}
+                                  >
+                                    <Td textAlign="center">#{detection.id}</Td>
+                                    <Td textAlign="left">{detection.title}</Td>
+                                    <Td textAlign="center">
+                                      <Text fontSize="xl" color={getDetectionTextColor(detection.falsePercentage || 70, "False", colors)}>
+                                        {detection.falsePercentage || "70%"}
+                                      </Text>
+                                    </Td>
+                                    <Td textAlign="center">
+                                      <Text fontSize="xl" color={getDetectionTextColor(detection.truePercentage || 30, "True", colors)}>
+                                        {detection.truePercentage || "30%"}
+                                      </Text>
+                                    </Td>
+                                    <Td textAlign="center">{formatDate(detection.date)}</Td>
+                                    <Td textAlign="center">
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button
+                                          size="sm"
+                                          onClick={() =>
+                                            navigate("/profile/detection-results", {
+                                              state: { detection },
+                                            })
+                                          }
+                                        >
+                                          Results
+                                        </Button>
+                                      </motion.div>
+                                    </Td>
+                                    <Td textAlign="center">
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
+                                          <FaTrashAlt />
+                                        </Button>
+                                      </motion.div>
+                                    </Td>
+                                  </motion.tr>
+                                ))}
+                              </AnimatePresence>
+                            </Tbody>
+                          </Table>
+                        </>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 15 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <Flex align="center" justify="center" direction="column" h="15vh">
+                            <WarningIcon boxSize="6" color="gray.500" mb="2" />
+                            <Text fontSize="lg" color="gray.500" textAlign="center">
+                              No detections found.
+                            </Text>
+                            <Text fontSize="md" color="gray.400" textAlign="center">
+                              Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
+                            </Text>
+                          </Flex>
+                        </motion.div>
+                      )}
+                    </Box>
+                </motion.div>
 
-                <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
-                <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                    {claimChecks.length > 0 ? (
-                      <>
-                        <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                          <Thead>
-                            <Tr>
-                              <Th width="5%" textAlign="center"><b>ID</b></Th>
-                              <Th width="30%" textAlign="left"><b>Title</b></Th>
-                              <Th width="12.5%" textAlign="center"><b>Rating</b></Th>
-                              <Th width="12.5%" textAlign="center"><b>Link</b></Th>
-                              <Th width="15%" textAlign="center"><b>Date</b></Th>
-                              <Th width="15%" textAlign="center"><b>Results</b></Th>
-                              <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody>
-                            {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
-                              <Tr key={claimCheck.id}>
-                                <Td textAlign="center">#{claimCheck.id}</Td>
-                                <Td textAlign="left">{claimCheck.title}</Td>
-                                <Td textAlign="center">
-                                  <Text fontSize="lg" color={getClaimCheckTextColor(claimCheck.rating || "Misleading", colors)}>
-                                    {claimCheck.rating || "70%"}
-                                  </Text>
-                                </Td>
-                                <Td textAlign="center">
-                                  <Button size="sm" color={primaryColor} onClick={() => window.open(claimCheck.link, "_blank")}>
-                                    <ExternalLinkIcon />
-                                  </Button>
-                                </Td>
-                                <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
-                                <Td textAlign="center">
-                                  <Button
-                                    size="sm"
-                                    onClick={() =>
-                                      navigate("/profile/claim-check-results", {
-                                        state: { claimCheck },
-                                      })
-                                    }
-                                  >
-                                    Results
-                                  </Button>
-                                </Td>
-                                <Td textAlign="center">
-                                  <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
-                                    <FaTrashAlt />
-                                  </Button>
-                                </Td>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8, duration: 0.5 }}
+                >
+                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
+                  <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
+                      {claimChecks.length > 0 ? (
+                        <>
+                          <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                            <Thead>
+                              <Tr>
+                                <Th width="5%" textAlign="center"><b>ID</b></Th>
+                                <Th width="30%" textAlign="left"><b>Title</b></Th>
+                                <Th width="12.5%" textAlign="center"><b>Rating</b></Th>
+                                <Th width="12.5%" textAlign="center"><b>Link</b></Th>
+                                <Th width="15%" textAlign="center"><b>Date</b></Th>
+                                <Th width="15%" textAlign="center"><b>Results</b></Th>
+                                <Th width="10%" textAlign="center"><b>Remove</b></Th>
                               </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      </>
-                    ) : (
-                      <Flex align="center" justify="center" direction="column" h="15vh">
-                        <WarningIcon boxSize="6" color="gray.500" mb="2" />
-                        <Text fontSize="lg" color="gray.500" textAlign="center">
-                          No claims checks found.
-                        </Text>
-                        <Text fontSize="md" color="gray.400" textAlign="center">
-                          Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
-                        </Text>
-                      </Flex>
-                    )}
-                    {/* Powered by Google Fact Check Tools API*/}
-                    <HStack justify="flex-end">
-                        <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
-                          Powered by
-                        </Text>
-                        <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
-                          <Box
-                            as="img"
-                            src={logoGoogleFactCheckLogo}
-                            alt="Google Fact Check Tools API Logo"
-                            height={logoGoogleFactCheckLogoHeight}
-                            _hover={{ opacity: 0.8 }}
-                            _active={{ transform: "scale(0.95)" }}
-                          />
-                        </a>
-                    </HStack>
-                  </Box>
+                            </Thead>
+                            <Tbody as={motion.tbody}>
+                              <AnimatePresence>
+                                {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
+                                  <motion.tr
+                                    key={claimCheck.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -50 }}
+                                    transition={{ duration: 0.5 }}
+                                  >
+                                    <Td textAlign="center">#{claimCheck.id}</Td>
+                                    <Td textAlign="left">{claimCheck.title}</Td>
+                                    <Td textAlign="center">
+                                      <Text fontSize="lg" color={getClaimCheckTextColor(claimCheck.rating || "Misleading", colors)}>
+                                        {claimCheck.rating || "70%"}
+                                      </Text>
+                                    </Td>
+                                    <Td textAlign="center">
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button size="sm" color={primaryColor} onClick={() => window.open(claimCheck.link, "_blank")}>
+                                          <ExternalLinkIcon />
+                                        </Button>
+                                      </motion.div>
+                                    </Td>
+                                    <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
+                                    <Td textAlign="center">
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button
+                                          size="sm"
+                                          onClick={() =>
+                                            navigate("/profile/claim-check-results", {
+                                              state: { claimCheck },
+                                            })
+                                          }
+                                        >
+                                          Results
+                                        </Button>
+                                      </motion.div>
+                                    </Td>
+                                    <Td textAlign="center">
+                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                        <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
+                                          <FaTrashAlt />
+                                        </Button>
+                                      </motion.div>
+                                    </Td>
+                                  </motion.tr>
+                                ))}
+                              </AnimatePresence>
+                            </Tbody>
+                          </Table>
+                        </>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 15 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <Flex align="center" justify="center" direction="column" h="15vh">
+                            <WarningIcon boxSize="6" color="gray.500" mb="2" />
+                            <Text fontSize="lg" color="gray.500" textAlign="center">
+                              No claims checks found.
+                            </Text>
+                            <Text fontSize="md" color="gray.400" textAlign="center">
+                              Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
+                            </Text>
+                          </Flex>
+                        </motion.div>
+                      )}
+                      {/* Powered by Google Fact Check Tools API*/}
+                      <HStack justify="flex-end">
+                          <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
+                            Powered by
+                          </Text>
+                          <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
+                            <Box
+                              as="img"
+                              src={logoGoogleFactCheckLogo}
+                              alt="Google Fact Check Tools API Logo"
+                              height={logoGoogleFactCheckLogoHeight}
+                              _hover={{ opacity: 0.8 }}
+                              _active={{ transform: "scale(0.95)" }}
+                            />
+                          </a>
+                      </HStack>
+                    </Box>
+                </motion.div>
               </Flex>
             }
           />

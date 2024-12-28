@@ -23,10 +23,11 @@ import {
 } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const primaryColor = "#4dcfaf";
 const primaryHoverLight = "#3ca790";
-const primaryHoverDark = "#4dcfaf";
+const primaryHoverDark = "#77e4c4";
 const primaryActiveLight = "#2a8073";
 const primaryActiveDark = "#91edd0";
 
@@ -107,134 +108,139 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
   };  
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}  sx={{
-      "@media screen and (min-height: 930px)": {
-        minHeight: "100vh",
-      },
-    }}>
-      <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
-        <Flex justify="space-between" align="center" mb="4">
-          <Heading fontSize={{ base: '3xl', md: '4xl' }}>Verify Claims</Heading>          
-          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-            <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
-            <IconButton
-              aria-label="Toggle theme"
-              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-              onClick={toggleColorMode}
-            />
-          </HStack>
-          <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-            <Box
-                as="img"
-                src={logo}
-                alt="Verify Logo"
-                maxHeight={logoHeight}
-                maxWidth="120px"
-                objectFit="contain"
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box px={{ md: 4 }} py={{ md: 6 }}>
+        <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
+          <Flex justify="space-between" align="center" mb="4">
+            <Heading fontSize={{ base: '3xl', md: '4xl' }}>Verify Claims</Heading>          
+            <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
+              <img src={logo} alt="Verify Logo" style={{ height: logoHeight, width: "auto" }} />
+              <IconButton
+                aria-label="Toggle theme"
+                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
               />
-          </HStack>
-        </Flex>
-        <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
-        <Text mb="4">Enter a claim to verify its authenticity against reliable sources:</Text>
-        <Input
-          placeholder="Enter a claim..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          mb="6"
-        />
-        <Flex justify="center" mb="4">
-          <Button
-            bg={primaryColor}
-            color="white"
-            _hover={{ bg: hoverColor }}
-            _active={{ bg: activeColor }}
-            size="md"
-            width="fit-content"
-            px="8"
-            onClick={handleVerify}
-          >
-            Verify
-          </Button>
-        </Flex>
-
-        {/* Powered by Google Fact Check Tools API */}
-        <HStack justify="flex-end">
-            <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
-              Powered by
-            </Text>
-            <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
+            </HStack>
+            <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
               <Box
-                as="img"
-                src={logoGoogleFactCheckLogo}
-                alt="Google Fact Check Tools API Logo"
-                height={logoGoogleFactCheckLogoHeight}
-                _hover={{ opacity: 0.8 }}
-                _active={{ transform: "scale(0.95)" }}
-              />
-            </a>
-        </HStack>
-
-        {/* Spinner Modal */}
-        <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalBody textAlign="center" py="6">
-              <Spinner size="xl" />
-              <Text mt="4">Verifying Claim... Please wait.</Text>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-
-        {/* Alert Modal */}
-        <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Missing Information</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Please input the claim in the provided field to proceed with verification. 
-              This detail is essential to evaluate the reliability and credibility of the claim.
-            </ModalBody>
-            <ModalFooter>
+                  as="img"
+                  src={logo}
+                  alt="Verify Logo"
+                  maxHeight={logoHeight}
+                  maxWidth="120px"
+                  objectFit="contain"
+                />
+            </HStack>
+          </Flex>
+          <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+          <Text mb="4">Enter a claim to verify its authenticity against reliable sources:</Text>
+          <Input
+            placeholder="Enter a claim..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            mb="6"
+          />
+          <Flex justify="center" mb="4">
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 bg={primaryColor}
                 color="white"
                 _hover={{ bg: hoverColor }}
                 _active={{ bg: activeColor }}
                 size="md"
-                onClick={onAlertClose}
+                width="fit-content"
+                px="8"
+                onClick={handleVerify}
               >
-                Close
+                Verify
               </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </motion.div>
+          </Flex>
 
-        {/* Error Modal */}
-        <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Error</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text>{errorMessage}</Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                bg={primaryColor}
-                color="white"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size="md"
-                onClick={onErrorClose}
-              >
-                Close
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        </Flex>
-    </Box>
+          {/* Powered by Google Fact Check Tools API */}
+          <HStack justify="flex-end">
+              <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
+                Powered by
+              </Text>
+              <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
+                <Box
+                  as="img"
+                  src={logoGoogleFactCheckLogo}
+                  alt="Google Fact Check Tools API Logo"
+                  height={logoGoogleFactCheckLogoHeight}
+                  _hover={{ opacity: 0.8 }}
+                  _active={{ transform: "scale(0.95)" }}
+                />
+              </a>
+          </HStack>
+
+          {/* Spinner Modal */}
+          <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalBody textAlign="center" py="6">
+                <Spinner size="xl" />
+                <Text mt="4">Verifying Claim... Please wait.</Text>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+
+          {/* Alert Modal */}
+          <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Missing Information</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                Please input the claim in the provided field to proceed with verification. 
+                This detail is essential to evaluate the reliability and credibility of the claim.
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  bg={primaryColor}
+                  color="white"
+                  _hover={{ bg: hoverColor }}
+                  _active={{ bg: activeColor }}
+                  size="md"
+                  onClick={onAlertClose}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          {/* Error Modal */}
+          <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Error</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text>{errorMessage}</Text>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  bg={primaryColor}
+                  color="white"
+                  _hover={{ bg: hoverColor }}
+                  _active={{ bg: activeColor }}
+                  size="md"
+                  onClick={onErrorClose}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          </Flex>
+      </Box>
+    </motion.div>
   );
 };
 

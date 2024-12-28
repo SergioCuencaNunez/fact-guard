@@ -24,10 +24,11 @@ import {
 } from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const primaryColor = "#4dcfaf";
 const primaryHoverLight = "#3ca790";
-const primaryHoverDark = "#4dcfaf";
+const primaryHoverDark = "#77e4c4";
 const primaryActiveLight = "#2a8073";
 const primaryActiveDark = "#91edd0";
 
@@ -105,123 +106,128 @@ const StartNewDetection = ({ addDetection }) => {
   };  
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}  sx={{
-      "@media screen and (min-height: 930px)": {
-        minHeight: "100vh",
-      },
-    }}>
-      <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
-        <Flex justify="space-between" align="center" mb="4">
-          <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detect Fake News</Heading>          
-          <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
-            <IconButton
-              aria-label="Toggle theme"
-              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-              onClick={toggleColorMode}
-            />
-          </HStack>
-          <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-            <Box
-                as="img"
-                src={logo}
-                alt="Detect Logo"
-                maxHeight={logoHeight}
-                maxWidth="120px"
-                objectFit="contain"
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box px={{ md: 4 }} py={{ md: 6 }}>
+        <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
+          <Flex justify="space-between" align="center" mb="4">
+            <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detect Fake News</Heading>          
+            <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
+              <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+              <IconButton
+                aria-label="Toggle theme"
+                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
               />
-          </HStack>
-        </Flex>
-        <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
-        <Text mb="4">Enter the title and paste/upload a news article to analyze its authenticity:</Text>
-        <Input
-          placeholder="Enter article title..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          mb="4"
-        />
-        <Textarea
-          placeholder="Paste your article content here..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          mb="6"
-        />
-        <Flex justify="center">
-          <Button
-            bg={primaryColor}
-            color="white"
-            _hover={{ bg: hoverColor }}
-            _active={{ bg: activeColor }}
-            size="md"
-            width="fit-content"
-            px="8"
-            onClick={handleAnalyze}
-          >
-            Analyze
-          </Button>
-        </Flex>
-    
-        {/* Spinner Modal */}
-        <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalBody textAlign="center" py="6">
-              <Spinner size="xl" />
-              <Text mt="4">Analyzing News... Please wait.</Text>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-
-        {/* Alert Modal */}
-        <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Missing Information</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Please fill in both the title and content fields to proceed with detecting fake news. 
-              These details are essential to analyze the authenticity of the article.
-            </ModalBody>
-            <ModalFooter>
+            </HStack>
+            <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
+              <Box
+                  as="img"
+                  src={logo}
+                  alt="Detect Logo"
+                  maxHeight={logoHeight}
+                  maxWidth="120px"
+                  objectFit="contain"
+                />
+            </HStack>
+          </Flex>
+          <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+          <Text mb="4">Enter the title and paste/upload a news article to analyze its authenticity:</Text>
+          <Input
+            placeholder="Enter article title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            mb="4"
+          />
+          <Textarea
+            placeholder="Paste your article content here..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            mb="6"
+          />
+          <Flex justify="center">
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 bg={primaryColor}
                 color="white"
                 _hover={{ bg: hoverColor }}
                 _active={{ bg: activeColor }}
                 size="md"
-                onClick={onAlertClose}
+                width="fit-content"
+                px="8"
+                onClick={handleAnalyze}
               >
-                Close
+                Analyze
               </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </motion.div>
+          </Flex>
+      
+          {/* Spinner Modal */}
+          <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
+            <ModalOverlay />
+            <ModalContent >
+              <ModalBody textAlign="center" py="6">
+                <Spinner size="xl" />
+                <Text mt="4">Analyzing News... Please wait.</Text>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
 
-        {/* Error Modal */}
-        <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Error</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text>{errorMessage}</Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                bg={primaryColor}
-                color="white"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size="md"
-                onClick={onErrorClose}
-              >
-                Close
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        </Flex>
-    </Box>
+          {/* Alert Modal */}
+          <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Missing Information</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                Please fill in both the title and content fields to proceed with detecting fake news. 
+                These details are essential to analyze the authenticity of the article.
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  bg={primaryColor}
+                  color="white"
+                  _hover={{ bg: hoverColor }}
+                  _active={{ bg: activeColor }}
+                  size="md"
+                  onClick={onAlertClose}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          {/* Error Modal */}
+          <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Error</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text>{errorMessage}</Text>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  bg={primaryColor}
+                  color="white"
+                  _hover={{ bg: hoverColor }}
+                  _active={{ bg: activeColor }}
+                  size="md"
+                  onClick={onErrorClose}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+          </Flex>
+      </Box>
+    </motion.div>
   );
 };
 

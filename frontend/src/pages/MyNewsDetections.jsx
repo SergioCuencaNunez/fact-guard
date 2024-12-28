@@ -29,6 +29,7 @@ import {
 import { FaTrashAlt } from "react-icons/fa";
 import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const primaryColor = "#4dcfaf";
 
@@ -122,161 +123,184 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   };
 
   return (
-    <Box px={{ md: 4 }} py={{ md: 6 }}  sx={{
-      "@media screen and (min-height: 930px)": {
-        minHeight: "100vh",
-      },
-    }}>
-      <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
-        <Flex justify="space-between" align="center" mb="4">
-          <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
-          <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
-            <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
-            <IconButton
-              aria-label="Toggle theme"
-              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-              onClick={toggleColorMode}
-            />
-          </HStack>
-          <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-            <Box
-                as="img"
-                src={logo}
-                alt="Detect Logo"
-                maxHeight={logoHeight}
-                maxWidth="120px"
-                objectFit="contain"
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box px={{ md: 4 }} py={{ md: 6 }}>
+        <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
+          <Flex justify="space-between" align="center" mb="4">
+            <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
+            <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
+              <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+              <IconButton
+                aria-label="Toggle theme"
+                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
               />
-          </HStack>
-        </Flex>
-        <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
-        {detections.length > 0 ? (
-          <>
-            <Box overflowX="auto">
-              <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                <Thead>
-                  <Tr>
-                    <Th width="5%" textAlign="center"><b>ID</b></Th>
-                    <Th width="30%" textAlign="left"><b>Title</b></Th>
-                    <Th width="10%" textAlign="center"><b>Fake</b></Th>
-                    <Th width="10%" textAlign="center"><b>True</b></Th>
-                    <Th width="15%" textAlign="center">
-                      <Flex align="center" justify="center">
-                        <b>Date</b>
-                        <IconButton
-                          aria-label="Toggle Sort Order"
-                          icon={sortOrder === "desc" ? <ChevronDownIcon /> : <ChevronUpIcon />}
-                          size="xs"
-                          variant="ghost"
-                          onClick={toggleSortOrder}
-                          ml="1"
-                        />
-                      </Flex>
-                    </Th>
-                    <Th width="15%" textAlign="center"><b>Results</b></Th>
-                    <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                    <Th width="5%" textAlign="center"><b>Select</b></Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {sortedDetections.map((detection) => (
-                    <Tr key={detection.id}>
-                      <Td textAlign="center">#{detection.id}</Td>
-                      <Td textAlign="left">{detection.title}</Td>
-                      <Td textAlign="center">
-                        <Text fontSize="xl" color={getTextColor(detection.falsePercentage || 70, "False")}>
-                          {detection.falsePercentage || "70%"}
-                        </Text>
-                      </Td>
-                      <Td textAlign="center">
-                        <Text fontSize="xl" color={getTextColor(detection.truePercentage || 30, "True")}>
-                          {detection.truePercentage || "30%"}
-                        </Text>
-                      </Td>
-                      <Td textAlign="center">{formatDate(detection.date)}</Td>
-                      <Td textAlign="center">
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            navigate("/profile/detection-results", {
-                              state: { detection },
-                            })
-                          }
-                        >
-                          Results
-                        </Button>
-                      </Td>
-                      <Td textAlign="center">
-                        <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
-                          <FaTrashAlt />
-                        </Button>
-                      </Td>
-                      <Td textAlign="center">
-                        <Checkbox
-                          isChecked={selectedDetections.some((item) => item.id === detection.id)}
-                          onChange={(e) => handleSelectDetection(detection, e.target.checked)}
-                        />
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </Box>
-            <Flex justify="space-between" align="center" mb="4">
-              <Checkbox
-                isChecked={selectedDetections.length === detections.length}
-                onChange={(e) => handleSelectAll(e.target.checked)}
-              >
-                Select All
-              </Checkbox>
-              <Button
-                colorScheme="red"
-                onClick={() => {
-                  setDetectionToDelete(null);
-                  onOpen();
-                }}
-                isDisabled={selectedDetections.length === 0}
-                visibility={selectedDetections.length > 0 ? "visible" : "hidden"}
-              >
-                Delete Selected
-              </Button>
-            </Flex>
-          </>
-        ) : (
-          <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }}>
-            <WarningIcon boxSize="6" color="gray.500" mb="2" />
-            <Text fontSize="lg" color="gray.500" textAlign="center">
-              No detections found.
-            </Text>
-            <Text fontSize="md" color="gray.400" textAlign="center">
-              Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
-            </Text>
+            </HStack>
+            <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
+              <Box
+                  as="img"
+                  src={logo}
+                  alt="Detect Logo"
+                  maxHeight={logoHeight}
+                  maxWidth="120px"
+                  objectFit="contain"
+                />
+            </HStack>
           </Flex>
-        )}
+          <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+          {detections.length > 0 ? (
+            <>
+              <Box overflowX="auto">
+                <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                  <Thead>
+                    <Tr>
+                      <Th width="5%" textAlign="center"><b>ID</b></Th>
+                      <Th width="30%" textAlign="left"><b>Title</b></Th>
+                      <Th width="10%" textAlign="center"><b>Fake</b></Th>
+                      <Th width="10%" textAlign="center"><b>True</b></Th>
+                      <Th width="15%" textAlign="center">
+                        <Flex align="center" justify="center">
+                          <b>Date</b>
+                          <IconButton
+                            aria-label="Toggle Sort Order"
+                            icon={sortOrder === "desc" ? <ChevronDownIcon /> : <ChevronUpIcon />}
+                            size="xs"
+                            variant="ghost"
+                            onClick={toggleSortOrder}
+                            ml="1"
+                          />
+                        </Flex>
+                      </Th>
+                      <Th width="15%" textAlign="center"><b>Results</b></Th>
+                      <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                      <Th width="5%" textAlign="center"><b>Select</b></Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody as={motion.tbody}>
+                    <AnimatePresence>
+                      {sortedDetections.map((detection) => (
+                        <motion.tr
+                          key={detection.id}
+                          layout
+                          initial={{ opacity: 0, y: 50 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -50 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <Td textAlign="center">#{detection.id}</Td>
+                          <Td textAlign="left">{detection.title}</Td>
+                          <Td textAlign="center">
+                            <Text fontSize="xl" color={getTextColor(detection.falsePercentage || 70, "False")}>
+                              {detection.falsePercentage || "70%"}
+                            </Text>
+                          </Td>
+                          <Td textAlign="center">
+                            <Text fontSize="xl" color={getTextColor(detection.truePercentage || 30, "True")}>
+                              {detection.truePercentage || "30%"}
+                            </Text>
+                          </Td>
+                          <Td textAlign="center">{formatDate(detection.date)}</Td>
+                          <Td textAlign="center">
+                            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  navigate("/profile/detection-results", {
+                                    state: { detection },
+                                  })
+                                }
+                              >
+                                Results
+                              </Button>
+                            </motion.div>
+                          </Td>
+                          <Td textAlign="center">
+                            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                              <Button size="sm" color={primaryColor} onClick={() => handleDelete(detection)}>
+                                <FaTrashAlt />
+                              </Button>
+                            </motion.div>
+                          </Td>
+                          <Td textAlign="center">
+                            <Checkbox
+                              isChecked={selectedDetections.some((item) => item.id === detection.id)}
+                              onChange={(e) => handleSelectDetection(detection, e.target.checked)}
+                            />
+                          </Td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </Tbody>
+                </Table>
+              </Box>
+              <Flex justify="space-between" align="center" mb="4">
+                <Checkbox
+                  isChecked={selectedDetections.length === detections.length}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                >
+                  Select All
+                </Checkbox>
+                <Button
+                  colorScheme="red"
+                  onClick={() => {
+                    setDetectionToDelete(null);
+                    onOpen();
+                  }}
+                  isDisabled={selectedDetections.length === 0}
+                  visibility={selectedDetections.length > 0 ? "visible" : "hidden"}
+                >
+                  Delete Selected
+                </Button>
+              </Flex>
+            </>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 15 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }}>
+                <WarningIcon boxSize="6" color="gray.500" mb="2" />
+                <Text fontSize="lg" color="gray.500" textAlign="center">
+                  No detections found.
+                </Text>
+                <Text fontSize="md" color="gray.400" textAlign="center">
+                  Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
+                </Text>
+              </Flex>
+            </motion.div>
+          )}
 
-        {/* Confirmation Modal */}
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Confirm Deletion</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {detectionToDelete
-                ? "Are you sure you want to delete this detection?"
-                : "Are you sure you want to delete the selected detections?"}
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="red" mr={3} onClick={confirmDelete}>
-                Delete
-              </Button>
-              <Button variant="ghost" onClick={onClose}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </Flex>
-    </Box>
+          {/* Confirmation Modal */}
+          <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Confirm Deletion</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {detectionToDelete
+                  ? "Are you sure you want to delete this detection?"
+                  : "Are you sure you want to delete the selected detections?"}
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="red" mr={3} onClick={confirmDelete}>
+                  Delete
+                </Button>
+                <Button variant="ghost" onClick={onClose}>
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Flex>
+      </Box>
+    </motion.div>
   );
 };
 
