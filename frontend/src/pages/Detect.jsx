@@ -1,5 +1,7 @@
 import React from 'react';
 import { Box, Flex, Heading, useColorModeValue, Text } from '@chakra-ui/react';
+import { motion } from "framer-motion";
+
 import logoDetectBright from '../assets/logo-detect-bright.png';
 import logoDetectDark from '../assets/logo-detect-dark.png';
 
@@ -14,17 +16,24 @@ const Detect = () => {
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
   return (
-    <Box p="6" mx="auto">
-      <Flex justify="space-between" align="center" mb="4">
-        <Heading>Detect Fake News</Heading>
-        <Flex direction="column" align="center">
-          <img src={logo} alt="Detect Logo" style={{ height: '50px', width: 'auto' }} />
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box p="6" mx="auto">
+        <Flex justify="space-between" align="center" mb="4">
+          <Heading>Detect Fake News</Heading>
+          <Flex direction="column" align="center">
+            <img src={logo} alt="Detect Logo" style={{ height: '50px', width: 'auto' }} />
+          </Flex>
         </Flex>
-      </Flex>
-      <Text>
-        FactGuard Detect: The fake news detection system, implemented using Deep Learning models such as BERT or RoBERTa and other types of architectures such as LSTMs.
-      </Text>
-    </Box>
+        <Text>
+          FactGuard Detect: The fake news detection system, implemented using Deep Learning models such as BERT or RoBERTa and other types of architectures such as LSTMs.
+        </Text>
+      </Box>
+    </motion.div>
   );
 };
 

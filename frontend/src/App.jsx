@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import {
   ChakraProvider,
   Box,
@@ -245,6 +245,7 @@ const DarkModeSwitch = () => {
 };
 
 const AuthLayout = ({ children, title, subtitle }) => {
+  const location = useLocation();
   const boxBg = useColorModeValue('white', 'gray.700');
   const boxColor = useColorModeValue('black', 'white');
   const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
@@ -263,48 +264,77 @@ const AuthLayout = ({ children, title, subtitle }) => {
         maxW="50%"
         color="white"
       >
-        <Box>
-          <Heading mb="4" textAlign="center">
-            {title}
-          </Heading>
-          <Text fontSize="lg" mb="6" textAlign="center">
-            {subtitle}
-          </Text>
-        </Box>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Box>
+              <Heading mb="4" textAlign="center">
+                {title}
+              </Heading>
+              <Text fontSize="lg" mb="6" textAlign="center">
+                {subtitle}
+              </Text>
+            </Box>
 
-        {/* Cards Section */}
-        <VStack spacing="6" align="start">
-          <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
-            <Heading size="md" mb="2">Real-Time Fact Checking</Heading>
-            <Text mb="4">
-              Use our advanced tools to verify claims instantly and combat misinformation effectively.
-            </Text>
+            {/* Cards Section */}
+            <VStack spacing="6" align="center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                style={{ width: '100%' }}
+              >
+                <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
+                  <Heading size="md" mb="2">Real-Time Fact Checking</Heading>
+                  <Text mb="4">
+                    Use our advanced tools to verify claims instantly and combat misinformation effectively.
+                  </Text>
+                </Box>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                style={{ width: '100%' }}
+              >
+              <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
+                  <Heading size="md" mb="2">AI-Powered Insights</Heading>
+                  <Text mb="4">
+                    Harness the power of AI to analyze trends, detect fake news, and gain actionable insights.
+                  </Text>
+                </Box>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                style={{ width: '100%' }}
+              >
+                <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
+                  <Heading size="md" mb="2">Built for Trust</Heading>
+                  <Text mb="4">
+                    A reliable platform designed to ensure authenticity and credibility in the information you consume.
+                  </Text>
+                </Box>
+              </motion.div>
+            </VStack>
+          </motion.div>
           </Box>
-          <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
-            <Heading size="md" mb="2">AI-Powered Insights</Heading>
-            <Text mb="4">
-              Harness the power of AI to analyze trends, detect fake news, and gain actionable insights.
-            </Text>
-          </Box>
-          <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
-            <Heading size="md" mb="2">Built for Trust</Heading>
-            <Text mb="4">
-              A reliable platform designed to ensure authenticity and credibility in the information you consume.
-            </Text>
-          </Box>
-        </VStack>
-      </Box>
 
-      {/* Right Section with Form */}
-      <Box
-        flex="1"
-        display="flex"
-        justifyContent={{ base: 'flex-start', md: 'center' }}
-        alignItems="center"
-        px="8"
-        py="10"
-      >
-        {children}
+          {/* Right Section with Form */}
+          <Box
+            flex="1"
+            display="flex"
+            justifyContent={{ base: 'flex-start', md: 'center' }}
+            alignItems="center"
+            px="8"
+            py="10"
+          >
+            {children}  
       </Box>
     </Flex>
   );

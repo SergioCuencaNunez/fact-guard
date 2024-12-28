@@ -1,5 +1,7 @@
 import React from 'react';
 import { Box, Flex, Heading, useColorModeValue, Text } from '@chakra-ui/react';
+import { motion } from "framer-motion";
+
 import logoVerifyBright from '../assets/logo-verify-bright.png';
 import logoVerifyDark from '../assets/logo-verify-dark.png';
 
@@ -14,17 +16,24 @@ const Verify = () => {
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
   return (
-    <Box p="6" mx="auto">
-      <Flex justify="space-between" align="center" mb="4">
-        <Heading>Verify Claims</Heading>
-        <Flex direction="column" align="center">
-          <img src={logo} alt="Verify Logo" style={{ height: '50px', width: 'auto' }} />
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box p="6" mx="auto">
+        <Flex justify="space-between" align="center" mb="4">
+          <Heading>Verify Claims</Heading>
+          <Flex direction="column" align="center">
+            <img src={logo} alt="Verify Logo" style={{ height: '50px', width: 'auto' }} />
+          </Flex>
         </Flex>
-      </Flex>
-      <Text>
-        FactGuard Verify: The claim verification tool that makes use of the Google FactCheck API. In case there are no direct results, LLMs will be used to carry out sophisticated semantic analysis.
-      </Text>
-    </Box>
+        <Text>
+          FactGuard Verify: The claim verification tool that makes use of the Google FactCheck API. In case there are no direct results, LLMs will be used to carry out sophisticated semantic analysis.
+        </Text>
+      </Box>
+    </motion.div>
   );
 };
 

@@ -185,202 +185,218 @@ const SignUp = () => {
   const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="center" flex="1">
-      <Box
-        maxW="md"
-        w="full"
-        p="6"
-        shadow="md"
-        borderWidth="1px"
-        borderRadius="md"
-        bg={bgColor}
-      >
-        <Box textAlign="center" mb="6">
-          <img
-            src={logo}
-            alt="FactGuard Logo"
-            style={{
-              height: logoHeight,
-              width: 'auto',
-              margin: '0 auto',
-              display: 'block',
-            }}
-          />
-        </Box>
-        <Heading mb="6" textAlign="center">Sign Up</Heading>
-        <motion.div
-          initial={{ height: 0 }}
-          animate={{
-            height: alert || emailAlert || passwordAlert || checkboxAlert || signingUpMessage ? "auto" : 0,
-          }}
-          exit={{ height: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{ overflow: "hidden" }}
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Box display="flex" alignItems="center" justifyContent="center" flex="1">
+        <Box
+          maxW="md"
+          w="full"
+          p="6"
+          shadow="md"
+          borderWidth="1px"
+          borderRadius="md"
+          bg={bgColor}
         >
-          <AnimatePresence>
-            {alert && (
-              <motion.div
-                key="alert"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                style={{ marginBottom: "8px" }}
-              >
-                <Alert status={alert.type}>
-                  <AlertIcon />
-                  <AlertDescription>{alert.message}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-            {emailAlert && (
-              <motion.div
-                key="emailAlert"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                style={{ marginBottom: "8px" }}
-              >
-                <Alert status="error">
-                  <AlertIcon />
-                  <AlertDescription>{emailAlert}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-            {passwordAlert && (
-              <motion.div
-                key="passwordAlert"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                style={{ marginBottom: "8px" }}
-              >
-                <Alert status="error">
-                  <AlertIcon />
-                  <AlertDescription>{passwordAlert}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-            {checkboxAlert && (
-              <motion.div
-                key="checkboxAlert"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                style={{ marginBottom: "8px" }}
-              >
-                <Alert status="error">
-                  <AlertIcon />
-                  <AlertDescription>{checkboxAlert}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-            {signingUpMessage && (
-              <motion.div
-                key="signingUpMessage"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                style={{ marginBottom: "8px" }}
-              >
-                <Alert status="success">
-                  <AlertIcon />
-                  <AlertDescription>{signingUpMessage}</AlertDescription>
-                </Alert>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-        <form onSubmit={handleSignUp}>
-          <VStack spacing="4" align="stretch">
-            <FormControl id="username">
-              <FormLabel>Username</FormLabel>
-              <InputGroup>
-              <InputLeftElement pointerEvents="none">
-                <FaUser style={{color:"#718096"}} />
-                </InputLeftElement>
-                <Input 
-                  type="text" 
-                  placeholder="Enter a username" 
-                  name="username"
-                />
-              </InputGroup>
-            </FormControl>
-            <FormControl id="email" isRequired isInvalid={!emailValid}>
-              <FormLabel>Email</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <EmailIcon color="gray.500" />
-                </InputLeftElement>
-                <Input 
-                  type="email" 
-                  placeholder="Enter an email" 
-                  name="email"
-                  onBlur={handleEmailBlur}
-                />
-              </InputGroup>
-            </FormControl>
-            <FormControl id="password" isRequired isInvalid={!passwordValid}>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <LockIcon color="gray.500" />
-                </InputLeftElement>
-                <Input 
-                  type="password" 
-                  placeholder="Create a password" 
-                  name="password"
-                  onBlur={handlePasswordBlur} 
-                />
-              </InputGroup>
-            </FormControl>
-            <FormControl>
-              <Checkbox
-                isChecked={termsChecked}
-                onChange={(e) => setTermsChecked(e.target.checked)}
-              >
-                By checking this box, I agree to the <ChakraLink href="/terms" color={primaryColor} isExternal>Terms & Conditions</ChakraLink> and <ChakraLink href="/privacy" color={primaryColor} isExternal>Privacy Policy</ChakraLink>.
-              </Checkbox>
-            </FormControl>
-            <Button
-              type="submit"
-              bg={primaryColor}
-              color="white"
-              _hover={{
-                bg: hoverColor,
-              }}
-              _active={{
-                bg: activeColor,
-              }}
-              size="md"
-            >
-              Continue
-            </Button>
-          </VStack>
-        </form>
-        <Box textAlign="center" mt="4">
-          <Text fontSize="sm" color={textColor} mb="2">
-            Empowering Truth: Delivering Clarity in a World of Misinformation
-          </Text>
-          <Text mt="2" fontSize="sm">
-            Already have an account?{' '}
-            <Link
-              to="/login"
+          <Box textAlign="center" mb="6">
+            <motion.img
+              src={logo}
+              alt="FactGuard Logo"
               style={{
-                color: hoverColor,
-                fontWeight: 'bold',
+                height: logoHeight,
+                width: 'auto',
+                margin: '0 auto',
+                display: 'block',
               }}
-            >
-              Login
-            </Link>
-          </Text>
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.5,
+                ease: "easeOut",
+              }}
+            />
+          </Box>
+          <Heading mb="6" textAlign="center">Sign Up</Heading>
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{
+              height: alert || emailAlert || passwordAlert || checkboxAlert || signingUpMessage ? "auto" : 0,
+            }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ overflow: "hidden" }}
+          >
+            <AnimatePresence>
+              {alert && (
+                <motion.div
+                  key="alert"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ marginBottom: "8px" }}
+                >
+                  <Alert status={alert.type}>
+                    <AlertIcon />
+                    <AlertDescription>{alert.message}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+              {emailAlert && (
+                <motion.div
+                  key="emailAlert"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ marginBottom: "8px" }}
+                >
+                  <Alert status="error">
+                    <AlertIcon />
+                    <AlertDescription>{emailAlert}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+              {passwordAlert && (
+                <motion.div
+                  key="passwordAlert"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ marginBottom: "8px" }}
+                >
+                  <Alert status="error">
+                    <AlertIcon />
+                    <AlertDescription>{passwordAlert}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+              {checkboxAlert && (
+                <motion.div
+                  key="checkboxAlert"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ marginBottom: "8px" }}
+                >
+                  <Alert status="error">
+                    <AlertIcon />
+                    <AlertDescription>{checkboxAlert}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+              {signingUpMessage && (
+                <motion.div
+                  key="signingUpMessage"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ marginBottom: "8px" }}
+                >
+                  <Alert status="success">
+                    <AlertIcon />
+                    <AlertDescription>{signingUpMessage}</AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+          <form onSubmit={handleSignUp}>
+            <VStack spacing="4" align="stretch">
+              <FormControl id="username">
+                <FormLabel>Username</FormLabel>
+                <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FaUser style={{color:"#718096"}} />
+                  </InputLeftElement>
+                  <Input 
+                    type="text" 
+                    placeholder="Enter a username" 
+                    name="username"
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl id="email" isRequired isInvalid={!emailValid}>
+                <FormLabel>Email</FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <EmailIcon color="gray.500" />
+                  </InputLeftElement>
+                  <Input 
+                    type="email" 
+                    placeholder="Enter an email" 
+                    name="email"
+                    onBlur={handleEmailBlur}
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl id="password" isRequired isInvalid={!passwordValid}>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <InputLeftElement pointerEvents="none">
+                    <LockIcon color="gray.500" />
+                  </InputLeftElement>
+                  <Input 
+                    type="password" 
+                    placeholder="Create a password" 
+                    name="password"
+                    onBlur={handlePasswordBlur} 
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <Checkbox
+                  isChecked={termsChecked}
+                  onChange={(e) => setTermsChecked(e.target.checked)}
+                >
+                  By checking this box, I agree to the <ChakraLink href="/terms" color={primaryColor} isExternal>Terms & Conditions</ChakraLink> and <ChakraLink href="/privacy" color={primaryColor} isExternal>Privacy Policy</ChakraLink>.
+                </Checkbox>
+              </FormControl>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  type="submit"
+                  bg={primaryColor}
+                  color="white"
+                  _hover={{
+                    bg: hoverColor,
+                  }}
+                  _active={{
+                    bg: activeColor,
+                  }}
+                  size="md"
+                  width={"100%"}
+                >
+                  Continue
+                </Button>
+              </motion.div>
+            </VStack>
+          </form>
+          <Box textAlign="center" mt="4">
+            <Text fontSize="sm" color={textColor} mb="2">
+              Empowering Truth: Delivering Clarity in a World of Misinformation
+            </Text>
+            <Text mt="2" fontSize="sm">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                style={{
+                  color: hoverColor,
+                  fontWeight: 'bold',
+                }}
+              >
+                Login
+              </Link>
+            </Text>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </motion.div>
   );
 };
 
