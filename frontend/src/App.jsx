@@ -19,6 +19,8 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 import { SunIcon, MoonIcon, ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { motion } from "framer-motion";
+
 import theme from './theme';
 import About from './pages/About';
 import SignUp from './pages/SignUp';
@@ -75,7 +77,18 @@ const Navbar = () => {
       <Flex justify="space-between" align="center" mx="auto" w="100%" px={{ base: '0', custom: '5' }}>
         {/* Logo */}
         <Link to="/">
-          <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: 'auto', cursor: 'pointer' }} />
+          <motion.img
+            src={logo}
+            alt="FactGuard Logo"
+            style={{ height: logoHeight, width: 'auto', cursor: 'pointer' }}
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: 'spring',
+              stiffness: 260,
+              damping: 20,
+            }}
+          />
         </Link>
         
         {/* Buttons, About, and Features Dropdown for larger screens */}      
@@ -91,10 +104,18 @@ const Navbar = () => {
             >
               Features
             </MenuButton>
-            <MenuList>
-              <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
-              <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
-            </MenuList>
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ overflow: "hidden" }}
+            >
+              <MenuList>
+                <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
+                <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
+              </MenuList>
+            </motion.div>
           </Menu>
           <Link to="/about">
             <Button
@@ -111,30 +132,34 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button
-              bg={loginIconBg}
-              color={textColor}
-              _hover={{ bg: loginHoverBg }}
-              _active={{ bg: loginActiveBg }}
-              size="md"
-            >
-              Login
-            </Button>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                bg={loginIconBg}
+                color={textColor}
+                _hover={{ bg: loginHoverBg }}
+                _active={{ bg: loginActiveBg }}
+                size="md"
+              >
+                Login
+              </Button>
+            </motion.div>
           </a>
           <a
             href="/signup"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button
-              bg={primaryColor}
-              color="white"
-              _hover={{ bg: hoverColor }}
-              _active={{ bg: activeColor }}
-              size="md"
-            >
-              Sign Up
-            </Button>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                bg={primaryColor}
+                color="white"
+                _hover={{ bg: hoverColor }}
+                _active={{ bg: activeColor }}
+                size="md"
+              >
+                Sign Up
+              </Button>
+            </motion.div>
           </a>
           <DarkModeSwitch />
         </HStack>
@@ -179,11 +204,19 @@ const Navbar = () => {
               aria-label="Toggle Navigation"
               size="md"
             />
-            <MenuList>
-              <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
-              <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
-              <MenuItem as={Link} to="/about">About</MenuItem>
-            </MenuList>
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ overflow: "hidden" }}
+            >
+              <MenuList>
+                <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
+                <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
+                <MenuItem as={Link} to="/about">About</MenuItem>
+              </MenuList>
+            </motion.div>
           </Menu>
         </HStack>
       </Flex>
