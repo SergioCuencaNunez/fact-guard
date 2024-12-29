@@ -51,7 +51,7 @@ const Home = () => {
   const benefitsImage = useColorModeValue(benefitsBright, benefitsDark);
   
   const heroText = useBreakpointValue({
-    base: "FactGuard supports transparency for fake news detection, claim verification, and responsible content sharing. Join a community committed to building a trustworthy and reliable media ecosystem.",
+    base: "FactGuard supports transparency for fake news detection and claim verification. Join a community committed to accuracy.",
     md: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. By leveraging Deep Learning, it is able to detect misinformation and uphold accuracy across the globe. Join a community committed to building a trustworthy and reliable media ecosystem.",
   });
 
@@ -61,11 +61,11 @@ const Home = () => {
   });
 
   const discoverTextLg = useBreakpointValue({
-    md: "With FactGuard, you’ll access real-time fact-checking capabilities, educational resources, and a global network of verification partners. Whether you’re an individual, a team, or an organization, FactGuard is here to help you navigate a world of information with confidence.",
+    lg: "With FactGuard, you’ll access real-time fact-checking capabilities, educational resources, and a global network of verification partners. Whether you’re an individual, a team, or an organization, FactGuard is here to help you navigate a world of information with confidence.",
   });
   
   return (
-    <VStack spacing="10" py="5" px={{ base: '0', custom: '5' }} w="100%">
+    <VStack spacing="10" px={{ base: '0', custom: '5' }} w="100%">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -83,17 +83,17 @@ const Home = () => {
             <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>
               Discover the Power of FactGuard
             </Heading>
-            <Text fontSize={{ base: 'md', md: 'lg' }}>
+            <Text fontSize={{ base: 'md', md: 'lg' }} mb="3">
               {discoverText}
             </Text>
-            <Text fontSize={{ md: 'lg' }}>
+            <Text fontSize={{ md: 'lg' }} mb="3">
               {discoverTextLg}
             </Text>
           </Box>
           <Image
             src={discoverImage}
             alt="Fake news detection illustration"
-            w={{ base: '80%', md: '35%' }}
+            w={{ base: '65%', sm: '45%' ,md: '40%', lg: '35%', xl: '25%' }}
             mx={{ base: 'auto', md: '0' }}
           />
         </HStack>
@@ -294,22 +294,23 @@ const Home = () => {
         exit={{ opacity: 0, y: -50 }}
         transition={{ duration: 0.5 }}
       >
-        <Heading mb="6" textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
+        <Heading mb="3" textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
               Benefits of Using FactGuard
         </Heading>
         <HStack
-            align="start"
-            justify="space-between"
+            align="center"
+            spacing={{ base: 8, md: 12, lg: 16, xl: 24 }} 
+            flexDirection={{ base: 'column', md: 'column', lg: 'row' }}
             w="100%"
-            flexWrap={{ base: 'wrap', md: 'nowrap' }}
           >
             <Image
               src={benefitsImage}
               alt="FactGuard benefits illustration"
-              w={{ base: '80%', md: '38%' }}
+              w={{ base: '70%', sm: '50%' ,md: '45%', lg: '40%', xl: '30%' }}
               mx={{ base: 'auto', md: '0' }}
+              flexShrink={0}
             />
-            <VStack spacing="8" w={{ base: '100%', md: '50%' }} align="start">
+            <VStack spacing="8" align="flex" w="100%">
               <Grid templateColumns={{ base: '1fr', md: '1fr' }} gap={6}>
                 <GridItem>
                   <motion.div
@@ -326,14 +327,16 @@ const Home = () => {
                       _hover={{ bg: useColorModeValue('gray.50', 'gray.600') }}
                     >
                       <HStack justify="start">
-                        <Box fontSize="lg" color={primaryColor}>
+                        <Box fontSize={{ base: 'md', md: 'lg' }} color={primaryColor}>
                           <FaCheckCircle />
                         </Box>
                         <Heading size="md">Enhanced Content Trust</Heading>
                       </HStack>
                       <Text fontSize={{ base: 'sm', md: 'md' }}>
-                        Build trust in your brand by ensuring the authenticity of your content. 
-                        With FactGuard's tools, you can confidently share verified information with your audience.
+                        {useBreakpointValue({
+                          base: "Build trust in your brand by ensuring the authenticity of your content.",
+                          lg: "Build trust in your brand by ensuring the authenticity of your content. With FactGuard's tools, you can confidently share verified information with your audience.",
+                        })}
                       </Text>
                     </Box>
                   </motion.div>
@@ -354,14 +357,16 @@ const Home = () => {
                       style={{ height: '100%' }}
                     >
                       <HStack justify="start">
-                        <Box fontSize="lg" color={primaryColor}>
+                        <Box fontSize={{ base: 'md', md: 'lg' }} color={primaryColor}>
                           <FaTasks />
                         </Box>
                         <Heading size="md">Comprehensive Fact-Checking</Heading>
                       </HStack>
                       <Text fontSize={{ base: 'sm', md: 'md' }}>
-                        Utilize advanced tools to verify claims and enhance credibility. 
-                        FactGuard provides accurate results to support your decisions and messaging.
+                        {useBreakpointValue({
+                          base: "Build trust in your brand by ensuring the authenticity of your content.",
+                          lg: "Utilize advanced tools to verify claims and enhance credibility. FactGuard provides accurate results to support your decisions and messaging.",
+                        })}
                       </Text>
                     </Box>
                   </motion.div>
@@ -381,14 +386,16 @@ const Home = () => {
                       _hover={{ bg: useColorModeValue('gray.50', 'gray.600') }}
                     >
                       <HStack justify="start">
-                        <Box fontSize="lg" color={primaryColor}>
+                        <Box fontSize={{ base: 'md', md: 'lg' }} color={primaryColor}>
                           <FaBrain />
                         </Box>
                         <Heading size="md">AI-Powered Efficiency</Heading>
                       </HStack>
                       <Text fontSize={{ base: 'sm', md: 'md' }}>
-                        Save time and resources with automated fake news detection processes. 
-                        Let our intelligent systems streamline your fact-checking efforts.
+                        {useBreakpointValue({
+                          base: "Save time and resources with automated fake news detection processes.",
+                          lg: "Save time and resources with automated fake news detection processes. Let our intelligent systems streamline your fact-checking efforts.",
+                        })}
                       </Text>
                     </Box>
                   </motion.div>
