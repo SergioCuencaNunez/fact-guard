@@ -117,7 +117,18 @@ const StartNewDetection = ({ addDetection }) => {
           <Flex justify="space-between" align="center" mb="4">
             <Heading fontSize={{ base: '3xl', md: '4xl' }}>Detect Fake News</Heading>          
             <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-              <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+              <motion.img
+                src={logo}
+                alt="Detect Logo"
+                style={{ height: logoHeight, width: 'auto'}}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 20,
+                }}
+              />
               <IconButton
                 aria-label="Toggle theme"
                 icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -125,7 +136,17 @@ const StartNewDetection = ({ addDetection }) => {
               />
             </HStack>
             <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-              <Box
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 20,
+                }}
+                style={{ display: 'inline-block' }}
+              >
+                <Box
                   as="img"
                   src={logo}
                   alt="Detect Logo"
@@ -133,6 +154,7 @@ const StartNewDetection = ({ addDetection }) => {
                   maxWidth="120px"
                   objectFit="contain"
                 />
+              </motion.div>
             </HStack>
           </Flex>
           <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>

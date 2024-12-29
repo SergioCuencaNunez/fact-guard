@@ -134,7 +134,18 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
           <Flex justify="space-between" align="center" mb="4">
             <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
             <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
-              <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+               <motion.img
+                  src={logo}
+                  alt="Detect Logo"
+                  style={{ height: logoHeight, width: 'auto'}}
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                />
               <IconButton
                 aria-label="Toggle theme"
                 icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -142,7 +153,17 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
               />
             </HStack>
             <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-              <Box
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 20,
+                }}
+                style={{ display: 'inline-block' }}
+              >
+                <Box
                   as="img"
                   src={logo}
                   alt="Detect Logo"
@@ -150,6 +171,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                   maxWidth="120px"
                   objectFit="contain"
                 />
+              </motion.div>
             </HStack>
           </Flex>
           <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>

@@ -79,7 +79,18 @@ const DetectionResults = () => {
             <Flex justify="space-between" align="center" mb="4">
               <Heading fontSize={{ base: "3xl", md: "4xl" }}>Detection Results</Heading>
               <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-                <img src={logo} alt="Detect Logo" style={{ height: logoHeight, width: "auto" }} />
+                <motion.img
+                    src={logo}
+                    alt="Detect Logo"
+                    style={{ height: logoHeight, width: 'auto'}}
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 260,
+                      damping: 20,
+                    }}
+                  />
                 <IconButton
                   aria-label="Toggle theme"
                   icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -87,14 +98,25 @@ const DetectionResults = () => {
                 />
               </HStack>
               <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-                <Box
-                  as="img"
-                  src={logo}
-                  alt="Detect Logo"
-                  maxHeight={logoHeight}
-                  maxWidth="120px"
-                  objectFit="contain"
-                />
+                <motion.div
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                  style={{ display: 'inline-block' }}
+                >
+                  <Box
+                    as="img"
+                    src={logo}
+                    alt="Detect Logo"
+                    maxHeight={logoHeight}
+                    maxWidth="120px"
+                    objectFit="contain"
+                  />
+                </motion.div>
               </HStack>
             </Flex>
           </motion.div>
