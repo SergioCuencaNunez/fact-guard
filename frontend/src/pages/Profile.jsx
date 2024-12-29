@@ -402,7 +402,18 @@ const Profile = () => {
       >
         <VStack spacing="8" align="flex-start">
           <HStack justifyContent={{ base: "center", md: "flex-start" }} w="100%">
-            <img src={logo} alt="FactGuard Logo" style={{ height: logoHeight, width: "auto" }} />
+            <motion.img
+              src={logo}
+              alt="FactGuard Logo"
+              style={{ height: logoHeight, width: 'auto'}}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{
+                type: 'spring',
+                stiffness: 260,
+                damping: 20,
+              }}
+            />
           </HStack>
 
           {/* User Info and Logout Button (Mobile only) */}
@@ -698,40 +709,60 @@ const Profile = () => {
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
                   <Heading size="lg" mb="4">Recent Pages</Heading>
-                  <Flex wrap="wrap" gap="6">
-                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
-                      <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />
-                      <Heading size="md" mt="4">Fake News Detection</Heading>
-                      <Text mt="2">
-                        {useBreakpointValue({
+                  <Flex wrap="wrap" justify="space-between" gap="6">
+                    {[
+                      {
+                        icon: <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                        title: "Fake News Detection",
+                        text: {
                           base: "Detect fake news using our DL model.",
                           md: "Detect fake news using our DL model.",
                           lg: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
-                        })}
-                      </Text>
-                    </Box>
-                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
-                      <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />
-                      <Heading size="md" mt="4">Claim Check</Heading>
-                      <Text mt="2">
-                        {useBreakpointValue({
+                        },
+                      },
+                      {
+                        icon: <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                        title: "Claim Check",
+                        text: {
                           base: "Validate claims with Google FactCheck API.",
                           md: "Validate claims with Google FactCheck API.",
                           lg: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
-                        })}
-                      </Text>
-                    </Box>
-                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" textAlign="center" shadow="md">
-                      <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />
-                      <Heading size="md" mt="4">Team Management</Heading>
-                      <Text mt="2">
-                        {useBreakpointValue({
+                        },
+                      },
+                      {
+                        icon: <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                        title: "Team Management",
+                        text: {
                           base: "Collaborate in detecting misinformation.",
                           md: "Invite other people and collaborate in detecting misinformation.",
                           lg: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
-                        })}
-                      </Text>
-                    </Box>
+                        },
+                      },
+                    ].map((item, index) => (
+                      <motion.div
+                        key={index}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                      >
+                        <Box
+                          bg={cardBg}
+                          p="5"
+                          borderRadius="md"
+                          textAlign="center"
+                          shadow="md"
+                          height="100%"
+                          _hover={{
+                            bg: useColorModeValue("gray.50", "gray.600"),
+                          }}
+                        >
+                          {item.icon}
+                          <Heading size="md" mt="4">{item.title}</Heading>
+                          <Text mt="2">{useBreakpointValue(item.text)}</Text>
+                        </Box>
+                      </motion.div>
+                    ))}
                   </Flex>
                 </motion.div>
 
