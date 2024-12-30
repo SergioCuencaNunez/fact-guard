@@ -12,6 +12,12 @@ import {
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
+  Select,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  Collapse,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -22,7 +28,7 @@ import {
   Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -48,6 +54,8 @@ const StartNewDetection = ({ addDetection }) => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [confidence, setConfidence] = useState(70);
+  const [showTransparency, setShowTransparency] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { isOpen: isSpinnerOpen, onOpen: onSpinnerOpen, onClose: onSpinnerClose } = useDisclosure();
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
@@ -105,6 +113,8 @@ const StartNewDetection = ({ addDetection }) => {
     }, 5000);
   };  
 
+  const toggleTransparency = () => setShowTransparency(!showTransparency);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -160,18 +170,76 @@ const StartNewDetection = ({ addDetection }) => {
           <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
           <Text mb="4">Enter the title and paste/upload a news article to analyze its authenticity:</Text>
           <Input
-            placeholder="Enter article title..."
+            placeholder="Enter article title."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             mb="4"
+            _placeholder={{
+              color: useColorModeValue("gray.500", "gray.400"),
+            }}
           />
           <Textarea
-            placeholder="Paste your article content here..."
+            placeholder="Paste your article content here."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            mb="6"
+            mb="4"
+            _placeholder={{
+              color: useColorModeValue("gray.500", "gray.400"),
+            }}
           />
-          <Flex justify="center">
+          
+          {/* Confidence Threshold */}
+          <Flex direction="column">
+            <Flex align="center" justify="space-between" mb="4">
+              <Text mr="4">Confidence Threshold:</Text>
+              {useBreakpointValue({
+                base: (
+                  <Select
+                    value={confidence}
+                    onChange={(e) => setConfidence(parseInt(e.target.value))}
+                    width="50%"
+                    maxWidth="150px"
+                  >
+                    {[...Array(11).keys()].map((val) => (
+                      <option key={val} value={50 + val * 5}>
+                        {50 + val * 5}%
+                      </option>
+                    ))}
+                  </Select>
+                ),
+                lg: (
+                  <Flex flex="1" align="center">
+                    <Slider
+                      defaultValue={confidence}
+                      min={50}
+                      max={100}
+                      step={5}
+                      onChange={(val) => setConfidence(val)}
+                      width="100%"
+                    >
+                      <SliderTrack bg="gray.200">
+                        <SliderFilledTrack bg={primaryColor} />
+                      </SliderTrack>
+                      <SliderThumb
+                        boxSize={5}
+                        border="1px"
+                        borderColor={useColorModeValue("gray.200", "gray.400")}
+                      />
+                    </Slider>
+                    <Text ml={4} fontWeight="bold">{confidence}%</Text>
+                  </Flex>
+                ),
+              })}
+            </Flex>
+            <Text fontSize="sm" mb="4" textAlign="justify" color={useColorModeValue("gray.500", "gray.400")}>
+              {useBreakpointValue({
+                base: "Adjust the confidence threshold using the selection box. FactGuard Detect will only classify news as fake or true if the certainty exceeds the selected threshold.",
+                lg: "The confidence slider lets you adjust the threshold that determines the minimum certainty required for classifying news. For instance, if set to 70%, FactGuard Detect will only classify news as fake or true when it is at least 70% confident in its prediction.",
+              })}
+            </Text>
+          </Flex>
+          
+          <Flex justify="center" mb="4">
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 bg={primaryColor}
@@ -187,14 +255,40 @@ const StartNewDetection = ({ addDetection }) => {
               </Button>
             </motion.div>
           </Flex>
+
+          {/* Transparency Section */}
+          <Flex direction="column">
+            <Flex align="center" cursor="pointer" onClick={toggleTransparency} color={useColorModeValue("gray.500", "gray.400")}>
+              <Text fontSize="sm" fontWeight="bold" mr={2}>
+                More Information and Details
+              </Text>
+              <InfoOutlineIcon fontSize="sm"/>
+            </Flex>
+            <Collapse in={showTransparency}>
+              <Box mt={4} p={4} borderRadius="md" bg={useColorModeValue("gray.50", "gray.800")}>
+                <Text fontSize="sm" textAlign="justify">
+                  {useBreakpointValue({
+                    base: "FactGuard Detect uses advanced ML and DL models to analyze the authenticity of news. It selects the most accurate model to ensure trustworthy results.",
+                    lg: "FactGuard Detect utilizes advanced Machine Learning (ML) and Deep Learning (DL) models to analyze the authenticity of news articles. By training multiple models on large datasets of verified fake and real news, the system evaluates their performance and selects the most accurate and reliable one based on key metrics like accuracy, precision, and recall.",
+                  })}
+                </Text>
+                <Text mt={2} fontSize="sm" textAlign="justify">
+                  {useBreakpointValue({
+                    base: "Continuous improvements are made to enhance accuracy and transparency.",
+                    lg: "This approach ensures that the best-performing model is used to deliver consistent and trustworthy results. While no prediction system is perfect, FactGuard Detect is continuously improved to enhance accuracy and maintain transparency.",
+                  })}
+                </Text>
+              </Box>
+            </Collapse>
+          </Flex>
       
           {/* Spinner Modal */}
-          <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
+          <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} closeOnOverlayClick={false} closeOnEsc={false} isCentered>
             <ModalOverlay />
             <ModalContent >
               <ModalBody textAlign="center" py="6">
                 <Spinner size="xl" />
-                <Text mt="4">Analyzing News... Please wait.</Text>
+                <Text mt="4">Analyzing News with {confidence}% Confidence Threshold. Please Wait...</Text>
               </ModalBody>
             </ModalContent>
           </Modal>
