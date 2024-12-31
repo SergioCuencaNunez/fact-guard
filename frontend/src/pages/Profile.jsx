@@ -67,6 +67,12 @@ const gradient = "linear-gradient(to bottom, #2a8073, #3ca790, #4dcfaf)";
 
 const Profile = () => {
   const navigate = useNavigate();
+  // For development only
+  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+
+  // For production
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   const [user, setUser] = useState({ username: "", email: "" });
   const [openDropdown, setOpenDropdown] = useState(null);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -156,7 +162,7 @@ const Profile = () => {
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:5001/profile", {
+        const response = await fetch(`${BACKEND_URL}/profile`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -197,7 +203,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:5001/detections", {
+        const response = await fetch(`${BACKEND_URL}/detections`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -225,7 +231,7 @@ const Profile = () => {
   const deleteDetection = async (id) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:5001/detections/${id}`, {
+      const response = await fetch(`${BACKEND_URL}/detections/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -295,7 +301,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:5001/claims", {
+        const response = await fetch(`${BACKEND_URL}/claims`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -323,7 +329,7 @@ const Profile = () => {
   const deleteClaimCheck = async (id) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:5001/claims/${id}`, {
+      const response = await fetch(`${BACKEND_URL}/claims/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -400,7 +406,7 @@ const Profile = () => {
           borderBottom: useBreakpointValue({ base: "solid", md: "none" }),
         }}      
       >
-        <VStack spacing="8" align="flex-start">
+        <VStack spacing={{base: "4", md: "8"}} align="flex-start">
           <HStack justifyContent={{ base: "center", md: "flex-start" }} w="100%">
             <motion.img
               src={logo}
@@ -964,7 +970,7 @@ const Profile = () => {
                           exit={{ opacity: 0, y: 15 }}
                           transition={{ duration: 0.5 }}
                         >
-                          <Flex align="center" justify="center" direction="column" h="15vh">
+                          <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb={{ base: "4", md: "0" }}>
                             <WarningIcon boxSize="6" color="gray.500" mb="2" />
                             <Text fontSize="lg" color="gray.500" textAlign="center">
                               No claims checks found.

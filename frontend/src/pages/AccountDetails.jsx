@@ -35,6 +35,12 @@ const primaryActiveLight = "#2a8073";
 const primaryActiveDark = "#77e4c4";
 
 const AccountDetails = () => {
+  // For development only
+  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+
+  // For production
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
@@ -68,7 +74,7 @@ const AccountDetails = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5001/profile", {
+      const response = await fetch(`${BACKEND_URL}/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -85,7 +91,7 @@ const AccountDetails = () => {
 
   const checkIfProfileChanged = async () => {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:5001/profile", {
+    const response = await fetch(`${BACKEND_URL}/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
@@ -116,7 +122,7 @@ const AccountDetails = () => {
     }
 
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:5001/account-update", {
+    const response = await fetch(`${BACKEND_URL}/account-update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -163,7 +169,7 @@ const AccountDetails = () => {
     }
 
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:5001/reset-password", {
+    const response = await fetch(`${BACKEND_URL}/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -196,7 +202,7 @@ const AccountDetails = () => {
 
   const handleDeleteAccount = async () => {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:5001/delete-account", {
+    const response = await fetch(`${BACKEND_URL}/delete-account`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -296,10 +302,10 @@ const AccountDetails = () => {
                 <AnimatePresence>
                     {alert && (
                     <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
                     >
                         <Alert status={alert.type} mb={4}>
                         <AlertIcon />

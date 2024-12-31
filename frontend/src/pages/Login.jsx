@@ -31,6 +31,12 @@ const primaryActiveDark = '#91edd0';
 
 const Login = () => {
   const navigate = useNavigate(); 
+  // For development only
+  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+
+  // For production
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  
   const [alert, setAlert] = useState(null);
   const [emailAlert, setEmailAlert] = useState(null);
   const [passwordAlert, setPasswordAlert] = useState(null);
@@ -72,7 +78,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5001/check-login-email?email=${encodeURIComponent(email)}`);
+      const response = await fetch(`${BACKEND_URL}/check-login-email?email=${encodeURIComponent(email)}`);
       if (!response.ok) {
         setEmailAlert(null);
         setAlert({ type: "info", message: "User not registered. Redirecting to Sign Up..." });
@@ -106,7 +112,7 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5001/login", {
+      const response = await fetch(`${BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

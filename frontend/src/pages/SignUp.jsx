@@ -34,6 +34,12 @@ const primaryActiveDark = '#91edd0';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  // For development only
+  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+
+  // For production
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    
   const [alert, setAlert] = useState(null);
   const [passwordAlert, setPasswordAlert] = useState(null);
   const [emailAlert, setEmailAlert] = useState(null);
@@ -105,7 +111,7 @@ const SignUp = () => {
     }
 
     try {
-      const emailResponse = await fetch(`http://localhost:5001/check-email?email=${encodeURIComponent(email)}`);
+      const emailResponse = await fetch(`${BACKEND_URL}/check-email?email=${encodeURIComponent(email)}`);
       const emailData = await emailResponse.json();
       if (emailData.exists) {
         setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });
@@ -113,7 +119,7 @@ const SignUp = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5001/signup", {
+      const response = await fetch(`${BACKEND_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -150,7 +156,7 @@ const SignUp = () => {
     } else {
       setEmailValid(true);
       try {
-        const response = await fetch(`http://localhost:5001/check-email?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${BACKEND_URL}/check-email?email=${encodeURIComponent(email)}`);
         const data = await response.json();
         if (data.exists) {
           setAlert({ type: "info", message: "User already registered. Redirecting to Login..." });

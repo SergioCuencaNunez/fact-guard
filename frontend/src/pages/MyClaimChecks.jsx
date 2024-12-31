@@ -270,24 +270,39 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                   </Tbody>
                 </Table>
               </Box>
-              <Flex justify="space-between" align="center" mb="4">
+              <Flex justify="space-between" align="center" mb="4" height="40px">
                 <Checkbox
                   isChecked={selectedClaimChecks.length === claimChecks.length}
                   onChange={(e) => handleSelectAll(e.target.checked)}
                 >
                   Select All
                 </Checkbox>
-                <Button
-                  colorScheme="red"
-                  onClick={() => {
-                    setClaimCheckToDelete(null);
-                    onOpen();
-                  }}
-                  isDisabled={selectedClaimChecks.length === 0}
-                  visibility={selectedClaimChecks.length > 0 ? "visible" : "hidden"}
-                >
-                  Delete Selected
-                </Button>
+                <AnimatePresence>
+                  {selectedClaimChecks.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, x: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                      }}
+                      exit={{ opacity: 0, scale: 0.8, x: 0 }}
+                      transition={{ duration: 0.3 }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <Button
+                        colorScheme="red"
+                        onClick={() => {
+                          setClaimCheckToDelete(null);
+                          onOpen();
+                        }}
+                        isDisabled={selectedClaimChecks.length === 0}
+                      >
+                        Delete Selected
+                      </Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </Flex>
             </>
           ) : (

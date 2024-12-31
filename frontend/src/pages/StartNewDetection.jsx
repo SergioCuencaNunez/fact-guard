@@ -42,6 +42,13 @@ import logoDetectBright from "../assets/logo-detect-bright.png";
 import logoDetectDark from "../assets/logo-detect-dark.png";
 
 const StartNewDetection = ({ addDetection }) => {
+  const navigate = useNavigate();
+  // For development only
+  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+
+  // For production
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  
   const logo = useColorModeValue(logoDetectBright, logoDetectDark);
   const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
   const cardBg = useColorModeValue("white", "gray.700");
@@ -49,8 +56,6 @@ const StartNewDetection = ({ addDetection }) => {
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
   const { colorMode, toggleColorMode } = useColorMode();
-
-  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -80,8 +85,8 @@ const StartNewDetection = ({ addDetection }) => {
           truePercentage: "30%", // Placeholder
           date: new Date().toISOString(),
         };
-  
-        const response = await fetch("http://localhost:5001/detections", {
+
+        const response = await fetch(`${BACKEND_URL}/detections`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -170,7 +175,7 @@ const StartNewDetection = ({ addDetection }) => {
           <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
           <Text mb="4">Enter the title and paste/upload a news article to analyze its authenticity:</Text>
           <Input
-            placeholder="Enter article title."
+            placeholder="Enter article title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             mb="4"
@@ -179,7 +184,7 @@ const StartNewDetection = ({ addDetection }) => {
             }}
           />
           <Textarea
-            placeholder="Paste your article content here."
+            placeholder="Paste your article content here"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             mb="4"

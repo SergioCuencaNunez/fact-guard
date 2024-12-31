@@ -5,12 +5,14 @@ import {
   Flex,
   Heading,
   Text,
+  Select,
   Input,
   Button,
   IconButton,
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
+  Collapse,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,7 +23,7 @@ import {
   Spinner,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -37,6 +39,13 @@ import logoGoogleFactCheckLogoBright from "../assets/logo-google-fact-check-brig
 import logoGoogleFactCheckLogoDark from "../assets/logo-google-fact-check-dark.png";
 
 const StartNewClaimCheck = ({ addClaimCheck }) => {
+  const navigate = useNavigate();
+  // For development only
+  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+
+  // For production
+  // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  
   const logo = useColorModeValue(logoVerifyBright, logoVerifyDark);
   const logoHeight = useBreakpointValue({ base: '40px', md: '45px' });
   const logoGoogleFactCheckLogo = useColorModeValue(logoGoogleFactCheckLogoBright, logoGoogleFactCheckLogoDark);
@@ -48,13 +57,15 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const navigate = useNavigate();
-
   const [title, setTitle] = useState("");
+  const [language, setLanguage] = useState("");
+  const [showTransparency, setShowTransparency] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { isOpen: isSpinnerOpen, onOpen: onSpinnerOpen, onClose: onSpinnerClose } = useDisclosure();
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
   const { isOpen: isErrorOpen, onOpen: onErrorOpen, onClose: onErrorClose } = useDisclosure();
+
+  const toggleTransparency = () => setShowTransparency(!showTransparency);
 
   const handleVerify = () => {
     if (!title) {
@@ -74,8 +85,8 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           link: "https://example.com", // Placeholder
           date: new Date().toISOString(),
         };
-  
-        const response = await fetch("http://localhost:5001/claims", {
+        
+        const response = await fetch(`${BACKEND_URL}/claims`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -161,11 +172,23 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           </Flex>
           <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
           <Text mb="4">Enter a claim to verify its authenticity against reliable sources:</Text>
+          <Select 
+            placeholder="Select the language" 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value)} 
+            mb="4"
+          >
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+          </Select>
           <Input
-            placeholder="Enter a claim..."
+            placeholder="Enter a claim to verify"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             mb="6"
+            _placeholder={{
+              color: useColorModeValue("gray.500", "gray.400"),
+            }}
           />
           <Flex justify="center" mb="4">
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
@@ -185,7 +208,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           </Flex>
 
           {/* Powered by Google Fact Check Tools API */}
-          <HStack justify="flex-end">
+          <HStack justify="flex-end" mb="4">
               <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
                 Powered by
               </Text>
@@ -200,6 +223,32 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
                 />
               </a>
           </HStack>
+
+          {/* Transparency Section */}
+          <Flex direction="column">
+            <Flex align="center" cursor="pointer" onClick={toggleTransparency} color={useColorModeValue("gray.500", "gray.400")}>
+              <Text fontSize="sm" fontWeight="bold" mr={2}>
+                More Information and Details
+              </Text>
+              <InfoOutlineIcon />
+            </Flex>
+            <Collapse in={showTransparency}>
+              <Box mt={4} p={4} borderRadius="md" bg={useColorModeValue("gray.50", "gray.800")}>
+                <Text fontSize="sm" textAlign="justify">
+                  {useBreakpointValue({
+                    base: "FactGuard Verify uses the Google Fact Check API to validate claims and provide reliable results.",
+                    lg: "FactGuard Verify integrates directly with the Google Fact Check Tools API to validate the accuracy of claims. By leveraging a comprehensive database of verified information from trusted fact-checking organizations, it ensures users receive precise and reliable results when assessing the truthfulness of claims.",
+                  })}
+                </Text>
+                <Text mt={2} fontSize="sm" textAlign="justify">
+                  {useBreakpointValue({
+                    base: "The system is continuously improved to enhance reliability and user experience.",
+                    lg: "This integration with the Google Fact Check Tools API ensures robust claim validation, offering users a reliable tool for uncovering the truth. FactGuard Verify is continuously improved to provide enhanced reliability, transparency, and a seamless user experience in combating misinformation.",
+                  })}
+                </Text>
+              </Box>
+            </Collapse>
+          </Flex>
 
           {/* Spinner Modal */}
           <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} isCentered>
