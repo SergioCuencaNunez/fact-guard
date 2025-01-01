@@ -9,7 +9,28 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const SECRET_KEY = "secret_key"; // Replace with strong key in production
 
-app.use(cors());
+//app.use(cors());
+
+// For development only
+app.use(cors({ origin: "*" }));
+
+/*
+// For production
+const allowedOrigins = [
+  "https://your-frontend-domain.com", // Replace with your frontend's domain
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+}));
+*/
+
 app.use(express.json());
 
 // Connect to SQLite database
@@ -339,7 +360,14 @@ app.delete("/claims/:id", verifyToken, (req, res) => {
   });
 });
 
-
+/*
+// For development only
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+});
+*/
+
+// For deployment
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
