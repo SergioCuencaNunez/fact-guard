@@ -15,6 +15,7 @@ import {
   Td,
   Avatar,
   IconButton,
+  Badge,
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
@@ -27,7 +28,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon, ChevronDownIcon, WarningIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, WarningIcon, WarningTwoIcon, InfoIcon } from "@chakra-ui/icons";
 import {
   FaUser,
   FaNewspaper,
@@ -112,25 +113,78 @@ const Profile = () => {
     }
     return gray;
   };
-  
-  const getClaimCheckTextColor = (rating, colors) => {
-    const { green, orange, gray, red } = colors;
-  
-    switch (rating) {
-      case "True":
-      case "Mostly true":
-        return green;
-      case "False":
-      case "Mostly false":
-        return red;
-      case "Misleading":
-      case "Mixture":
-        return orange;
-      default:
-        return gray;
-    }
-  };  
 
+  const getRatingColor = (rating) => {
+    const lowerRating = rating.toLowerCase();
+  
+    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].includes(lowerRating)) {
+      return "red";
+    } else if (["true", "yes", "verdadero", "si"].includes(lowerRating)) {
+      return "green";
+    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].includes(lowerRating)) {
+      return "orange";
+    } else if (lowerRating === "inconclusive") {
+      return "gray";
+    } else {
+      return "gray";
+    }
+  };
+  
+  const getRatingIcon = (rating) => {
+    const lowerRating = rating.toLowerCase();
+    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].includes(lowerRating)) {
+      return <WarningTwoIcon color="red.500" />;
+    } else if (["true", "yes", "verdadero", "si"].includes(lowerRating)) {
+      return <CheckCircleIcon color="green.500" />;
+    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].includes(lowerRating)) {
+      return <WarningIcon color="orange.500" />;
+    } else {
+      return <InfoIcon color="gray.500" />;
+    }
+  };
+  
+  const getAggregateRating = (ratings) => {
+    const normalizedRatings = ratings.map((rating) => rating.toLowerCase());
+  
+    const categories = {
+      true: ["true", "yes", "verdadero", "si"],
+      false: ["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"],
+      inconclusive: ["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"],
+    };
+  
+    let trueCount = 0;
+    let falseCount = 0;
+    let inconclusiveCount = 0;
+  
+    normalizedRatings.forEach((rating) => {
+      if (categories.true.includes(rating)) {
+        trueCount++;
+      } else if (categories.false.includes(rating)) {
+        falseCount++;
+      } else if (categories.inconclusive.includes(rating)) {
+        inconclusiveCount++;
+      }
+    });
+  
+    if (trueCount > falseCount && trueCount > inconclusiveCount) {
+      return "True";
+    } else if (falseCount > trueCount && falseCount > inconclusiveCount) {
+      return "False";
+    } else if (inconclusiveCount > trueCount && inconclusiveCount > falseCount) {
+      return "Misleading";
+    } else if (
+      (trueCount > 0 && falseCount > 0 && inconclusiveCount === 0) ||
+      (trueCount > 0 && inconclusiveCount > 0 && falseCount === 0) ||
+      (falseCount > 0 && inconclusiveCount > 0 && trueCount === 0)
+    ) {
+      return "Inconclusive";
+    } else if (normalizedRatings.length === 1) {
+      return ratings[0];
+    }
+  
+    return "Inconclusive";
+  };
+  
   const getCurrentDate = () => {
     const now = new Date();
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -901,13 +955,12 @@ const Profile = () => {
                           <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
                             <Thead>
                               <Tr>
-                                <Th width="5%" textAlign="center"><b>ID</b></Th>
-                                <Th width="30%" textAlign="left"><b>Title</b></Th>
-                                <Th width="12.5%" textAlign="center"><b>Rating</b></Th>
-                                <Th width="12.5%" textAlign="center"><b>Link</b></Th>
+                                <Th width="10%" textAlign="center"><b>ID</b></Th>
+                                <Th width="45%" textAlign="left"><b>Query</b></Th>
+                                <Th width="10%" textAlign="center"><b>Rating</b></Th>
                                 <Th width="15%" textAlign="center"><b>Date</b></Th>
                                 <Th width="15%" textAlign="center"><b>Results</b></Th>
-                                <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                                <Th width="5%" textAlign="center"><b>Remove</b></Th>
                               </Tr>
                             </Thead>
                             <Tbody as={motion.tbody}>
@@ -922,18 +975,23 @@ const Profile = () => {
                                     transition={{ duration: 0.5 }}
                                   >
                                     <Td textAlign="center">#{claimCheck.id}</Td>
-                                    <Td textAlign="left">{claimCheck.title}</Td>
+                                    <Td textAlign="left">{claimCheck.query}</Td>
                                     <Td textAlign="center">
-                                      <Text fontSize="lg" color={getClaimCheckTextColor(claimCheck.rating || "Misleading", colors)}>
-                                        {claimCheck.rating || "70%"}
-                                      </Text>
-                                    </Td>
-                                    <Td textAlign="center">
-                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                        <Button size="sm" color={primaryColor} onClick={() => window.open(claimCheck.link, "_blank")}>
-                                          <ExternalLinkIcon />
-                                        </Button>
-                                      </motion.div>
+                                      <Badge
+                                        colorScheme={getRatingColor(getAggregateRating(claimCheck.ratings))}
+                                        fontSize="md"
+                                        p={2}
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        gap="2"
+                                        whiteSpace="normal"
+                                      >
+                                        {getRatingIcon(getAggregateRating(claimCheck.ratings))}
+                                        <Text as="span" fontSize="sm">
+                                          {getAggregateRating(claimCheck.ratings)}
+                                        </Text>
+                                      </Badge>
                                     </Td>
                                     <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
                                     <Td textAlign="center">
@@ -1036,7 +1094,9 @@ const Profile = () => {
         {/* Detections Confirmation Modal */}
         <Modal isOpen={isDetectionModalOpen} onClose={onDetectionModalClose} isCentered>
           <ModalOverlay />
-          <ModalContent>
+            <ModalContent
+              width={{ base: "90%"}}
+            >
             <ModalHeader>Confirm Deletion</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -1058,7 +1118,9 @@ const Profile = () => {
         {/* Claim Checks Confirmation Modal */}
         <Modal isOpen={isClaimModalOpen} onClose={onClaimModalClose} isCentered>
           <ModalOverlay />
-          <ModalContent>
+            <ModalContent
+              width={{ base: "90%"}}
+            >
             <ModalHeader>Confirm Deletion</ModalHeader>
             <ModalCloseButton />
             <ModalBody>

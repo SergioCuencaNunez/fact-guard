@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
+CORS(app)
 
 # Initialize your API key
 API_KEY = "AIzaSyBnQqmXmGZwMVKt2l1RfJO4IQ9P8YtZErQ"
@@ -53,12 +55,6 @@ def search_fact_check_claims(api_key, query, language_code="en"):
             return {
                 "success": False,
                 "message": f"No claims matching '{query}' were found in {language_name}.",
-                "suggestions": [
-                    "Make sure all keywords are spelled correctly.",
-                    "Try different keywords.",
-                    "Try more general keywords.",
-                    "Try fewer keywords."
-                ]
             }
 
     except requests.exceptions.RequestException as e:

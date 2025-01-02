@@ -302,7 +302,9 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
           {/* Confirmation Modal */}
           <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent>
+              <ModalContent
+                width={{ base: "90%"}}
+              >
               <ModalHeader>Confirm Deletion</ModalHeader>
               <ModalCloseButton />
               <ModalBody>

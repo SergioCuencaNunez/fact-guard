@@ -283,45 +283,86 @@ app.delete("/detections/:id", verifyToken, (req, res) => {
 
 // Get all claims for a user
 app.get("/claims", verifyToken, (req, res) => {
-  const query = "SELECT * FROM claims WHERE user_id = ?";
+  const query = `
+    SELECT id, query, claims, ratings, links, language, date 
+    FROM claims 
+    WHERE user_id = ? 
+    ORDER BY date DESC
+  `;
+
   db.all(query, [req.user.id], (err, rows) => {
-    if (err) return res.status(500).json({ error: "Failed to fetch claims" });
-    res.json(rows);
+    if (err) return res.status(500).json({ error: "Failed to fetch claims." });
+
+    const parsedRows = rows.map((row) => ({
+      ...row,
+      claims: JSON.parse(row.claims),
+      ratings: JSON.parse(row.ratings),
+      links: JSON.parse(row.links),
+    }));
+
+    res.json(parsedRows);
   });
 });
 
+// Generate a FactGuard Verify Claims' ID
+const generateClaimsID = () => {
+  const randomNumber = Math.floor(Math.random() * 100);
+  const formattedNumber = String(randomNumber).padStart(2, '0');
+  return `FGV${formattedNumber}`;
+};
+
 // Add a new claim
 app.post("/claims", verifyToken, (req, res) => {
-  const { title, rating, link, date } = req.body;
+  const { query, claims, ratings, links, language, date } = req.body;
 
-  if (!title || !rating || !link || !date) {
-    return res.status(400).json({ error: "All fields are required" });
+  if (!query || !claims || !ratings || !links || !language || !date) {
+    return res.status(400).json({ error: "All fields are required." });
   }
 
-  // Check if the detection already exists for the user
-  const checkQuery = "SELECT * FROM claims WHERE user_id = ? AND title = ?";
-  const insertQuery =
-    "INSERT INTO claims (user_id, title, rating, link, date) VALUES (?, ?, ?, ?, ?)";
+  if (claims.length > 3 || ratings.length > 3 || links.length > 3) {
+    return res.status(400).json({ error: "A maximum of 3 claims, ratings, and links are allowed per query." });
+  }
 
-  db.get(checkQuery, [req.user.id, title], (err, row) => {
+  const customID = generateClaimsID();
+
+  const insertQuery = `
+    INSERT INTO claims (id, user_id, query, claims, ratings, links, language, date) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const checkQuery = `
+    SELECT 1 FROM claims WHERE user_id = ? AND query = ?
+  `;
+
+  db.get(checkQuery, [req.user.id, query], (err, row) => {
     if (err) return res.status(500).json({ error: "Database error" });
 
     if (row) {
-      return res.status(409).json({ error: "Duplicate claim. Already exists." });
+      return res.status(409).json({ error: "Duplicate query. Already exists." });
     }
 
     db.run(
       insertQuery,
-      [req.user.id, title, rating, link, date],
+      [
+        customID,
+        req.user.id,
+        query,
+        JSON.stringify(claims),
+        JSON.stringify(ratings),
+        JSON.stringify(links),
+        language,
+        date,
+      ],
       function (err) {
-        if (err) return res.status(500).json({ error: "Failed to add claim" });
+        if (err) return res.status(500).json({ error: "Failed to add claims." });
 
         res.status(201).json({
-          id: this.lastID,
-          user_id: req.user.id,
-          title,
-          rating,
-          link,
+          id: customID,
+          query,
+          claims,
+          ratings,
+          links,
+          language,
           date,
         });
       }

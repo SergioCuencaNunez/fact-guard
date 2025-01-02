@@ -23,7 +23,8 @@ import {
   CheckCircleIcon,
   WarningTwoIcon,
   WarningIcon,
-  QuestionIcon,
+  InfoIcon,
+  ExternalLinkIcon,
 } from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
@@ -69,6 +70,34 @@ const ClaimCheckResults = () => {
       </Flex>
     );
   }
+
+  const { claims, ratings, links } = claimCheck;
+
+  const getRatingColor = (rating) => {
+    const lowerRating = rating.toLowerCase();
+    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].some((term) => lowerRating.includes(term))) {
+      return "red";
+    } else if (["true", "yes", "verdadero", "si"].some((term) => lowerRating.includes(term))) {
+      return "green";
+    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].some((term) => lowerRating.includes(term))) {
+      return "orange";
+    } else {
+      return "gray";
+    }
+  };
+
+  const getRatingIcon = (rating) => {
+    const lowerRating = rating.toLowerCase();
+    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].some((term) => lowerRating.includes(term))) {
+      return <WarningTwoIcon color="red.500" />;
+    } else if (["true", "yes", "verdadero", "si"].some((term) => lowerRating.includes(term))) {
+      return <CheckCircleIcon color="green.500" />;
+    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].some((term) => lowerRating.includes(term))) {
+      return <WarningIcon color="orange.500" />;
+    } else {
+      return <InfoIcon color="gray.500" />;
+    }
+  };
 
   return (
     <motion.div
@@ -146,7 +175,10 @@ const ClaimCheckResults = () => {
                   <b>Claim Check ID:</b> #{claimCheck.id}
                 </Text>
                 <Text fontSize="md">
-                  <b>Title:</b> {claimCheck.title}
+                  <b>Query:</b> {claimCheck.query}
+                </Text>
+                <Text fontSize="md">
+                  <b>Language:</b> {claimCheck.language}
                 </Text>
                 <Text fontSize="md">
                   <b>Date Analyzed:</b> {formatDate(claimCheck.date)}
@@ -157,7 +189,7 @@ const ClaimCheckResults = () => {
 
           <Divider mb="4" />
 
-          {/* Analysis Details */}
+          {/* Display Claims */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -165,46 +197,50 @@ const ClaimCheckResults = () => {
           >
             <Box mb="4">
               <Heading size="md" mb="2" color={textColor}>
-                Analysis
+                Fact-Checks Found
               </Heading>
-              <Stack
-                direction={{ base: "column", md: "row" }}
-                justify="flex-start"
-                spacing="2"
-                flexWrap="wrap"
-              >
-                <Badge
-                  fontSize="md"
-                  p={2}
-                  textAlign="center"
-                  colorScheme={
-                    claimCheck.rating === "True"
-                      ? "green"
-                      : claimCheck.rating === "False" || claimCheck.rating === "Mostly false"
-                      ? "red"
-                      : claimCheck.rating === "Misleading" || claimCheck.rating === "Mixture"
-                      ? "orange"
-                      : claimCheck.rating === "Mostly true"
-                      ? "green"
-                      : "gray"
-                  }
+              {claims.map((claim, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: 0.2 * index,
+                    duration: 0.5,
+                  }}
                 >
-                  <Flex align="center" justify="center" direction="row" gap="2">
-                    {claimCheck.rating === "True" || claimCheck.rating === "Mostly true" ? (
-                      <CheckCircleIcon color="green.500" />
-                    ) : claimCheck.rating === "False" || claimCheck.rating === "Mostly false" ? (
-                      <WarningTwoIcon color="red.500" />
-                    ) : claimCheck.rating === "Misleading" || claimCheck.rating === "Mixture" ? (
-                      <WarningIcon color="orange.500" />
-                    ) : (
-                      <QuestionIcon color="gray.500" />
-                    )}
-                    <Text>
-                      <b>Rating:</b> {claimCheck.rating || "Misleading"}
+                  <Box key={index} mb="4" p="5" bg={useColorModeValue("gray.50", "gray.800")} borderRadius="md" shadow="md" textAlign="justify">
+                    <Text fontSize="md" mb="2">
+                      <b>Claim:</b> {claim}
                     </Text>
-                  </Flex>
-                </Badge>
-              </Stack>
+                    <Text fontSize="md" mb="2">
+                      <b>Rating:</b> {ratings[index]}
+                    </Text>
+                    <Flex align="center" mb="2">
+                      <Badge
+                        colorScheme={getRatingColor(ratings[index])}
+                        fontSize="md"
+                        p={2}
+                        display="flex"
+                        alignItems="center"
+                        gap="2"
+                        whiteSpace="normal"
+                      >
+                        {getRatingIcon(ratings[index])}
+                        <Text as="span" fontSize="sm">
+                          {ratings[index]}
+                        </Text>
+                      </Badge>
+                    </Flex>
+                    <Text fontSize="md">
+                      <b>Link:</b>{" "}
+                      <a href={links[index]} target="_blank" rel="noopener noreferrer">
+                        {new URL(links[index]).hostname} <ExternalLinkIcon ml="1" />
+                      </a>
+                    </Text>
+                  </Box>
+                </motion.div>
+              ))}
             </Box>
           </motion.div>
 
@@ -214,9 +250,9 @@ const ClaimCheckResults = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
           >
-            <Box>
+            <Box textAlign="justify">
               <Heading size="md" mb="2" color={textColor}>
                 Insights
               </Heading>
@@ -232,7 +268,7 @@ const ClaimCheckResults = () => {
 
           {/* Navigation Buttons */}
           <Flex justify="center" mt="8">
-            <Stack direction={{ base: "column", md: "row" }} spacing="4">
+            <Stack direction={{ base: "column", md: "row" }} spacing="4" align="center">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                   leftIcon={<ArrowBackIcon />}

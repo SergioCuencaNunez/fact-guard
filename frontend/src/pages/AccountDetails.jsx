@@ -316,30 +316,30 @@ const AccountDetails = () => {
                 </AnimatePresence>
             </motion.div>
             <VStack spacing="4" align="stretch">
-            <Flex
-                direction={{ base: "column", lg: "row" }}
-                gap="4"
-                alignItems={{ base: "flex-start", lg: "center" }}
-            >
-                <FormControl>
-                <FormLabel>Name</FormLabel>
-                <Input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
-                />
-                </FormControl>
-                <FormControl isInvalid={!emailValid}>
-                <FormLabel>Email</FormLabel>
-                <Input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onBlur={() => setEmailValid(validateEmail(email))}
-                    placeholder="Enter your email"
-                />
-                </FormControl>
-            </Flex>
-            <Flex
+              <Flex
+                  direction={{ base: "column", lg: "row" }}
+                  gap="4"
+                  alignItems={{ base: "flex-start", lg: "center" }}
+              >
+                  <FormControl>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your name"
+                  />
+                  </FormControl>
+                  <FormControl isInvalid={!emailValid}>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onBlur={() => setEmailValid(validateEmail(email))}
+                      placeholder="Enter your email"
+                  />
+                  </FormControl>
+              </Flex>
+              <Flex
                 direction={{ base: "column", lg: "row" }}
                 gap="4"
                 alignItems="flex-start"
@@ -413,66 +413,65 @@ const AccountDetails = () => {
                     {getPasswordStrengthLabel(confirmPasswordStrength)}
                     </Text>
                 </FormControl>
-            </Flex>
-            <HStack spacing="4" justify="center" mt="4">
+              </Flex>
+              <HStack spacing={{ base: "2", md: "4" }} mt="4" justify={{ base: "center", md: "center" }} flexWrap="wrap">
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                     <Button
-                    bg={primaryColor}
-                    color="white"
-                    onClick={handleSaveChanges}
-                    _hover={{ bg: hoverColor }}
-                    _active={{ bg: activeColor }}
-                    whiteSpace="normal"
+                      bg={primaryColor}
+                      color="white"
+                      onClick={handleSaveChanges}
+                      _hover={{ bg: hoverColor }}
+                      _active={{ bg: activeColor }}
                     >
                     Save Changes
                     </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                     <Button
-                    bg={primaryColor}
-                    color="white"
-                    onClick={handleResetPassword}
-                    _hover={{ bg: hoverColor }}
-                    _active={{ bg: activeColor }}
-                    whiteSpace="normal"
+                      bg={primaryColor}
+                      color="white"
+                      onClick={handleResetPassword}
+                      _hover={{ bg: hoverColor }}
+                      _active={{ bg: activeColor }}
                     >
                     Reset Password
                     </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                     <Button
-                    colorScheme="red"
-                    variant="solid"
-                    onClick={() => setIsDeleting(true)}
-                    whiteSpace="normal"
+                      colorScheme="red"
+                      variant="solid"
+                      onClick={() => setIsDeleting(true)}
                     >
                     Delete Account
                     </Button>
                 </motion.div>
-            </HStack>
+              </HStack>
             </VStack>
         </Flex>
 
         {/* Account Deletion Modal */}
         <Modal isOpen={isDeleting} onClose={() => setIsDeleting(false)} isCentered>
             <ModalOverlay />
-            <ModalContent>
-            <ModalHeader>Confirm Account Deletion</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-                Are you sure you want to delete your account? This action cannot be undone. All your detections and claim checks will also be permanently removed.
-            </ModalBody>
-            <ModalFooter>
-                <Button colorScheme="red" mr={3} onClick={handleDeleteAccount}>
-                Delete
-                </Button>
-                <Button variant="ghost" onClick={() => setIsDeleting(false)}>
-                Cancel
-                </Button>
-            </ModalFooter>
+            <ModalContent
+              width={{ base: "90%"}}
+            >
+              <ModalHeader>Confirm Account Deletion</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                  Are you sure you want to delete your account? This action cannot be undone. All your detections and claim checks will also be permanently removed.
+              </ModalBody>
+              <ModalFooter>
+                  <Button colorScheme="red" mr={3} onClick={handleDeleteAccount}>
+                  Delete
+                  </Button>
+                  <Button variant="ghost" onClick={() => setIsDeleting(false)}>
+                  Cancel
+                  </Button>
+              </ModalFooter>
             </ModalContent>
         </Modal>
-        </Box>
+      </Box>
     </motion.div>
   );
 };

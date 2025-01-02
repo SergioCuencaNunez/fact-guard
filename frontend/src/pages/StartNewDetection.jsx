@@ -264,10 +264,10 @@ const StartNewDetection = ({ addDetection }) => {
           {/* Transparency Section */}
           <Flex direction="column">
             <Flex align="center" cursor="pointer" onClick={toggleTransparency} color={useColorModeValue("gray.500", "gray.400")}>
-              <Text fontSize="sm" fontWeight="bold" mr={2}>
+              <InfoOutlineIcon fontSize="sm"/>             
+             <Text fontSize="sm" fontWeight="bold" ml={2}>
                 More Information and Details
               </Text>
-              <InfoOutlineIcon fontSize="sm"/>
             </Flex>
             <Collapse in={showTransparency}>
               <Box mt={4} p={4} borderRadius="md" bg={useColorModeValue("gray.50", "gray.800")}>
@@ -290,10 +290,12 @@ const StartNewDetection = ({ addDetection }) => {
           {/* Spinner Modal */}
           <Modal isOpen={isSpinnerOpen} onClose={onSpinnerClose} closeOnOverlayClick={false} closeOnEsc={false} isCentered>
             <ModalOverlay />
-            <ModalContent >
+              <ModalContent
+                width={{ base: "90%"}}
+              >
               <ModalBody textAlign="center" py="6">
                 <Spinner size="xl" />
-                <Text mt="4">Analyzing News with {confidence}% Confidence Threshold. Please Wait...</Text>
+                <Text mt="4">Analyzing News with {confidence}% Confidence Threshold... Please Wait.</Text>
               </ModalBody>
             </ModalContent>
           </Modal>
@@ -301,12 +303,13 @@ const StartNewDetection = ({ addDetection }) => {
           {/* Alert Modal */}
           <Modal isOpen={isAlertOpen} onClose={onAlertClose} isCentered>
             <ModalOverlay />
-            <ModalContent>
+              <ModalContent
+                width={{ base: "90%"}}
+              >
               <ModalHeader>Missing Information</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 Please fill in both the title and content fields to proceed with detecting fake news. 
-                These details are essential to analyze the authenticity of the article.
               </ModalBody>
               <ModalFooter>
                 <Button
@@ -326,7 +329,9 @@ const StartNewDetection = ({ addDetection }) => {
           {/* Error Modal */}
           <Modal isOpen={isErrorOpen} onClose={onErrorClose} isCentered>
             <ModalOverlay />
-            <ModalContent>
+              <ModalContent
+                width={{ base: "90%"}}
+              >
               <ModalHeader>Error</ModalHeader>
               <ModalCloseButton />
               <ModalBody>

@@ -228,7 +228,7 @@ const DetectionResults = () => {
 
           {/* Navigation Buttons */}
           <Flex justify="center" mt="8">
-            <Stack direction={{ base: "column", md: "row" }} spacing="4">
+            <Stack direction={{ base: "column", md: "row" }} spacing="4" align="center">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                   leftIcon={<ArrowBackIcon />}
