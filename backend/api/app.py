@@ -5,8 +5,7 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# Initialize your API key
-API_KEY = "AIzaSyBnQqmXmGZwMVKt2l1RfJO4IQ9P8YtZErQ"
+API_KEY = "secret_API_key"
 
 # Supported languages
 LANGUAGE_MAP = {
