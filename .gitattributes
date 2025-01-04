@@ -1,7 +1,7 @@
 *.pkl filter=lfs diff=lfs merge=lfs -text
 *.csv filter=lfs diff=lfs merge=lfs -text
 *.pb filter=lfs diff=lfs merge=lfs -text
-backend/models/bert_model/** filter=lfs diff=lfs merge=lfs -text
-backend/models/bert_model/variables/** filter=lfs diff=lfs merge=lfs -text
+# backend/models/bert_model/** filter=lfs diff=lfs merge=lfs -text
+# backend/models/bert_model/variables/** filter=lfs diff=lfs merge=lfs -text
 backend/preprocessing_artifacts/bert_tokenizer/** filter=lfs diff=lfs merge=lfs -text
 backend/preprocessing_artifacts/bert_tokenizer/variables/** filter=lfs diff=lfs merge=lfs -text
