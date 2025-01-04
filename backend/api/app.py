@@ -1,17 +1,154 @@
+import os
+import re
+import requests
+import pickle
+import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from transformers import AutoTokenizer, AdamWeightDecay
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import requests
 
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = "secret_API_key"
-
+current_dir = os.path.dirname(__file__)
+api_key_path = os.path.join(current_dir, "api_key.txt")
+with open(api_key_path, "r") as file:
+    API_KEY = file.read().strip()
+      
 # Supported languages
 LANGUAGE_MAP = {
     "en": "English",
     "es": "Spanish",
 }
+
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('punkt')
+
+lemmatizer = WordNetLemmatizer()
+stop_words = set(stopwords.words('english'))
+
+# Load models and tokenizers
+with open('../models/dt_pruned_model.pkl', 'rb') as file:
+    pruned_tree = pickle.load(file)
+with open('../models/rf_cv_model.pkl', 'rb') as file:
+    rf_cv = pickle.load(file)
+with open('../models/xgboost_model.pkl', 'rb') as file:
+    xgb_model = pickle.load(file)
+with open('../models/lstm_model.pkl', 'rb') as file:
+    lstm_model = pickle.load(file)
+
+bert_model = load_model('../models/bert_model', custom_objects={'AdamWeightDecay': AdamWeightDecay})
+
+with open('../preprocessing_artifacts/tfidf_vectorizer.pkl', 'rb') as file:
+    vectorizer = pickle.load(file)
+with open('../preprocessing_artifacts/lstm_tokenizer.pkl', 'rb') as file:
+    lstm_tokenizer = pickle.load(file)
+
+bert_tokenizer = AutoTokenizer.from_pretrained("../preprocessing_artifacts/bert_tokenizer")
+
+def clean_text(text):
+    # Remove extra whitespaces
+    text = re.sub(r'\s+', ' ', text, flags=re.I)
+
+    # Remove special characters
+    text = re.sub(r'\W', ' ', str(text))  
+
+    # Remove single characters
+    text = re.sub(r'\s+[a-zA-Z]\s+', ' ', text)
+
+    # Remove not alphabetical characters
+    text = re.sub(r'[^a-zA-Z\s]', ' ', text)
+    
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Lemmatization
+    tokens = word_tokenize(text)
+    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
+
+    # Removal of Stop Words
+    tokens = [word for word in tokens if len(word) > 3]
+    
+    return tokens
+
+# Define the prediction function
+def predict_news(news_text):
+    tokens = clean_text(news_text)
+    cleaned_text = ' '.join(tokens)
+
+    # TF-IDF for ML models
+    tfidf_features = vectorizer.transform([cleaned_text])
+
+    # Tokenization and padding for LSTM
+    max_sequence_length = 150
+    lstm_sequence = lstm_tokenizer.texts_to_sequences([cleaned_text])
+    lstm_padded = pad_sequences(lstm_sequence, maxlen=max_sequence_length)
+
+    # Tokenization for BERT
+    bert_inputs = bert_tokenizer(cleaned_text, return_tensors = "tf", padding = "max_length", truncation = True, max_length=512)
+
+    # Predict with ML models
+    dt_pred = pruned_tree.predict_proba(tfidf_features)[0]
+    rf_pred = rf_cv.predict_proba(tfidf_features)[0]
+    xgb_pred = xgb_model.predict_proba(tfidf_features)[0]
+
+    # Predict with LSTM
+    lstm_pred_probs = lstm_model.predict(lstm_padded)[0]
+
+    # Predict with BERT
+    bert_predictions = bert_model.predict(dict(bert_inputs))
+    bert_pred_logits = bert_predictions['logits'][0]
+    bert_pred_probs = tf.nn.sigmoid(bert_pred_logits).numpy()
+
+    predictions = {
+        "Decision Tree": {"Fake": dt_pred[0] * 100, "True": dt_pred[1] * 100},
+        "Random Forest": {"Fake": rf_pred[0] * 100, "True": rf_pred[1] * 100},
+        "XGBoost": {"Fake": xgb_pred[0] * 100, "True": xgb_pred[1] * 100},
+        "LSTM": {"Fake": lstm_pred_probs[0] * 100, "True": lstm_pred_probs[1] * 100},
+        "BERT": {"Fake": (1 - bert_pred_probs[0]) * 100, "True": bert_pred_probs[0] * 100},
+    }
+
+    predictions_class = {
+        model: "True" if probs["True"] >= probs["Fake"] else "Fake"
+        for model, probs in predictions.items()
+    }
+
+    final_decision = (
+        "True" if list(predictions_class.values()).count("True") > list(predictions_class.values()).count("Fake") else "Fake"
+    )
+
+    predictions_df = pd.DataFrame(predictions).T.reset_index()
+    predictions_df.columns = ["Model", "Fake (%)", "True (%)"]
+
+    classifications_df = pd.DataFrame(list(predictions_class.items()), columns=["Model", "Classification"])
+
+    return predictions_df, classifications_df, final_decision
+
+# Prediction endpoint
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    news_text = data.get("news_text")
+
+    if not news_text:
+        return jsonify({"success": False, "error": "News text is required."}), 400
+
+    predictions_df, classifications_df, final_decision = predict_news(news_text)
+
+    response = {
+        "predictions": predictions_df.to_dict(orient = "records"),
+        "classifications": classifications_df.to_dict(orient = "records"),
+        "final_decision": final_decision,
+    }
+    return jsonify(response)
 
 def search_fact_check_claims(api_key, query, language_code="en"):
     url = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
