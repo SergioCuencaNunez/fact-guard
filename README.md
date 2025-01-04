@@ -29,10 +29,11 @@ FactGuard is a web application designed to detect fake news and verify claims us
 
 - **Backend**:
   - Python 3.9.21
-  - Flask (API Development)
-  - TensorFlow/PyTorch (Model Deployment)
+  - API Development: Flask
+  - Model Deployment: TensorFlow/PyTorch
   - Google FactCheck Claim Search API Key
-  - Node.js with Express (Database and Authentication)
+  - Database and Authentication: Node.js with Express
+
 - **Frontend**:
   - Node.js
   - React + Vite
