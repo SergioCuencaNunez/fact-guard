@@ -203,25 +203,50 @@ app.get("/profile", verifyToken, (req, res) => {
 
 // Get all detections for a user
 app.get("/detections", verifyToken, (req, res) => {
-  const query = "SELECT * FROM detections WHERE user_id = ?";
+  const query = `
+  SELECT * 
+  FROM detections 
+  WHERE user_id = ? 
+  ORDER BY date DESC
+`;
+
   db.all(query, [req.user.id], (err, rows) => {
     if (err) return res.status(500).json({ error: "Failed to fetch detections" });
-    res.json(rows);
+    const parsedRows = rows.map((row) => ({
+      ...row,
+      models: JSON.parse(row.models),
+      true_probabilities: JSON.parse(row.true_probabilities),
+      fake_probabilities: JSON.parse(row.fake_probabilities),
+      predictions: JSON.parse(row.predictions),
+    }));
+
+    res.json(parsedRows);
   });
 });
 
+// Generate FactGuard Detect ID
+const generateDetectionsID = () => {
+  const randomNumber = Math.floor(Math.random() * 100);
+  const formattedNumber = String(randomNumber).padStart(2, '0');
+  return `FGD${formattedNumber}`;
+};
+
 // Add a new detection
 app.post("/detections", verifyToken, (req, res) => {
-  const { title, content, fakePercentage = "70%", truePercentage = "30%", date } = req.body;
+  const { title, content, models, true_probabilities, fake_probabilities, predictions, final_prediction, date } = req.body;
 
-  if (!title || !content || !fakePercentage || !truePercentage || !date) {
+  if (!title || !content || !models || !true_probabilities || !fake_probabilities || !predictions || !final_prediction || !date) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  // Check if the detection already exists for the user
-  const checkQuery = "SELECT * FROM detections WHERE user_id = ? AND title = ? AND content = ?";
-  const insertQuery =
-    "INSERT INTO detections (user_id, title, content, fake_percentage, true_percentage, date) VALUES (?, ?, ?, ?, ?, ?)";
+  const customID = generateDetectionsID();
+
+  const insertQuery = `
+    INSERT INTO detections (id, user_id, title, content, models, true_probabilities, fake_probabilities, predictions, final_prediction, date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const checkQuery = "SELECT 1 FROM detections WHERE user_id = ? AND title = ? AND content = ?";
 
   db.get(checkQuery, [req.user.id, title, content], (err, row) => {
     if (err) return res.status(500).json({ error: "Database error" });
@@ -232,17 +257,31 @@ app.post("/detections", verifyToken, (req, res) => {
 
     db.run(
       insertQuery,
-      [req.user.id, title, content, fakePercentage, truePercentage, date],
+      [
+        customID, 
+        req.user.id, 
+        title, 
+        content, 
+        JSON.stringify(models), 
+        JSON.stringify(true_probabilities), 
+        JSON.stringify(fake_probabilities), 
+        JSON.stringify(predictions), 
+        final_prediction, 
+        date,
+      ],
       function (err) {
         if (err) return res.status(500).json({ error: "Failed to add detection" });
 
         res.status(201).json({
-          id: this.lastID,
+          id: customID,
           user_id: req.user.id,
           title,
           content,
-          fakePercentage,
-          truePercentage,
+          models,
+          true_probabilities,
+          fake_probabilities,
+          predictions,
+          final_prediction,
           date,
         });
       }
@@ -304,7 +343,7 @@ app.get("/claims", verifyToken, (req, res) => {
   });
 });
 
-// Generate a FactGuard Verify Claims' ID
+// Generate a FactGuard Verify ID
 const generateClaimsID = () => {
   const randomNumber = Math.floor(Math.random() * 100);
   const formattedNumber = String(randomNumber).padStart(2, '0');

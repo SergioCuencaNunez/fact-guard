@@ -44,7 +44,8 @@ import logoDetectDark from "../assets/logo-detect-dark.png";
 const StartNewDetection = ({ addDetection }) => {
   const navigate = useNavigate();
   // For development only
-  const BACKEND_URL = `${window.location.protocol}//${window.location.hostname}:5001`;
+  const BACKEND_URL_DB = `${window.location.protocol}//${window.location.hostname}:5001`;
+  const BACKEND_URL_API = `${window.location.protocol}//${window.location.hostname}:5002`;
 
   // For production
   // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -66,6 +67,8 @@ const StartNewDetection = ({ addDetection }) => {
   const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
   const { isOpen: isErrorOpen, onOpen: onErrorOpen, onClose: onErrorClose } = useDisclosure();
 
+  const toggleTransparency = () => setShowTransparency(!showTransparency);
+
   const handleAnalyze = () => {
     if (!title || !content) {
       onAlertOpen();
@@ -73,39 +76,72 @@ const StartNewDetection = ({ addDetection }) => {
     }
   
     onSpinnerOpen();
-  
+
     setTimeout(async () => {
       try {
         const token = localStorage.getItem("token");
-  
-        const detection = {
-          title,
-          content,
-          fakePercentage: "70%", // Placeholder
-          truePercentage: "30%", // Placeholder
-          date: new Date().toISOString(),
-        };
 
-        const response = await fetch(`${BACKEND_URL}/detections`, {
+        // Call the API to perform the prediction
+        const response = await fetch(`${BACKEND_URL_API}/predict`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(detection),
+          body: JSON.stringify({ news_text: content, confidence_threshold: confidence }),
         });
-  
-        if (response.ok) {
-          const newDetection = await response.json();
-          addDetection(newDetection); // Add detection to parent state
-          navigate("/profile/detection-results", { state: { detection: newDetection } });
-        } else if (response.status === 409) {
-          console.warn("Duplicate detection.");
-          setErrorMessage("This detection already exists. Please check your list of detections.");
+    
+        if (!response.ok) {
+          const errorText = await response.text();
+          setErrorMessage(`Detection failed: ${errorText}`);
           onErrorOpen();
+        }
+    
+        const predictionResult = await response.json();
+    
+        if (predictionResult.success) {
+          // Extract detection details
+          const models = predictionResult.detections.slice(0, 5).map((item) => item.Model);
+          const trueProbabilities = predictionResult.detections.slice(0, 5).map((item) => item["True Probability"]);
+          const fakeProbabilities = predictionResult.detections.slice(0, 5).map((item) => item["Fake Probability"]);
+          const predictions = predictionResult.detections.slice(0, 5).map((item) => item.Prediction);
+    
+          const detectionData = {
+            title: title,
+            content: content,
+            models: models,
+            true_probabilities: trueProbabilities,
+            fake_probabilities: fakeProbabilities,
+            predictions: predictions,
+            final_prediction: predictionResult.final_prediction,
+            date: new Date().toISOString(),
+          };
+    
+          // Save the detection data to the database
+          const dbResponse = await fetch(`${BACKEND_URL_DB}/detections`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(detectionData),
+          });
+    
+          if (dbResponse.ok) {
+            const newDetection = await dbResponse.json();
+            addDetection(newDetection); // Add detection to parent state
+            navigate("/profile/detection-results", { state: { detection: newDetection } });
+          } else if (dbResponse.status === 409) {
+            console.warn("Duplicate detection.");
+            setErrorMessage("This detection already exists. Please check your list of detections.");
+            onErrorOpen();
+          } else {
+            console.error("Failed to save detection:", await dbResponse.text());
+            setErrorMessage(`Failed to save detection: ${await dbResponse.text()}`);
+            onErrorOpen();
+          }
         } else {
-          console.error("Failed to analyze detection:", await response.text());
-          setErrorMessage(`Failed to analyze detection: ${await response.text()}`);
+          // Display error message if no detections are found
+          setErrorMessage(predictionResult.message || "No detections found for the input.");
           onErrorOpen();
         }
       } catch (error) {
@@ -116,9 +152,7 @@ const StartNewDetection = ({ addDetection }) => {
         onSpinnerClose();
       }
     }, 5000);
-  };  
-
-  const toggleTransparency = () => setShowTransparency(!showTransparency);
+  };
 
   return (
     <motion.div

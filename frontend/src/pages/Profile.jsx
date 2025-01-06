@@ -91,6 +91,7 @@ const Profile = () => {
   const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
+  const dateFormat = useBreakpointValue({ base: 'small', md: 'medium', lg: 'full' });
 
   const colors = {
     green: useColorModeValue("green.600", "green.300"),
@@ -184,13 +185,25 @@ const Profile = () => {
   
     return "Inconclusive";
   };
+
+  const getPredictionColor = (prediction) => {
+    if (prediction === "Fake") return "red";
+    if (prediction === "True") return "green";
+    return "orange";
+  };
   
-  const getCurrentDate = () => {
+  const getPredictionIcon = (prediction) => {
+    if (prediction === "Fake") return <WarningTwoIcon color="red.500" />;
+    if (prediction === "True") return <CheckCircleIcon color="green.500" />;
+    return <WarningIcon color="orange.500" />;
+  };
+  
+  const getCurrentDate = (dateFormat) => {
     const now = new Date();
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    const dayName = dayNames[now.getDay()].slice(0, 3);
+    const dayName = dayNames[now.getDay()];
     const monthName = monthNames[now.getMonth()];
     const date = now.getDate();
     const year = now.getFullYear();
@@ -203,7 +216,20 @@ const Profile = () => {
         : date % 10 === 3 && date !== 13
         ? "rd"
         : "th";
-    return `${dayName} ${monthName} ${date}${dateSuffix}, ${year}`;
+
+    if (dateFormat == 'small') {
+      const day = String(date).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const shortYear = String(year).slice(-2);
+      return `${day}/${month}/${shortYear}`;
+    }
+
+    if (dateFormat == 'medium') {
+      const shortDayName = dayName.slice(0, 3);
+      return `${shortDayName}, ${monthName} ${date}${dateSuffix}, ${year}`;
+    }
+
+    return `${dayName}, ${monthName} ${date}${dateSuffix}, ${year}`;
   };
 
   // Fetch user data
@@ -748,7 +774,7 @@ const Profile = () => {
                   <Flex justify="space-between" align="center">
                     <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
                     <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-                      <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate()}</Text>
+                      <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate(dateFormat)}</Text>
                       <IconButton
                         aria-label="Toggle theme"
                         icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -756,7 +782,7 @@ const Profile = () => {
                       />
                     </HStack>
                     <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-                      <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate()}</Text>
+                      <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate(dateFormat)}</Text>
                     </HStack>
                   </Flex>
                   <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
@@ -859,68 +885,76 @@ const Profile = () => {
                     <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
                       {detections.length > 0 ? (
                         <>
-                          <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                            <Thead>
-                              <Tr>
-                                <Th width="5%" textAlign="center"><b>ID</b></Th>
-                                <Th width="30%" textAlign="left"><b>Title</b></Th>
-                                <Th width="12.5%" textAlign="center"><b>Fake</b></Th>
-                                <Th width="12.5%" textAlign="center"><b>True</b></Th>
-                                <Th width="15%" textAlign="center"><b>Date</b></Th>
-                                <Th width="15%" textAlign="center"><b>Results</b></Th>
-                                <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                              </Tr>
-                            </Thead>
-                            <Tbody as={motion.tbody}>
-                              <AnimatePresence>
-                                {sortedDetections.slice(0, 5).map((detection) => (
-                                  <motion.tr
-                                    key={detection.id}
-                                    layout
-                                    initial={{ opacity: 0, y: 50 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -50 }}
-                                    transition={{ duration: 0.5 }}
-                                  >
-                                    <Td textAlign="center">#{detection.id}</Td>
-                                    <Td textAlign="left">{detection.title}</Td>
-                                    <Td textAlign="center">
-                                      <Text fontSize="xl" color={getDetectionTextColor(detection.falsePercentage || 70, "False", colors)}>
-                                        {detection.falsePercentage || "70%"}
-                                      </Text>
-                                    </Td>
-                                    <Td textAlign="center">
-                                      <Text fontSize="xl" color={getDetectionTextColor(detection.truePercentage || 30, "True", colors)}>
-                                        {detection.truePercentage || "30%"}
-                                      </Text>
-                                    </Td>
-                                    <Td textAlign="center">{formatDate(detection.date)}</Td>
-                                    <Td textAlign="center">
-                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                        <Button
-                                          size="sm"
-                                          onClick={() =>
-                                            navigate("/profile/detection-results", {
-                                              state: { detection },
-                                            })
-                                          }
+                          <Box overflowX="auto">
+                            <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                              <Thead>
+                                <Tr>
+                                  <Th width="10%" textAlign="center"><b>ID</b></Th>
+                                  <Th width="45%" textAlign="left"><b>Title</b></Th>
+                                  <Th width="15%" textAlign="center"><b>Prediction</b></Th>
+                                  <Th width="10%" textAlign="center"><b>Date</b></Th>
+                                  <Th width="10%" textAlign="center"><b>Results</b></Th>
+                                  <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                                </Tr>
+                              </Thead>
+                              <Tbody as={motion.tbody}>
+                                <AnimatePresence>
+                                  {sortedDetections.slice(0, 5).map((detection) => (
+                                    <motion.tr
+                                      key={detection.id}
+                                      layout
+                                      initial={{ opacity: 0, y: 50 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -50 }}
+                                      transition={{ duration: 0.5 }}
+                                    >
+                                      <Td textAlign="center">#{detection.id}</Td>
+                                      <Td textAlign="justify">{detection.title}</Td>
+                                      <Td textAlign="center">
+                                        <Badge
+                                          colorScheme={getPredictionColor(detection.final_prediction)}
+                                          fontSize="md"
+                                          p={2}
+                                          display="flex"
+                                          alignItems="center"
+                                          justifyContent="center"
+                                          gap="2"
+                                          whiteSpace="normal"
                                         >
-                                          Results
-                                        </Button>
-                                      </motion.div>
-                                    </Td>
-                                    <Td textAlign="center">
-                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                        <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
-                                          <FaTrashAlt />
-                                        </Button>
-                                      </motion.div>
-                                    </Td>
-                                  </motion.tr>
-                                ))}
-                              </AnimatePresence>
-                            </Tbody>
-                          </Table>
+                                          {getPredictionIcon(detection.final_prediction)}
+                                          <Text as="span" fontSize="md">
+                                            {detection.final_prediction}
+                                          </Text>
+                                        </Badge>
+                                      </Td>
+                                      <Td textAlign="center">{formatDate(detection.date)}</Td>
+                                      <Td textAlign="center">
+                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                          <Button
+                                            size="sm"
+                                            onClick={() =>
+                                              navigate("/profile/detection-results", {
+                                                state: { detection },
+                                              })
+                                            }
+                                          >
+                                            Results
+                                          </Button>
+                                        </motion.div>
+                                      </Td>
+                                      <Td textAlign="center">
+                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                          <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
+                                            <FaTrashAlt />
+                                          </Button>
+                                        </motion.div>
+                                      </Td>
+                                    </motion.tr>
+                                  ))}
+                                </AnimatePresence>
+                              </Tbody>
+                            </Table>
+                          </Box>
                         </>
                       ) : (
                         <motion.div
@@ -952,74 +986,76 @@ const Profile = () => {
                   <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
                       {claimChecks.length > 0 ? (
                         <>
-                          <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                            <Thead>
-                              <Tr>
-                                <Th width="10%" textAlign="center"><b>ID</b></Th>
-                                <Th width="45%" textAlign="left"><b>Query</b></Th>
-                                <Th width="10%" textAlign="center"><b>Rating</b></Th>
-                                <Th width="15%" textAlign="center"><b>Date</b></Th>
-                                <Th width="15%" textAlign="center"><b>Results</b></Th>
-                                <Th width="5%" textAlign="center"><b>Remove</b></Th>
-                              </Tr>
-                            </Thead>
-                            <Tbody as={motion.tbody}>
-                              <AnimatePresence>
-                                {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
-                                  <motion.tr
-                                    key={claimCheck.id}
-                                    layout
-                                    initial={{ opacity: 0, y: 50 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -50 }}
-                                    transition={{ duration: 0.5 }}
-                                  >
-                                    <Td textAlign="center">#{claimCheck.id}</Td>
-                                    <Td textAlign="left">{claimCheck.query}</Td>
-                                    <Td textAlign="center">
-                                      <Badge
-                                        colorScheme={getRatingColor(getAggregateRating(claimCheck.ratings))}
-                                        fontSize="md"
-                                        p={2}
-                                        display="flex"
-                                        alignItems="center"
-                                        justifyContent="center"
-                                        gap="2"
-                                        whiteSpace="normal"
-                                      >
-                                        {getRatingIcon(getAggregateRating(claimCheck.ratings))}
-                                        <Text as="span" fontSize="sm">
-                                          {getAggregateRating(claimCheck.ratings)}
-                                        </Text>
-                                      </Badge>
-                                    </Td>
-                                    <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
-                                    <Td textAlign="center">
-                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                        <Button
-                                          size="sm"
-                                          onClick={() =>
-                                            navigate("/profile/claim-check-results", {
-                                              state: { claimCheck },
-                                            })
-                                          }
+                          <Box overflowX="auto">
+                            <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                              <Thead>
+                                <Tr>
+                                  <Th width="10%" textAlign="center"><b>ID</b></Th>
+                                  <Th width="45%" textAlign="left"><b>Query</b></Th>
+                                  <Th width="15%" textAlign="center"><b>Rating</b></Th>
+                                  <Th width="10%" textAlign="center"><b>Date</b></Th>
+                                  <Th width="10%" textAlign="center"><b>Results</b></Th>
+                                  <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                                </Tr>
+                              </Thead>
+                              <Tbody as={motion.tbody}>
+                                <AnimatePresence>
+                                  {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
+                                    <motion.tr
+                                      key={claimCheck.id}
+                                      layout
+                                      initial={{ opacity: 0, y: 50 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -50 }}
+                                      transition={{ duration: 0.5 }}
+                                    >
+                                      <Td textAlign="center">#{claimCheck.id}</Td>
+                                      <Td textAlign="justify">{claimCheck.query}</Td>
+                                      <Td textAlign="center">
+                                        <Badge
+                                          colorScheme={getRatingColor(getAggregateRating(claimCheck.ratings))}
+                                          fontSize="md"
+                                          p={2}
+                                          display="flex"
+                                          alignItems="center"
+                                          justifyContent="center"
+                                          gap="2"
+                                          whiteSpace="normal"
                                         >
-                                          Results
-                                        </Button>
-                                      </motion.div>
-                                    </Td>
-                                    <Td textAlign="center">
-                                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                        <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
-                                          <FaTrashAlt />
-                                        </Button>
-                                      </motion.div>
-                                    </Td>
-                                  </motion.tr>
-                                ))}
-                              </AnimatePresence>
-                            </Tbody>
-                          </Table>
+                                          {getRatingIcon(getAggregateRating(claimCheck.ratings))}
+                                          <Text as="span" fontSize="sm">
+                                            {getAggregateRating(claimCheck.ratings)}
+                                          </Text>
+                                        </Badge>
+                                      </Td>
+                                      <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
+                                      <Td textAlign="center">
+                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                          <Button
+                                            size="sm"
+                                            onClick={() =>
+                                              navigate("/profile/claim-check-results", {
+                                                state: { claimCheck },
+                                              })
+                                            }
+                                          >
+                                            Results
+                                          </Button>
+                                        </motion.div>
+                                      </Td>
+                                      <Td textAlign="center">
+                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                          <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
+                                            <FaTrashAlt />
+                                          </Button>
+                                        </motion.div>
+                                      </Td>
+                                    </motion.tr>
+                                  ))}
+                                </AnimatePresence>
+                              </Tbody>
+                            </Table>
+                          </Box>
                         </>
                       ) : (
                         <motion.div

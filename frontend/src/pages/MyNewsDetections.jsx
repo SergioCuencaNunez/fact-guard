@@ -11,6 +11,7 @@ import {
   Tr,
   Th,
   Td,
+  Badge,
   Button,
   IconButton,
   Checkbox,
@@ -27,7 +28,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { FaTrashAlt } from "react-icons/fa";
-import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon, WarningTwoIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -98,19 +99,6 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   const orange = useColorModeValue("orange.600", "orange.300");
   const gray = useColorModeValue("gray.600", "gray.300");
   const red = useColorModeValue("red.600", "red.300");
-
-  const getTextColor = (value, type) => {  
-    if (type === "True") {
-      if (value >= 70) return green;
-      if (value >= 40) return orange;
-      return gray;
-    } else if (type === "False") {
-      if (value >= 70) return red;
-      if (value >= 40) return orange;
-      return gray;
-    }
-    return gray;
-  };
   
   const sortedDetections = [...detections].sort((a, b) => {
     return sortOrder === "desc"
@@ -121,6 +109,18 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   const toggleSortOrder = () => {
     setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
   };
+
+    const getPredictionColor = (prediction) => {
+      if (prediction === "Fake") return "red";
+      if (prediction === "True") return "green";
+      return "orange";
+    };
+    
+    const getPredictionIcon = (prediction) => {
+      if (prediction === "Fake") return <WarningTwoIcon color="red.500" />;
+      if (prediction === "True") return <CheckCircleIcon color="green.500" />;
+      return <WarningIcon color="orange.500" />;
+    };
 
   return (
     <motion.div
@@ -181,11 +181,10 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                 <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
                   <Thead>
                     <Tr>
-                      <Th width="5%" textAlign="center"><b>ID</b></Th>
-                      <Th width="30%" textAlign="left"><b>Title</b></Th>
-                      <Th width="10%" textAlign="center"><b>Fake</b></Th>
-                      <Th width="10%" textAlign="center"><b>True</b></Th>
-                      <Th width="15%" textAlign="center">
+                      <Th width="10%" textAlign="center"><b>ID</b></Th>
+                      <Th width="35%" textAlign="left"><b>Title</b></Th>
+                      <Th width="15%" textAlign="center"><b>Prediction</b></Th>
+                      <Th width="10%" textAlign="center">
                         <Flex align="center" justify="center">
                           <b>Date</b>
                           <IconButton
@@ -198,9 +197,9 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                           />
                         </Flex>
                       </Th>
-                      <Th width="15%" textAlign="center"><b>Results</b></Th>
+                      <Th width="10%" textAlign="center"><b>Results</b></Th>
                       <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                      <Th width="5%" textAlign="center"><b>Select</b></Th>
+                      <Th width="10%" textAlign="center"><b>Select</b></Th>
                     </Tr>
                   </Thead>
                   <Tbody as={motion.tbody}>
@@ -215,16 +214,23 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                           transition={{ duration: 0.5 }}
                         >
                           <Td textAlign="center">#{detection.id}</Td>
-                          <Td textAlign="left">{detection.title}</Td>
+                          <Td textAlign="justify">{detection.title}</Td>
                           <Td textAlign="center">
-                            <Text fontSize="xl" color={getTextColor(detection.falsePercentage || 70, "False")}>
-                              {detection.falsePercentage || "70%"}
-                            </Text>
-                          </Td>
-                          <Td textAlign="center">
-                            <Text fontSize="xl" color={getTextColor(detection.truePercentage || 30, "True")}>
-                              {detection.truePercentage || "30%"}
-                            </Text>
+                            <Badge
+                              colorScheme={getPredictionColor(detection.final_prediction)}
+                              fontSize="md"
+                              p={2}
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              gap="2"
+                              whiteSpace="normal"
+                            >
+                              {getPredictionIcon(detection.final_prediction)}
+                              <Text as="span" fontSize="md">
+                                {detection.final_prediction}
+                              </Text>
+                            </Badge>
                           </Td>
                           <Td textAlign="center">{formatDate(detection.date)}</Td>
                           <Td textAlign="center">

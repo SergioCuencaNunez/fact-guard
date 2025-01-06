@@ -204,40 +204,53 @@ const ClaimCheckResults = () => {
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ scale: 1.025 }}
+                  whileTap={{ scale: 0.95 }}
                   transition={{
-                    delay: 0.2 * index,
-                    duration: 0.5,
+                    opacity: { duration: 0.5, delay: 0.4 * index },
+                    scale: { type: "spring", stiffness: 300, damping: 20 },
                   }}
                 >
                   <Box key={index} mb="4" p="5" bg={useColorModeValue("gray.50", "gray.800")} borderRadius="md" shadow="md" textAlign="justify">
-                    <Text fontSize="md" mb="2">
-                      <b>Claim:</b> {claim}
+                    <Text fontSize={{base: "md", lg: "lg"}} fontWeight="bold" mb="2" textAlign="justify">
+                      {claim}
                     </Text>
-                    <Text fontSize="md" mb="2">
-                      <b>Rating:</b> {ratings[index]}
-                    </Text>
-                    <Flex align="center" mb="2">
+                    <Divider mb={4} />
+                    <Flex justify="flex-start" direction={{base: "column", lg: "row"}} align={{lg: "center"}} mb="2">
+                      <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")} mr="2" mb={{base: "2", md: "0", lg: "0"}}> 
+                        Rating:
+                      </Text>                     
                       <Badge
                         colorScheme={getRatingColor(ratings[index])}
                         fontSize="md"
-                        p={2}
+                        px={4}
+                        py={2}
                         display="flex"
                         alignItems="center"
                         gap="2"
+                        justifyContent="center"
+                        textAlign="center"
                         whiteSpace="normal"
                       >
                         {getRatingIcon(ratings[index])}
-                        <Text as="span" fontSize="sm">
+                        <Text as="span" fontSize="md">
                           {ratings[index]}
                         </Text>
                       </Badge>
                     </Flex>
-                    <Text fontSize="md">
-                      <b>Link:</b>{" "}
-                      <a href={links[index]} target="_blank" rel="noopener noreferrer">
-                        {new URL(links[index]).hostname} <ExternalLinkIcon ml="1" />
-                      </a>
-                    </Text>
+                    <Flex justify="flex-start" alignItems="center">
+                      <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")} mr="2" position="relative"  top={{base: "2px", md: "0px", lg: "-1px"}}> 
+                          Link:
+                      </Text>
+                      <Flex alignItems="center">
+                        <Text fontSize="md">
+                          <a href={links[index]} target="_blank" rel="noopener noreferrer">
+                            {new URL(links[index]).hostname}
+                          </a>
+                        </Text>
+                        <ExternalLinkIcon ml="2" />
+                      </Flex>
+                    </Flex>
                   </Box>
                 </motion.div>
               ))}
@@ -260,15 +273,17 @@ const ClaimCheckResults = () => {
                 This analysis was performed using Google Fact Check Tools API.
               </Text>
               <Text fontSize="md">
-                The rating indicates the evaluation of the claim's accuracy based on trusted fact-checking sources.
-                For further details, review the provided link to the fact-checking source.
+                {useBreakpointValue({
+                  base: "The rating indicates the evaluation of the claim's accuracy based on the trusted fact-checking sources. For further details, review the provided link.",
+                  md: "The rating indicates the evaluation of the claim's accuracy based on trusted fact-checking sources. For further details, review the provided link to the fact-checking source.",
+                })}                
               </Text>
             </Box>
           </motion.div>
 
           {/* Navigation Buttons */}
           <Flex justify="center" mt="8">
-            <Stack direction={{ base: "column", md: "row" }} spacing="4" align="center">
+            <Stack direction={{ base: "column", md: "column", lg: "row" }} spacing="4" align="center">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                   leftIcon={<ArrowBackIcon />}

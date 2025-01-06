@@ -35,24 +35,34 @@ nltk.download('punkt')
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
 
-# Load models and tokenizers
-with open('../models/dt_pruned_model.pkl', 'rb') as file:
-    pruned_tree = pickle.load(file)
-with open('../models/rf_cv_model.pkl', 'rb') as file:
-    rf_cv = pickle.load(file)
-with open('../models/xgboost_model.pkl', 'rb') as file:
-    xgb_model = pickle.load(file)
-with open('../models/lstm_model.pkl', 'rb') as file:
-    lstm_model = pickle.load(file)
 
-bert_model = load_model('../models/bert_model', custom_objects={'AdamWeightDecay': AdamWeightDecay})
+def load_models():
+    global pruned_tree, rf_cv, xgb_model, lstm_model, bert_model
 
-with open('../preprocessing_artifacts/tfidf_vectorizer.pkl', 'rb') as file:
-    vectorizer = pickle.load(file)
-with open('../preprocessing_artifacts/lstm_tokenizer.pkl', 'rb') as file:
-    lstm_tokenizer = pickle.load(file)
+    with open('../models/dt_pruned_model.pkl', 'rb') as file:
+        pruned_tree = pickle.load(file)
+    with open('../models/rf_cv_model.pkl', 'rb') as file:
+        rf_cv = pickle.load(file)
+    with open('../models/xgboost_model.pkl', 'rb') as file:
+        xgb_model = pickle.load(file)
+    with open('../models/lstm_model.pkl', 'rb') as file:
+        lstm_model = pickle.load(file)
 
-bert_tokenizer = AutoTokenizer.from_pretrained("../preprocessing_artifacts/bert_tokenizer")
+    bert_model = load_model('../models/bert_model', custom_objects={'AdamWeightDecay': AdamWeightDecay})
+
+load_models()
+
+def load_tokenizers():
+    global vectorizer, lstm_tokenizer, bert_tokenizer
+
+    with open('../preprocessing_artifacts/tfidf_vectorizer.pkl', 'rb') as file:
+        vectorizer = pickle.load(file)
+    with open('../preprocessing_artifacts/lstm_tokenizer.pkl', 'rb') as file:
+        lstm_tokenizer = pickle.load(file)
+
+    bert_tokenizer = AutoTokenizer.from_pretrained("../preprocessing_artifacts/bert_tokenizer")
+
+load_tokenizers()
 
 def clean_text(text):
     # Remove extra whitespaces
@@ -79,8 +89,7 @@ def clean_text(text):
     
     return tokens
 
-# Define the prediction function
-def predict_news(news_text):
+def predict_news(news_text, confidence_threshold):
     tokens = clean_text(news_text)
     cleaned_text = ' '.join(tokens)
 
@@ -116,39 +125,63 @@ def predict_news(news_text):
         "BERT": {"Fake": (1 - bert_pred_probs[0]) * 100, "True": bert_pred_probs[0] * 100},
     }
 
-    predictions_class = {
-        model: "True" if probs["True"] >= probs["Fake"] else "Fake"
-        for model, probs in predictions.items()
-    }
+    detection_results = []
 
-    final_decision = (
-        "True" if list(predictions_class.values()).count("True") > list(predictions_class.values()).count("Fake") else "Fake"
-    )
+    for model, probs in predictions.items():
+        true_prob = probs["True"]
+        fake_prob = probs["Fake"]
+        prediction = "True" if true_prob >= fake_prob else "Fake"
+        if max(probs.values()) < confidence_threshold:
+            prediction = "Uncertain"
 
-    predictions_df = pd.DataFrame(predictions).T.reset_index()
-    predictions_df.columns = ["Model", "Fake (%)", "True (%)"]
+        detection_results.append({
+            "Model": model,
+            "True Probability": f"{true_prob:.2f}%",
+            "Fake Probability": f"{fake_prob:.2f}%",
+            "Prediction": prediction
+        })
 
-    classifications_df = pd.DataFrame(list(predictions_class.items()), columns=["Model", "Classification"])
+    if detection_results:
+        prediction_counts = {
+            "True": sum(1 for result in detection_results if result["Prediction"] == "True"),
+            "Fake": sum(1 for result in detection_results if result["Prediction"] == "Fake"),
+            "Uncertain": sum(1 for result in detection_results if result["Prediction"] == "Uncertain"),
+        }
 
-    return predictions_df, classifications_df, final_decision
+        if prediction_counts["True"] > prediction_counts["Fake"]:
+            final_prediction = "True"
+        elif prediction_counts["Fake"] > prediction_counts["True"]:
+            final_prediction = "Fake"
+        else:
+            final_prediction = "Uncertain"
+        
+        return {
+            "success": True,
+            "detections": detection_results,
+            "final_prediction": final_prediction
+        }
+    else:
+        return {
+            "success": False,
+            "message": "No detection results available for the given input.",
+        }
 
 # Prediction endpoint
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     news_text = data.get("news_text")
+    confidence_threshold = data.get("confidence_threshold")
 
     if not news_text:
         return jsonify({"success": False, "error": "News text is required."}), 400
 
-    predictions_df, classifications_df, final_decision = predict_news(news_text)
+    if not (0 <= confidence_threshold <= 100):
+        return jsonify({"success": False, "error": "Confidence threshold must be between 0 and 100."}), 400
 
-    response = {
-        "predictions": predictions_df.to_dict(orient = "records"),
-        "classifications": classifications_df.to_dict(orient = "records"),
-        "final_decision": final_decision,
-    }
-    return jsonify(response)
+    result = predict_news(news_text, confidence_threshold)
+
+    return jsonify(result)
 
 def search_fact_check_claims(api_key, query, language_code="en"):
     url = "https://factchecktools.googleapis.com/v1alpha1/claims:search"

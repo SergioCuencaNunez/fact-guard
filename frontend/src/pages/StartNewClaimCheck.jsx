@@ -91,7 +91,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
       try {
         const token = localStorage.getItem("token");
   
-        // Call the Flask API to perform fact-checking
+        // Call the API to perform the fact-checking
         const response = await fetch(`${BACKEND_URL_API}/factcheck`, {
           method: "POST",
           headers: {
@@ -99,6 +99,12 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           },
           body: JSON.stringify({ query: query, language }),
         });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          setErrorMessage(`Fact-Check failed: ${errorText}`);
+          onErrorOpen();
+        }
   
         const factCheckResult = await response.json();
   
@@ -382,7 +388,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           <Modal isOpen={isNotClaimsMatchingOpen} onClose={onNotClaimsMatchingClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader>No Claims Matching</ModalHeader>
+              <ModalHeader>Not Found</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
                 <Text>{notClaimsMatchingMessage}</Text>

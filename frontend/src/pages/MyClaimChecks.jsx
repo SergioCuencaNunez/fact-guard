@@ -248,10 +248,10 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                 <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
                   <Thead>
                     <Tr>
-                      <Th width="5%" textAlign="center"><b>ID</b></Th>
-                      <Th width="45%" textAlign="left"><b>Query</b></Th>
-                      <Th width="10%" textAlign="center"><b>Rating</b></Th>
-                      <Th width="15%" textAlign="center">
+                      <Th width="10%" textAlign="center"><b>ID</b></Th>
+                      <Th width="35%" textAlign="left"><b>Query</b></Th>
+                      <Th width="15%" textAlign="center"><b>Rating</b></Th>
+                      <Th width="10%" textAlign="center">
                         <Flex align="center" justify="center">
                           <b>Date</b>
                           <IconButton
@@ -264,9 +264,9 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                           />
                         </Flex>
                       </Th>
-                      <Th width="15%" textAlign="center"><b>Results</b></Th>
-                      <Th width="5%" textAlign="center"><b>Remove</b></Th>
-                      <Th width="5%" textAlign="center"><b>Select</b></Th>
+                      <Th width="10%" textAlign="center"><b>Results</b></Th>
+                      <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                      <Th width="10%" textAlign="center"><b>Select</b></Th>
                     </Tr>
                   </Thead>
                   <Tbody as={motion.tbody}>
@@ -281,7 +281,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                           transition={{ duration: 0.5 }}
                         >
                           <Td textAlign="center">#{claimCheck.id}</Td>
-                          <Td textAlign="left">{claimCheck.query}</Td>
+                          <Td textAlign="justify">{claimCheck.query}</Td>
                           <Td textAlign="center">
                             <Badge
                               colorScheme={getRatingColor(getAggregateRating(claimCheck.ratings))}
@@ -294,7 +294,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                               whiteSpace="normal"
                             >
                               {getRatingIcon(getAggregateRating(claimCheck.ratings))}
-                              <Text as="span" fontSize="sm">
+                              <Text as="span" fontSize="md">
                                 {getAggregateRating(claimCheck.ratings)}
                               </Text>
                             </Badge>
