@@ -26,5 +26,7 @@ dist-ssr
 # API key file
 backend/api/api_key.txt
 
-# Store the large BERT model locally only
-models/bert_model/
+# Git LFS local files for the moment
+backend/data/*
+backend/models/*
+backend/preprocessing_artifacts/*
