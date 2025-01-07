@@ -2,11 +2,12 @@ import os
 import re
 import requests
 import pickle
-import pandas as pd
+import jwt
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from functools import wraps
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import tensorflow as tf
 from tensorflow.keras.models import load_model
@@ -21,7 +22,9 @@ current_dir = os.path.dirname(__file__)
 api_key_path = os.path.join(current_dir, "api_key.txt")
 with open(api_key_path, "r") as file:
     API_KEY = file.read().strip()
-      
+
+SECRET_KEY = "secret_key"
+
 # Supported languages
 LANGUAGE_MAP = {
     "en": "English",
@@ -34,7 +37,6 @@ nltk.download('punkt')
 
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
-
 
 def load_models():
     global pruned_tree, rf_cv, xgb_model, lstm_model, bert_model
@@ -88,6 +90,25 @@ def clean_text(text):
     tokens = [word for word in tokens if len(word) > 3]
     
     return tokens
+
+def verify_token(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return jsonify({"error": "Authorization header missing"}), 403
+        
+        token = auth_header.split(" ")[1]
+        try:
+            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            request.user = decoded_token
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token has expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Invalid token"}), 401
+        
+        return func(*args, **kwargs)
+    return wrapper
 
 def predict_news(news_text, confidence_threshold):
     tokens = clean_text(news_text)
@@ -168,6 +189,7 @@ def predict_news(news_text, confidence_threshold):
 
 # Prediction endpoint
 @app.route("/predict", methods=["POST"])
+@verify_token
 def predict():
     data = request.get_json()
     news_text = data.get("news_text")
@@ -231,6 +253,7 @@ def search_fact_check_claims(api_key, query, language_code="en"):
 
 # Fact-checking via Google Fact Check Tools API
 @app.route("/factcheck", methods=["POST"])
+@verify_token
 def fact_check():
     data = request.get_json()
     query = data.get("query")

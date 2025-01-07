@@ -224,6 +224,31 @@ app.get("/detections", verifyToken, (req, res) => {
   });
 });
 
+// Get detection by ID
+app.get("/detections/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  const query = "SELECT * FROM detections WHERE id = ? AND user_id = ?";
+  db.get(query, [id, req.user.id], (err, row) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch detection" });
+
+    if (!row) {
+      return res.status(404).json({ error: "Detection not found" });
+    }
+
+    // Parse JSON fields before sending the response
+    const parsedRow = {
+      ...row,
+      models: JSON.parse(row.models),
+      true_probabilities: JSON.parse(row.true_probabilities),
+      fake_probabilities: JSON.parse(row.fake_probabilities),
+      predictions: JSON.parse(row.predictions),
+    };
+
+    res.json(parsedRow);
+  });
+});
+
 // Generate FactGuard Detect ID
 const generateDetectionsID = () => {
   const randomNumber = Math.floor(Math.random() * 100);
@@ -233,17 +258,17 @@ const generateDetectionsID = () => {
 
 // Add a new detection
 app.post("/detections", verifyToken, (req, res) => {
-  const { title, content, models, true_probabilities, fake_probabilities, predictions, final_prediction, date } = req.body;
+  const { title, content, models, confidence, true_probabilities, fake_probabilities, predictions, final_prediction, date } = req.body;
 
-  if (!title || !content || !models || !true_probabilities || !fake_probabilities || !predictions || !final_prediction || !date) {
+  if (!title || !content || !models || !confidence || !true_probabilities || !fake_probabilities || !predictions || !final_prediction || !date) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   const customID = generateDetectionsID();
 
   const insertQuery = `
-    INSERT INTO detections (id, user_id, title, content, models, true_probabilities, fake_probabilities, predictions, final_prediction, date)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO detections (id, user_id, title, content, models, confidence, true_probabilities, fake_probabilities, predictions, final_prediction, date)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const checkQuery = "SELECT 1 FROM detections WHERE user_id = ? AND title = ? AND content = ?";
@@ -262,7 +287,8 @@ app.post("/detections", verifyToken, (req, res) => {
         req.user.id, 
         title, 
         content, 
-        JSON.stringify(models), 
+        JSON.stringify(models),
+        confidence,
         JSON.stringify(true_probabilities), 
         JSON.stringify(fake_probabilities), 
         JSON.stringify(predictions), 
@@ -278,6 +304,7 @@ app.post("/detections", verifyToken, (req, res) => {
           title,
           content,
           models,
+          confidence,
           true_probabilities,
           fake_probabilities,
           predictions,
@@ -340,6 +367,30 @@ app.get("/claims", verifyToken, (req, res) => {
     }));
 
     res.json(parsedRows);
+  });
+});
+
+// Get detection by ID
+app.get("/claims/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+
+  const query = "SELECT * FROM claims WHERE id = ? AND user_id = ?";
+  db.get(query, [id, req.user.id], (err, row) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch claim" });
+
+    if (!row) {
+      return res.status(404).json({ error: "Claim not found" });
+    }
+
+    // Parse JSON fields before sending the response
+    const parsedRow = {
+      ...row,
+      claims: JSON.parse(row.claims),
+      ratings: JSON.parse(row.ratings),
+      links: JSON.parse(row.links),
+    };
+
+    res.json(parsedRow);
   });
 });
 

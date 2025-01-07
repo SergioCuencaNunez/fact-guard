@@ -28,7 +28,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
-import { SunIcon, MoonIcon, ChevronDownIcon, WarningIcon, WarningTwoIcon, InfoIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, CheckCircleIcon, WarningIcon, WarningTwoIcon, InfoIcon } from "@chakra-ui/icons";
 import {
   FaUser,
   FaNewspaper,
@@ -741,16 +741,18 @@ const Profile = () => {
         
         {/* Logout Button (Desktop only) */}
         <HStack display={{ base: 'none', md: 'flex' }}>
-          <Button
-            leftIcon={<FaSignOutAlt />}
-            colorScheme="red"
-            variant="solid"
-            onClick={handleLogout}
-            size={{ base: "sm", md: "md" }}
-            width="100%"
-          >
-            Logout
-          </Button>
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} style={{ width: '100%' }}>
+            <Button
+              leftIcon={<FaSignOutAlt />}
+              colorScheme="red"
+              variant="solid"
+              onClick={handleLogout}
+              size={{ base: "sm", md: "md" }}
+              width="100%"
+            >
+              Logout
+            </Button>
+          </motion.div>
         </HStack>
       </Box>
       
@@ -933,7 +935,7 @@ const Profile = () => {
                                           <Button
                                             size="sm"
                                             onClick={() =>
-                                              navigate("/profile/detection-results", {
+                                              navigate(`/profile/detection-results/${detection.id}`, {
                                                 state: { detection },
                                               })
                                             }
@@ -1034,7 +1036,7 @@ const Profile = () => {
                                           <Button
                                             size="sm"
                                             onClick={() =>
-                                              navigate("/profile/claim-check-results", {
+                                              navigate(`/profile/claim-check-results/${claimCheck.id}`, {
                                                 state: { claimCheck },
                                               })
                                             }
@@ -1109,7 +1111,7 @@ const Profile = () => {
               />
             }
           />
-          <Route path="/detection-results" element={<DetectionResults />} />
+          <Route path="/detection-results/:id" element={<DetectionResults />} />
           <Route
             path="/start-new-claim-check"
             element={<StartNewClaimCheck addClaimCheck={addClaimCheck}/>}
@@ -1123,7 +1125,7 @@ const Profile = () => {
               />
             }
           />
-          <Route path="/claim-check-results" element={<ClaimCheckResults />} />
+          <Route path="/claim-check-results/:id" element={<ClaimCheckResults />} />
           <Route path="/account-details" element={<AccountDetails />} />
         </Routes>
 

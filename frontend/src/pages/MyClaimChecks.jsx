@@ -305,7 +305,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                               <Button
                                 size="sm"
                                 onClick={() =>
-                                  navigate("/profile/claim-check-results", {
+                                  navigate(`/profile/claim-check-results/${claimCheck.id}`, {
                                     state: { claimCheck },
                                   })
                                 }

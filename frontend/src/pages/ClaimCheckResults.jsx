@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Flex,
   Box,
@@ -10,12 +10,13 @@ import {
   Text,
   Divider,
   Badge,
+  Spinner,
   IconButton,
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   SunIcon,
   MoonIcon,
@@ -38,28 +39,78 @@ const primaryActiveLight = "#2a8073";
 const primaryActiveDark = "#91edd0";
 
 const ClaimCheckResults = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  const BACKEND_URL_DB = `${window.location.protocol}//${window.location.hostname}:5001`;
 
   const logo = useColorModeValue(logoVerifyBright, logoVerifyDark);
   const logoHeight = useBreakpointValue({ base: "40px", md: "45px" });
   const cardBg = useColorModeValue("white", "gray.700");
 
-  const location = useLocation();
-  const { claimCheck } = location.state || {};
-
   const { colorMode, toggleColorMode } = useColorMode();
+  const modelCardBg = useColorModeValue("gray.50", "gray.800");
   const textColor = useColorModeValue("black", "white");
+  const textColor2 = useColorModeValue("gray.500", "gray.400")
   const allClaimChecksBg = useColorModeValue("gray.100", "gray.600");
   const startNewClaimCheckHoverBg = useColorModeValue("gray.200", "gray.500");
   const startNewClaimCheckActiveBg = useColorModeValue("gray.300", "gray.400");
   const allClaimChecksHoverBg = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const allClaimChecksActiveBg = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
-  const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
-    return date.toLocaleDateString("en-GB", options).replace(",", "");
-  };
+  const insightsText = useBreakpointValue({
+    base: "The rating indicates the evaluation of the claim's accuracy based on the trusted fact-checking sources. For further details, review the provided link.",
+    md: "The rating indicates the evaluation of the claim's accuracy based on trusted fact-checking sources. For further details, review the provided link to the fact-checking source.",
+  });
+
+  const [claimCheck, setClaimCheck] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  
+  useEffect(() => {
+    const fetchClaimCheck= async () => {
+      try {
+        const token = localStorage.getItem("token");
+        
+        const response = await fetch(`${BACKEND_URL_DB}/claims/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });        
+        if (!response.ok) {
+          throw new Error("Claim not found.");
+        }
+        const data = await response.json();
+        setClaimCheck(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClaimCheck();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Flex align="center" justify="center" h="100vh">
+        <Spinner size="xl" />
+        <Text ml="4">Loading claim check details...</Text>
+      </Flex>
+    );
+  }
+
+  if (error) {
+    return (
+      <Flex align="center" justify="center" h="100vh">
+        <Text fontSize="lg" color="red.500" textAlign="center">
+          {error}
+        </Text>
+      </Flex>
+    );
+  }
 
   if (!claimCheck) {
     return (
@@ -97,6 +148,12 @@ const ClaimCheckResults = () => {
     } else {
       return <InfoIcon color="gray.500" />;
     }
+  };
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
+    return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
   return (
@@ -211,13 +268,13 @@ const ClaimCheckResults = () => {
                     scale: { type: "spring", stiffness: 300, damping: 20 },
                   }}
                 >
-                  <Box key={index} mb="4" p="5" bg={useColorModeValue("gray.50", "gray.800")} borderRadius="md" shadow="md" textAlign="justify">
+                  <Box key={index} mb="4" p="5" bg={modelCardBg} borderRadius="md" shadow="md" textAlign="justify">
                     <Text fontSize={{base: "md", lg: "lg"}} fontWeight="bold" mb="2" textAlign="justify">
                       {claim}
                     </Text>
                     <Divider mb={4} />
                     <Flex justify="flex-start" direction={{base: "column", lg: "row"}} align={{lg: "center"}} mb="2">
-                      <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")} mr="2" mb={{base: "2", md: "0", lg: "0"}}> 
+                      <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={textColor2} mr="2" mb={{base: "2", md: "2", lg: "0"}}> 
                         Rating:
                       </Text>                     
                       <Badge
@@ -239,7 +296,7 @@ const ClaimCheckResults = () => {
                       </Badge>
                     </Flex>
                     <Flex justify="flex-start" alignItems="center">
-                      <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")} mr="2" position="relative"  top={{base: "2px", md: "0px", lg: "-1px"}}> 
+                      <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={textColor2} mr="2" position="relative"  top={{base: "2px", md: "0px", lg: "-1px"}}> 
                           Link:
                       </Text>
                       <Flex alignItems="center">
@@ -273,10 +330,7 @@ const ClaimCheckResults = () => {
                 This analysis was performed using Google Fact Check Tools API.
               </Text>
               <Text fontSize="md">
-                {useBreakpointValue({
-                  base: "The rating indicates the evaluation of the claim's accuracy based on the trusted fact-checking sources. For further details, review the provided link.",
-                  md: "The rating indicates the evaluation of the claim's accuracy based on trusted fact-checking sources. For further details, review the provided link to the fact-checking source.",
-                })}                
+                {insightsText}                
               </Text>
             </Box>
           </motion.div>

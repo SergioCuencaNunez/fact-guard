@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Flex,
   Box,
@@ -10,13 +10,14 @@ import {
   Text,
   Divider,
   Badge,
+  Spinner,
   Collapse,
   IconButton,
   useColorMode,
   useColorModeValue,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { SunIcon, MoonIcon, ArrowBackIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon, WarningTwoIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
@@ -30,17 +31,20 @@ const primaryActiveLight = "#2a8073";
 const primaryActiveDark = "#91edd0";
 
 const DetectionResults = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  const BACKEND_URL_DB = `${window.location.protocol}//${window.location.hostname}:5001`;
 
   const logo = useColorModeValue(logoDetectBright, logoDetectDark);
   const logoHeight = useBreakpointValue({ base: "40px", md: "45px" });
   const cardBg = useColorModeValue("white", "gray.700");
 
-  const location = useLocation();
-  const { detection } = location.state || {};
-
   const { colorMode, toggleColorMode } = useColorMode();
+  const modelCardBg = useColorModeValue("gray.50", "gray.800");
+  const contentBorderColor = useColorModeValue("gray.200", "gray.600");
   const textColor = useColorModeValue("black", "white");
+  const textColor2 = useColorModeValue("gray.500", "gray.400")
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const allDetectionsBg = useColorModeValue("gray.100", "gray.600");
   const startNewDetectionHoverBg = useColorModeValue("gray.200", "gray.500");
@@ -48,13 +52,158 @@ const DetectionResults = () => {
   const allDetectionsHoverBg = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const allDetectionsActiveBg = useColorModeValue(primaryActiveLight, primaryActiveDark);
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const modelClassificationText1 = useBreakpointValue({
+    base: (
+      <span>
+        Models classify the article as <strong>True</strong>, <strong>Fake</strong>, or <strong>Uncertain</strong>.
+      </span>
+    ),
+    md: (
+      <span>
+        Models classify the article as <strong>True</strong>, <strong>Fake</strong>, or <strong>Uncertain</strong>, determined by analyzing the models' probabilities.
+      </span>
+    ),
+    lg: (
+      <span>
+        Models classify the article as <strong>True</strong>, <strong>Fake</strong>, or <strong>Uncertain</strong>. Each classification is determined by analyzing the probabilities calculated by the models.
+      </span>
+    ),
+  });
+
+  const modelClassificationText2 = useBreakpointValue({
+    base: (
+      <span>
+        <strong>True:</strong> The majority of models consider the article credible.
+      </span>
+    ),
+    md: (
+      <span>
+        <strong>True:</strong> The majority of models consider the article credible, with probabilities surpassing the confidence threshold.
+      </span>
+    ),
+    lg: (
+      <span>
+        <strong>True:</strong> The majority of models consider the article credible, with probabilities surpassing the confidence threshold.
+      </span>
+    ),
+  });
+
+  const modelClassificationText3 = useBreakpointValue({
+    base: (
+      <span>
+        <strong>Fake:</strong> The models identify significant indicators of falsehood.
+      </span>
+    ),
+    md: (
+      <span>
+        <strong>Fake:</strong> The models identify significant indicators of falsehood, with probabilities exceeding the confidence threshold.
+      </span>
+    ),
+    lg: (
+      <span>
+        <strong>Fake:</strong> The models identify significant indicators of falsehood, with probabilities meeting or exceeding the confidence threshold.
+      </span>
+    ),
+  });
+
+  const modelClassificationText4 = useBreakpointValue({
+    base: (
+      <span>
+        <strong>Uncertain:</strong> Occurs when the models either fail to reach a strong consensus.
+      </span>
+    ),
+    md: (
+      <span>
+        <strong>Uncertain:</strong> Occurs when the models either fail to reach a strong consensus, indicating the need for further review.
+      </span>
+    ),
+    lg: (
+      <span>
+        <strong>Uncertain:</strong> Occurs when the models either fail to reach a strong consensus or their confidence scores fall below the predefined threshold, indicating the need for further review.
+      </span>
+    ),
+  });
+
+  const modelClassificationText5 = useBreakpointValue({
+    base: (
+      <span>
+        The final prediction for the article is determined using <strong>majority voting</strong>. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>.
+        </span>
+    ),
+    md: (
+      <span>
+        The final prediction for the article is determined using a <strong>majority voting</strong> mechanism. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
+        </span>
+    ),
+    lg: (
+      <span>
+        The final prediction for the article is determined using a <strong>majority voting</strong> mechanism. Each model contributes its classification, and the category with the highest number of votes is chosen as the final prediction. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
+      </span>
+    ),
+  });
+
+  const insightsText1 = useBreakpointValue({
+    base: "This analysis aggregates results from models for a holistic evaluation.",
+    md: "This analysis integrates results from multiple ML and DL models to ensure a holistic evaluation.",
+    lg: "This analysis integrates results from multiple machine learning and deep learning models to ensure a holistic evaluation of the article.",
+  });
+
+  const insightsText2 =  useBreakpointValue({
+    base: "The probabilities provided are used to inform the final prediction through majority voting. For further investigation, please use trusted fact-checking sources such as ",
+    md: "The probabilities provided by each model are used to inform the final prediction through majority voting. For further investigation, it is advised to compare the article's claims with trusted fact-checking sources, such as ",
+    lg: "The probabilities and classifications provided by each model are used to inform the final prediction through a majority voting approach, ensuring transparency and accuracy in the assessment. For further investigation, it is advised to compare the article's claims with trusted fact-checking databases or reliable sources or databases, such as ",
+  });
   
-  const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
-    return date.toLocaleDateString("en-GB", options).replace(",", "");
-  };
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const [detection, setDetection] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  
+  useEffect(() => {
+    const fetchDetection = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        
+        const response = await fetch(`${BACKEND_URL_DB}/detections/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });        
+        if (!response.ok) {
+          throw new Error("Detection not found.");
+        }
+        const data = await response.json();
+        setDetection(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetection();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Flex align="center" justify="center" h="100vh">
+        <Spinner size="xl" />
+        <Text ml="4">Loading detection details...</Text>
+      </Flex>
+    );
+  }
+
+  if (error) {
+    return (
+      <Flex align="center" justify="center" h="100vh">
+        <Text fontSize="lg" color="red.500" textAlign="center">
+          {error}
+        </Text>
+      </Flex>
+    );
+  }
 
   if (!detection) {
     return (
@@ -67,6 +216,12 @@ const DetectionResults = () => {
   }
 
   const {models, true_probabilities, fake_probabilities, predictions, final_prediction} = detection;
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
+    return date.toLocaleDateString("en-GB", options).replace(",", "");
+  };
 
   const getPredictionColor = (prediction) => {
     if (prediction === "Fake") return "red";
@@ -162,7 +317,7 @@ const DetectionResults = () => {
                   maxH="150px"
                   overflowY="auto"
                   border="1px"
-                  borderColor={useColorModeValue("gray.200", "gray.600")}
+                  borderColor={contentBorderColor}
                   p={2}
                   borderRadius="md"
                   textAlign="justify"
@@ -171,6 +326,9 @@ const DetectionResults = () => {
                   <b>Content:</b> {detection.content}
                   </Text>
                 </Box>
+                <Text fontSize="md">
+                  <b>Confidence Threshold Established:</b> {detection.confidence}%
+                </Text>
                 <Text fontSize="md">
                   <b>Date Analyzed:</b> {formatDate(detection.date)}
                 </Text>
@@ -191,7 +349,7 @@ const DetectionResults = () => {
                 Final Prediction
               </Heading>
               <Badge
-                colorScheme={final_prediction === "Fake" ? "red" : "green"}
+                colorScheme={getPredictionColor(detection.final_prediction)}
                 fontSize="lg"
                 px={4}
                 py={2}
@@ -212,121 +370,41 @@ const DetectionResults = () => {
             {/* Advanced Options */}
             <Box>
               <Flex align="center" mb="4" justify={{ base: "center", md: "flex-start" }}>
-                <Text fontSize="lg" fontWeight="bold" color={useColorModeValue("gray.500", "gray.400")}>
+                <Text fontSize="md" fontWeight="bold" color={textColor2}>
                   Detailed Model Analysis
                 </Text>
                 <IconButton
                   aria-label="Toggle Detailed Model Analysis"
                   icon={showAdvanced ? <ChevronUpIcon /> : <ChevronDownIcon />}
                   onClick={() => setShowAdvanced(!showAdvanced)}
-                  size="sm"
+                  size="xs"
                   ml={2}
                 />
               </Flex>
             </Box>
             <Collapse in={showAdvanced} animateOpacity style={{ overflow: "visible" }}>
               <Text mb="2" fontSize="md" textAlign="justify">
-                {useBreakpointValue({
-                  base: (
-                    <span>
-                      Models classify the article as <strong>True</strong>, <strong>Fake</strong>, or <strong>Uncertain</strong>.
-                    </span>
-                  ),
-                  md: (
-                    <span>
-                      Models classify the article as <strong>True</strong>, <strong>Fake</strong>, or <strong>Uncertain</strong>, determined by analyzing the each models' probabilities.
-                    </span>
-                  ),
-                  lg: (
-                    <span>
-                      Models classify the article as <strong>True</strong>, <strong>Fake</strong>, or <strong>Uncertain</strong>. Each classification is determined by analyzing the probabilities calculated by the models.
-                    </span>
-                  ),
-                })}
+                {modelClassificationText1}
               </Text>
               <Box as="ul" pl={5} mb="2" textAlign="justify">
                 <Box as="li" mb="1">
                   <Text fontSize="md">
-                    {useBreakpointValue({
-                      base: (
-                        <span>
-                          <strong>True:</strong> The majority of models consider the article credible.
-                          </span>
-                      ),
-                      md: (
-                        <span>
-                          <strong>True:</strong> The majority of models consider the article credible, with probabilities surpassing the confidence threshold.
-                        </span>
-                      ),
-                      lg: (
-                        <span>
-                          <strong>True:</strong> The majority of models consider the article credible, with probabilities surpassing the confidence threshold.
-                        </span>
-                      ),
-                    })}
+                    {modelClassificationText2}
                   </Text>
                 </Box>
                 <Box as="li" mb="1">
                   <Text fontSize="md">
-                    {useBreakpointValue({
-                        base: (
-                          <span>
-                            <strong>Fake:</strong> The models identify significant indicators of falsehood.
-                          </span>
-                        ),
-                        md: (
-                          <span>
-                            <strong>Fake:</strong> The models identify significant indicators of falsehood, with probabilities exceeding the confidence threshold.
-                          </span>
-                        ),
-                        lg: (
-                          <span>
-                            <strong>Fake:</strong> The models identify significant indicators of falsehood, with probabilities meeting or exceeding the confidence threshold.
-                          </span>
-                        ),
-                      })}
+                    {modelClassificationText3}
                   </Text>
                 </Box>
                 <Box as="li" mb="1">
                   <Text fontSize="md">
-                    {useBreakpointValue({
-                        base: (
-                          <span>
-                            <strong>Uncertain:</strong> Occurs when the models either fail to reach a strong consensus.
-                          </span>
-                        ),
-                        md: (
-                          <span>
-                            <strong>Uncertain:</strong> Occurs when the models either fail to reach a strong consensus, indicating the need for further review.
-                          </span>
-                        ),
-                        lg: (
-                          <span>
-                            <strong>Uncertain:</strong> Occurs when the models either fail to reach a strong consensus or their confidence scores fall below the predefined threshold, indicating the need for further review.
-                          </span>
-                        ),
-                      })}
+                    {modelClassificationText4}
                   </Text>
                 </Box>
               </Box>
               <Text mb="4" fontSize="md" textAlign="justify">
-                {useBreakpointValue({
-                  base: (
-                    <span>
-                      The final prediction for the article is determined using <strong>majority voting</strong>. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>.
-                      </span>
-                  ),
-                  md: (
-                    <span>
-                      The final prediction for the article is determined using a <strong>majority voting</strong> mechanism. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
-                      </span>
-                  ),
-                  lg: (
-                    <span>
-                      The final prediction for the article is determined using a <strong>majority voting</strong> mechanism. Each model contributes its classification, and the category with the highest number of votes is chosen as the final prediction. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
-                    </span>
-                  ),
-                })}
+                {modelClassificationText5}
               </Text>
               {/* Machine Learning Models */}
               <Heading size="md" mb="2" color={textColor}>
@@ -345,7 +423,7 @@ const DetectionResults = () => {
                       key={index}
                       flex="1 1 calc(33% - 1rem)"
                       p="5"
-                      bg={useColorModeValue("gray.50", "gray.800")}
+                      bg={modelCardBg}
                       borderRadius="md"
                       shadow="md"
                       textAlign="justify"
@@ -356,7 +434,7 @@ const DetectionResults = () => {
                       <Divider mb={4} />
                       <Flex justify="space-between" px={{base: "2", md: "14", lg: "12"}} mb="4">
                         <Box textAlign="center">
-                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")}>
+                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={textColor2}>
                             True
                           </Text>
                           <Text fontSize="2xl" fontWeight="medium">
@@ -364,7 +442,7 @@ const DetectionResults = () => {
                           </Text>
                         </Box>
                         <Box textAlign="center">
-                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")}>
+                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={textColor2}>
                             Fake
                           </Text>
                           <Text fontSize="2xl" fontWeight="medium">
@@ -403,17 +481,17 @@ const DetectionResults = () => {
               <Flex wrap="wrap" direction={{ base: "column", md: "row" }} justify="space-between" mb="6" gap="8">
                 {models.slice(3).map((model, index) => (
                   <motion.div
-                    key={index}
+                    key={index+3}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     style={{ flex: "1 1 calc(33.333% - 1rem)"}}
                   >
                     <Box
-                      key={index}
+                      key={index+3}
                       flex="1 1 calc(33% - 1rem)"
                       p="5"
-                      bg={useColorModeValue("gray.50", "gray.800")}
+                      bg={modelCardBg}
                       borderRadius="md"
                       shadow="md"
                       textAlign="justify"
@@ -424,25 +502,25 @@ const DetectionResults = () => {
                       <Divider mb={4} /> 
                       <Flex justify="space-between" px={{base: "2", md: "14", lg: "24"}}  mb="2">
                         <Box textAlign="center">
-                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")}>
+                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={textColor2}>
                             True
                           </Text>
                           <Text fontSize="2xl" fontWeight="medium">
-                            {true_probabilities[index]}
+                            {true_probabilities[index+3]}
                           </Text>
                         </Box>
                         <Box textAlign="center">
-                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={useColorModeValue("gray.500", "gray.400")}>
+                          <Text fontSize="sm" fontWeight="bold" textTransform="uppercase" color={textColor2}>
                             Fake
                           </Text>
                           <Text fontSize="2xl" fontWeight="medium">
-                            {fake_probabilities[index]}
+                            {fake_probabilities[index+3]}
                           </Text>
                         </Box>
                       </Flex>
                       <Flex justify="center">
                         <Badge
-                          colorScheme={getPredictionColor(predictions[index])}
+                          colorScheme={getPredictionColor(predictions[index+3])}
                           fontSize="md"
                           px={4}
                           py={2}
@@ -453,9 +531,9 @@ const DetectionResults = () => {
                           textAlign="center"
                           whiteSpace="normal"
                         >
-                          {getPredictionIcon(predictions[index])}
+                          {getPredictionIcon(predictions[index+3])}
                           <Text as="span" fontSize="md">
-                          {predictions[index]}
+                          {predictions[index+3]}
                           </Text>
                         </Badge>
                       </Flex>
@@ -479,18 +557,10 @@ const DetectionResults = () => {
                 Insights
               </Heading>
               <Text fontSize="md" mb="2">
-                {useBreakpointValue({
-                  base: "This analysis aggregates results from models for a holistic evaluation.",
-                  md: "This analysis integrates results from multiple ML and DL models to ensure a holistic evaluation.",
-                  lg: "This analysis integrates results from multiple machine learning and deep learning models to ensure a holistic evaluation of the article.",
-                })}
+                {insightsText1}
               </Text>
               <Text fontSize="md">
-                {useBreakpointValue({
-                  base: "The probabilities provided are used to inform the final prediction through majority voting. For further investigation, please use trusted fact-checking sources such as ",
-                  md: "The probabilities provided by each model are used to inform the final prediction through majority voting. For further investigation, it is advised to compare the article's claims with trusted fact-checking sources, such as ",
-                  lg: "The probabilities and classifications provided by each model are used to inform the final prediction through a majority voting approach, ensuring transparency and accuracy in the assessment. For further investigation, it is advised to compare the article's claims with trusted fact-checking databases or reliable sources or databases, such as ",
-                })}
+                {insightsText2}
                 <Link
                   to="/profile/start-new-claim-check"
                   style={{

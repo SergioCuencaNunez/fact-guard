@@ -238,7 +238,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                               <Button
                                 size="sm"
                                 onClick={() =>
-                                  navigate("/profile/detection-results", {
+                                  navigate(`/profile/detection-results/${detection.id}`, {
                                     state: { detection },
                                   })
                                 }

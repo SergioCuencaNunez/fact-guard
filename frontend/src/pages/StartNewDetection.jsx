@@ -86,6 +86,7 @@ const StartNewDetection = ({ addDetection }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ news_text: content, confidence_threshold: confidence }),
         });
@@ -109,6 +110,7 @@ const StartNewDetection = ({ addDetection }) => {
             title: title,
             content: content,
             models: models,
+            confidence: confidence,
             true_probabilities: trueProbabilities,
             fake_probabilities: fakeProbabilities,
             predictions: predictions,
@@ -129,7 +131,7 @@ const StartNewDetection = ({ addDetection }) => {
           if (dbResponse.ok) {
             const newDetection = await dbResponse.json();
             addDetection(newDetection); // Add detection to parent state
-            navigate("/profile/detection-results", { state: { detection: newDetection } });
+            navigate(`/profile/detection-results/${newDetection.id}`, { state: { detection: newDetection } });
           } else if (dbResponse.status === 409) {
             console.warn("Duplicate detection.");
             setErrorMessage("This detection already exists. Please check your list of detections.");

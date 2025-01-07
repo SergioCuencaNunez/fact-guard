@@ -96,6 +96,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ query: query, language }),
         });
@@ -136,7 +137,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           if (dbResponse.ok) {
             const newClaimCheck = await dbResponse.json();
             addClaimCheck(newClaimCheck); // Add claim to parent state
-            navigate("/profile/claim-check-results", { state: { claimCheck: newClaimCheck } });
+            navigate(`/profile/claim-check-results/${newClaimCheck.id}`, { state: { claimCheck: newClaimCheck } });
           } else if (dbResponse.status === 409) {
             console.warn("Duplicate query.");
             setErrorMessage("This query has already been analyzed. Please check your list of claims.");
