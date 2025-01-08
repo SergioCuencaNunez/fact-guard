@@ -57,6 +57,10 @@ import MyClaimChecks from "./MyClaimChecks";
 import ClaimCheckResults from "./ClaimCheckResults";
 import AccountDetails from "./AccountDetails";
 
+import RatingsAndPredictionsPieChart from "../graphs/RatingsAndPredictionsPieChart";
+import DetectionsAndClaimsLineChart from "../graphs/DetectionsAndClaimsLineChart";
+import UsageStatistics from "../graphs/UsageStatistics";
+
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
 const primaryHoverDark = '#77e4c4';
@@ -92,28 +96,6 @@ const Profile = () => {
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
   const dateFormat = useBreakpointValue({ base: 'small', md: 'medium', lg: 'full' });
-
-  const colors = {
-    green: useColorModeValue("green.600", "green.300"),
-    orange: useColorModeValue("orange.600", "orange.300"),
-    gray: useColorModeValue("gray.600", "gray.300"),
-    red: useColorModeValue("red.600", "red.300"),
-  };
-
-  const getDetectionTextColor = (value, type, colors) => {
-    const { green, orange, gray, red } = colors;
-  
-    if (type === "True") {
-      if (value >= 70) return green;
-      if (value >= 40) return orange;
-      return gray;
-    } else if (type === "False") {
-      if (value >= 70) return red;
-      if (value >= 40) return orange;
-      return gray;
-    }
-    return gray;
-  };
 
   const getRatingColor = (rating) => {
     const lowerRating = rating.toLowerCase();
@@ -862,18 +844,81 @@ const Profile = () => {
                 >
                   <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
                   <Flex wrap="wrap" gap="6">
-                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
-                      <Heading size="sm">Detections Over Time</Heading>
-                      <Text>Graph Placeholder</Text>
-                    </Box>
-                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
-                      <Heading size="sm">Claim Checks</Heading>
-                      <Text>Graph Placeholder</Text>
-                    </Box>
-                    <Box bg={cardBg} p="5" borderRadius="md" flex="1" shadow="md">
-                      <Heading size="sm">Usage Statistics</Heading>
-                      <Text>Graph Placeholder</Text>
-                    </Box>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                    >
+                      <Box 
+                        bg={cardBg} 
+                        p="5" 
+                        borderRadius="md"
+                        flex="1"
+                        shadow="md"
+                        display="flex" 
+                        flexDirection="column" 
+                        justifyContent="center" 
+                        alignItems="center" 
+                        textAlign="center"
+                        _hover={{
+                          bg: useColorModeValue("gray.50", "gray.600"),
+                        }}                
+                      >
+                        <Heading size="md">Detections and Claims Over Time</Heading>
+                        <DetectionsAndClaimsLineChart detections={detections} claimChecks={claimChecks} />
+                      </Box>
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                    >
+                      <Box 
+                        bg={cardBg} 
+                        p="5" 
+                        borderRadius="md"
+                        flex="1"
+                        shadow="md"
+                        display="flex" 
+                        flexDirection="column" 
+                        justifyContent="center" 
+                        alignItems="center" 
+                        textAlign="center"
+                        _hover={{
+                          bg: useColorModeValue("gray.50", "gray.600"),
+                        }}                
+                      >
+                        <Heading size="md">Predictions and Ratings Overview</Heading>
+                        <RatingsAndPredictionsPieChart detections={detections} claimChecks={claimChecks} />
+                      </Box>
+                    </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                    >
+                      <Box 
+                        bg={cardBg} 
+                        p="5" 
+                        borderRadius="md"
+                        flex="1"
+                        shadow="md"
+                        display="flex" 
+                        flexDirection="column" 
+                        justifyContent="center" 
+                        alignItems="center" 
+                        textAlign="center" 
+                        _hover={{
+                          bg: useColorModeValue("gray.50", "gray.600"),
+                        }}               
+                      >
+                        <Heading size="md">Usage Statistics</Heading>
+                        <UsageStatistics detections={detections} claimChecks={claimChecks} />
+                      </Box>
+                    </motion.div>
                   </Flex>
                 </motion.div>
 

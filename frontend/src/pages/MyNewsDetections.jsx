@@ -266,24 +266,39 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                   </Tbody>
                 </Table>
               </Box>
-              <Flex justify="space-between" align="center" mb="4">
+              <Flex justify="space-between" align="center" height="40px">
                 <Checkbox
                   isChecked={selectedDetections.length === detections.length}
                   onChange={(e) => handleSelectAll(e.target.checked)}
                 >
                   Select All
                 </Checkbox>
-                <Button
-                  colorScheme="red"
-                  onClick={() => {
-                    setDetectionToDelete(null);
-                    onOpen();
-                  }}
-                  isDisabled={selectedDetections.length === 0}
-                  visibility={selectedDetections.length > 0 ? "visible" : "hidden"}
-                >
-                  Delete Selected
-                </Button>
+                <AnimatePresence>
+                  {selectedDetections.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, x: 0 }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                      }}
+                      exit={{ opacity: 0, scale: 0.8, x: 0 }}
+                      transition={{ duration: 0.3 }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <Button
+                        colorScheme="red"
+                        onClick={() => {
+                          setDetectionToDelete(null);
+                          onOpen();
+                        }}
+                        isDisabled={selectedDetections.length === 0}
+                      >
+                        Delete Selected
+                      </Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </Flex>
             </>
           ) : (
