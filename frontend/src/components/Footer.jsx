@@ -11,15 +11,22 @@ const Footer = () => {
   const logo = useColorModeValue(logoBright, logoDark);
 
   return (
-    <Box bg={bg} color={textColor} w="100%" py={{ base: '4', md: '6' }} px={{ base: '4', md: '8' }} mt="auto">
+    <Box
+      bg={bg}
+      color={textColor}
+      w="100%"
+      px={{ base: '6', md: '12' }}
+      py={{ base: '4', md: '6' }}
+      mt="auto"
+    >      
       <Flex
-        maxW="1200px"
         mx="auto"
         direction={{ base: 'column', md: 'row' }}
         justify="space-between"
         align="center"
         textAlign={{ base: 'center', md: 'left' }}
         gap="4"
+        px={{ base: '0', xl: '5' }}
       >
         {/* Left Section with Logo */}
         <VStack align={{ base: 'center', md: 'flex-start' }} spacing="1">

@@ -87,7 +87,7 @@ const Profile = () => {
   const logoGoogleFactCheckLogo = useColorModeValue(logoGoogleFactCheckLogoBright, logoGoogleFactCheckLogoDark);
   const logoGoogleFactCheckLogoHeight = useBreakpointValue({ base: '15px', md: '20px' });
 
-  const bg = useColorModeValue("gray.50", "gray.800");
+  const bg = useColorModeValue("gray.100", "gray.900");
   const cardBg = useColorModeValue("white", "gray.700");
   const textColor = useColorModeValue('black', 'white');
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
@@ -95,7 +95,7 @@ const Profile = () => {
   const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
-  const dateFormat = useBreakpointValue({ base: 'small', md: 'medium', lg: 'full' });
+  const dateFormat = useBreakpointValue({ base: 'small', md: 'medium', lg: 'full', xl: 'full' });
 
   const getRatingColor = (rating) => {
     const lowerRating = rating.toLowerCase();
@@ -755,21 +755,37 @@ const Profile = () => {
                   exit={{ opacity: 0, y: -50 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <Flex justify="space-between" align="center">
-                    <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
-                    <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-                      <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate(dateFormat)}</Text>
-                      <IconButton
-                        aria-label="Toggle theme"
-                        icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                        onClick={toggleColorMode}
-                      />
-                    </HStack>
-                    <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-                      <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate(dateFormat)}</Text>
-                    </HStack>
-                  </Flex>
-                  <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+                  <Box
+                    bg={cardBg} 
+                    p="5" 
+                    borderRadius="md"
+                    shadow="md"
+                    mb="4" // Add margin-bottom
+                  >
+                    <Flex justify="space-between" align="center">
+                      <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+                      <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
+                        <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate(dateFormat)}</Text>
+                        <IconButton
+                          aria-label="Toggle theme"
+                          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                          onClick={toggleColorMode}
+                          _hover={{
+                            bg: colorMode === "light" ? "gray.200" : "gray.600",
+                            transform: "scale(1.1)",
+                          }}
+                          _active={{
+                            bg: colorMode === "light" ? "gray.300" : "gray.500",
+                            transform: "scale(0.9)",
+                          }}
+                        />
+                      </HStack>
+                      <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
+                        <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate(dateFormat)}</Text>
+                      </HStack>
+                    </Flex>
+                    <Box borderBottom="1px" borderColor="gray.300"></Box>
+                  </Box>
                 </motion.div>
 
                 {/* Features */}
@@ -842,8 +858,8 @@ const Profile = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
                 >
-                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">This Week</Heading>
-                  <Flex wrap="wrap" gap="6">
+                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Trends & Statistics</Heading>
+                  <Flex wrap="wrap" gap="6" align="flex-start">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -854,18 +870,19 @@ const Profile = () => {
                         bg={cardBg} 
                         p="5" 
                         borderRadius="md"
+                        height="100%"
                         flex="1"
                         shadow="md"
                         display="flex" 
                         flexDirection="column" 
-                        justifyContent="center" 
+                        justifyContent="flex-start" 
                         alignItems="center" 
                         textAlign="center"
                         _hover={{
                           bg: useColorModeValue("gray.50", "gray.600"),
                         }}                
                       >
-                        <Heading size="md">Detections and Claims Over Time</Heading>
+                        <Heading size="md" mb="4">Detections and Claims Over Time</Heading>
                         <DetectionsAndClaimsLineChart detections={detections} claimChecks={claimChecks} />
                       </Box>
                     </motion.div>
@@ -879,18 +896,19 @@ const Profile = () => {
                         bg={cardBg} 
                         p="5" 
                         borderRadius="md"
+                        height="100%"
                         flex="1"
                         shadow="md"
                         display="flex" 
                         flexDirection="column" 
-                        justifyContent="center" 
+                        justifyContent="flex-start" 
                         alignItems="center" 
                         textAlign="center"
                         _hover={{
                           bg: useColorModeValue("gray.50", "gray.600"),
                         }}                
                       >
-                        <Heading size="md">Predictions and Ratings Overview</Heading>
+                        <Heading size="md" mb="4">Predictions and Ratings Overview</Heading>
                         <RatingsAndPredictionsPieChart detections={detections} claimChecks={claimChecks} />
                       </Box>
                     </motion.div>
@@ -904,18 +922,19 @@ const Profile = () => {
                         bg={cardBg} 
                         p="5" 
                         borderRadius="md"
+                        height="100%"
                         flex="1"
                         shadow="md"
                         display="flex" 
                         flexDirection="column" 
-                        justifyContent="center" 
+                        justifyContent="flex-start" 
                         alignItems="center" 
-                        textAlign="center" 
+                        textAlign="center"
                         _hover={{
                           bg: useColorModeValue("gray.50", "gray.600"),
                         }}               
                       >
-                        <Heading size="md">Usage Statistics</Heading>
+                        <Heading size="md" mb="4">Usage Statistics</Heading>
                         <UsageStatistics detections={detections} claimChecks={claimChecks} />
                       </Box>
                     </motion.div>

@@ -74,7 +74,7 @@ const Navbar = () => {
         left: '0',
       }}
     >
-      <Flex justify="space-between" align="center" mx="auto" w="100%" px={{ base: '0', custom: '5' }}>
+      <Flex justify="space-between" align="center" mx="auto" w="100%" px={{ base: '0', xl: '5' }}>
         {/* Logo */}
         <Link to="/">
           <motion.img
@@ -240,6 +240,14 @@ const DarkModeSwitch = () => {
       aria-label="Toggle Dark Mode"
       onClick={toggleColorMode}
       size="md"
+      _hover={{
+        bg: colorMode === "light" ? "gray.200" : "gray.600",
+        transform: "scale(1.1)",
+      }}
+      _active={{
+        bg: colorMode === "light" ? "gray.300" : "gray.500",
+        transform: "scale(0.9)",
+      }}
     />
   );
 };

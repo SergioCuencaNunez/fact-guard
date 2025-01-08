@@ -65,7 +65,7 @@ const Home = () => {
   });
   
   return (
-    <VStack spacing="10" px={{ base: '0', custom: '5' }} w="100%">
+    <VStack spacing="10" px={{ base: '0', xl: '5' }} w="100%">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}

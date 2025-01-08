@@ -24,7 +24,6 @@ const theme = extendTheme({
     md: '48em',  // 768px
     lg: '62em',  // 992px
     xl: '80em',  // 1280px
-    custom: '78.125em', // 1250px (new custom breakpoint)
     '2xl': '90em', // 1440px
   },
 });
