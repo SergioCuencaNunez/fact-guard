@@ -56,6 +56,7 @@ import StartNewClaimCheck from "./StartNewClaimCheck";
 import MyClaimChecks from "./MyClaimChecks";
 import ClaimCheckResults from "./ClaimCheckResults";
 import AccountDetails from "./AccountDetails";
+import NotFound from "../pages/NotFound"; 
 
 import RatingsAndPredictionsPieChart from "../graphs/RatingsAndPredictionsPieChart";
 import DetectionsAndClaimsLineChart from "../graphs/DetectionsAndClaimsLineChart";
@@ -1191,6 +1192,14 @@ const Profile = () => {
           />
           <Route path="/claim-check-results/:id" element={<ClaimCheckResults />} />
           <Route path="/account-details" element={<AccountDetails />} />
+          <Route
+            path="*"
+            element={
+              <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
+                <NotFound buttonText="Go Back to Dashboard" redirectPath="/profile" />
+              </Flex>
+            }
+          />
         </Routes>
 
         {/* Detections Confirmation Modal */}

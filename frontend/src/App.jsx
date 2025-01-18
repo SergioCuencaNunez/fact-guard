@@ -1,256 +1,30 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import {
   ChakraProvider,
   Box,
   Flex,
   Heading,
-  IconButton,
-  useColorMode,
   useColorModeValue,
-  useBreakpointValue,
   VStack,
-  HStack,
   Text,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
 } from '@chakra-ui/react';
-import { SunIcon, MoonIcon, ChevronDownIcon, HamburgerIcon } from '@chakra-ui/icons';
 import { motion } from "framer-motion";
 
 import theme from './theme';
+
 import About from './pages/About';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import Profile from "./pages/Profile";
-import NotFound from './pages/NotFound';
-import Footer from './components/Footer';
-import Home from './components/Home';
 import Detect from './pages/Detect';
 import Verify from './pages/Verify';
-import logoBright from './assets/logo-main-bright.png';
-import logoDark from './assets/logo-main-dark.png';
-import { FiLogIn, FiUserPlus } from 'react-icons/fi';
 
-const primaryColor = '#4dcfaf';
-const primaryHoverLight = '#3ca790';
-const primaryHoverDark = '#77e4c4';
-const primaryActiveLight = '#2a8073';
-const primaryActiveDark = '#91edd0';
+import NotFound from './pages/NotFound';
 
-const Navbar = () => {
-  const logo = useColorModeValue(logoBright, logoDark);
-  const bg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('black', 'white');
-  const loginIconBg = useColorModeValue('gray.100', 'gray.700');
-  const loginHoverBg = useColorModeValue('gray.200', 'gray.600');
-  const loginActiveBg = useColorModeValue('gray.300', 'gray.500');
-  const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
-  const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
-  const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
-  const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
-
-  return (
-    <Box
-      bg={bg}
-      color={textColor}
-      shadow="sm"
-      px={{ base: '6', md: '12' }}
-      py="4"
-      position="sticky"
-      top="0"
-      zIndex="1000"
-      _after={{
-        content: '""',
-        display: 'block',
-        height: '3px',
-        backgroundImage: gradient,
-        width: '100%',
-        position: 'absolute',
-        bottom: '0',
-        left: '0',
-      }}
-    >
-      <Flex justify="space-between" align="center" mx="auto" w="100%" px={{ base: '0', xl: '5' }}>
-        {/* Logo */}
-        <Link to="/">
-          <motion.img
-            src={logo}
-            alt="FactGuard Logo"
-            style={{ height: logoHeight, width: 'auto', cursor: 'pointer' }}
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{
-              type: 'spring',
-              stiffness: 260,
-              damping: 20,
-            }}
-          />
-        </Link>
-        
-        {/* Buttons, About, and Features Dropdown for larger screens */}      
-        <HStack spacing="4" display={{ base: 'none', md: 'none', lg: 'flex' }}>
-          <Menu>
-            <MenuButton
-              as={Button}
-              bg="transparent"
-              color={textColor}
-              _hover={{ color: hoverColor }}
-              size="md"
-              rightIcon={<ChevronDownIcon />}
-            >
-              Features
-            </MenuButton>
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              style={{ overflow: "hidden" }}
-            >
-              <MenuList>
-                <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
-                <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
-              </MenuList>
-            </motion.div>
-          </Menu>
-          <Link to="/about">
-            <Button
-              bg="transparent"
-              color={textColor}
-              _hover={{ color: hoverColor }}
-              size="md"
-            >
-              About
-            </Button>
-          </Link>
-          <a
-            href="/login"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                bg={loginIconBg}
-                color={textColor}
-                _hover={{ bg: loginHoverBg }}
-                _active={{ bg: loginActiveBg }}
-                size="md"
-              >
-                Login
-              </Button>
-            </motion.div>
-          </a>
-          <a
-            href="/signup"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                bg={primaryColor}
-                color="white"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size="md"
-              >
-                Sign Up
-              </Button>
-            </motion.div>
-          </a>
-          <DarkModeSwitch />
-        </HStack>
-
-        {/* Icons for smaller screens */}
-        <HStack spacing="2" display={{ base: 'flex', md: 'flex', lg:'none'}}>
-          <a
-            href="/login"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <IconButton
-              icon={<FiLogIn />}
-              aria-label="Login"
-              bg={loginIconBg}
-              _hover={{ bg: hoverColor }}
-              _active={{ bg: activeColor }}
-              size="md"
-            />
-          </a>
-          <a
-            href="/signup"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <IconButton
-              icon={<FiUserPlus />}
-              aria-label="Sign Up"
-              bg={primaryColor}
-              color={useColorModeValue('white', 'gray.100')}
-              _hover={{ bg: hoverColor }}
-              _active={{ bg: activeColor }}
-              size="md"
-            />
-          </a>
-
-          {/* Hamburger Menu for smaller screens */}
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={<HamburgerIcon />}
-              aria-label="Toggle Navigation"
-              size="md"
-            />
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              style={{ overflow: "hidden" }}
-            >
-              <MenuList>
-                <MenuItem as={Link} to="/detect">Fake News Detection</MenuItem>
-                <MenuItem as={Link} to="/verify">Verify Claims</MenuItem>
-                <MenuItem as={Link} to="/about">About</MenuItem>
-              </MenuList>
-            </motion.div>
-          </Menu>
-        </HStack>
-      </Flex>
-    </Box>
-  );
-};
-
-// Dark Mode Toggle with System Default Detection
-const DarkModeSwitch = () => {
-  const { colorMode, toggleColorMode, setColorMode } = useColorMode();
-
-  // Detect system color mode on initial load
-  useEffect(() => {
-    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    setColorMode(systemPreference);
-  }, [setColorMode]);
-
-  return (
-    <IconButton
-      icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-      aria-label="Toggle Dark Mode"
-      onClick={toggleColorMode}
-      size="md"
-      _hover={{
-        bg: colorMode === "light" ? "gray.200" : "gray.600",
-        transform: "scale(1.1)",
-      }}
-      _active={{
-        bg: colorMode === "light" ? "gray.300" : "gray.500",
-        transform: "scale(0.9)",
-      }}
-    />
-  );
-};
+import Navbar from './components/Navbar'; 
+import Home from './components/Home';
+import Footer from './components/Footer';
 
 const AuthLayout = ({ children, title, subtitle }) => {
   const location = useLocation();
@@ -365,6 +139,25 @@ const DefaultLayout = ({ children }) => (
   </Flex>
 );
 
+// Not Founf Layout (with Navbar and Footer)
+const NotFoundLayout = ({ children }) => (
+  <Flex direction="column" minH="100vh">
+    <Navbar />
+    <Box
+      flex="1"
+      display="flex"
+      justifyContent="center"
+      py={{ base: '6', md: '12' }}
+      px={{ base: '6', md: '12' }}
+      mx="auto"
+      w="100%"
+    >
+      {children}
+    </Box>
+    <Footer />
+  </Flex>
+);
+
 // App Component
 function App() {
   return (
@@ -394,25 +187,31 @@ function App() {
               </AuthLayout>
             }
           />
-          {/* Default Routes */}
+
+          {/* Default Layout (For Main Pages) */}
+          <Route
+            path="/"
+            element={<DefaultLayout><Home /></DefaultLayout>}
+          />
+          <Route
+            path="/about"
+            element={<DefaultLayout><About /></DefaultLayout>}
+          />
+          <Route
+            path="/detect"
+            element={<DefaultLayout><Detect /></DefaultLayout>}
+          />
+          <Route
+            path="/verify"
+            element={<DefaultLayout><Verify /></DefaultLayout>}
+          />
+          {/* Not Found */}
           <Route
             path="*"
-            element={
-              <DefaultLayout>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/detect" element={<Detect />} />
-                  <Route path="/verify" element={<Verify />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </DefaultLayout>
-            }
+            element={<NotFoundLayout><NotFound /></NotFoundLayout>}
           />
-          <Route
-            path="/profile/*"
-            element={<Profile />}
-          />
+          {/* Profile Route */}
+          <Route path="/profile/*" element={<Profile />} />
         </Routes>
       </Router>
     </ChakraProvider>

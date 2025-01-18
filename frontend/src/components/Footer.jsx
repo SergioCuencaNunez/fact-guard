@@ -30,18 +30,18 @@ const Footer = () => {
       >
         {/* Left Section with Logo */}
         <VStack align={{ base: 'center', md: 'flex-start' }} spacing="1">
-          <img src={logo} alt="FactGuard Logo" style={{ height: '30px', width: 'auto' }} />
-          <Text fontSize="sm">Version 0.8</Text>
-          <Text fontSize="sm">© 2024 Fact Guard. All Rights Reserved</Text>
+          <img src={logo} alt="FactGuard Logo" style={{ height: '40px', width: 'auto' }} />
+          <Text fontSize="md">Version 1.0</Text>
+          <Text fontSize="md">© 2025 Fact Guard. All Rights Reserved</Text>
         </VStack>
 
         {/* Right Section with Icons */}
-        <HStack spacing="4" justify="center" align="center">
+        <HStack spacing="4" justify="center" align="center" alignItems="center">
           <Link href="https://github.com/SergioCuencaNunez" isExternal aria-label="GitHub">
-            <Icon as={SiGithub} boxSize="6" color={textColor} _hover={{ color: hoverColor }} />
+            <Icon as={SiGithub} boxSize={{base: "7", md: "8"}} color={textColor} _hover={{ color: hoverColor }} />
           </Link>
           <Link href="https://www.linkedin.com/in/sergio-cuenca-núñez-b8a391223/" isExternal aria-label="LinkedIn">
-            <Icon as={SiLinkedin} boxSize="6" color={textColor} _hover={{ color: hoverColor }} />
+            <Icon as={SiLinkedin} boxSize={{base: "7", md: "8"}} color={textColor} _hover={{ color: hoverColor }} />
           </Link>
         </HStack>
       </Flex>

@@ -18,7 +18,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { SunIcon, MoonIcon, ArrowBackIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon, WarningTwoIcon, CheckCircleIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ArrowBackIcon, RepeatIcon, ChevronDownIcon, ChevronUpIcon, WarningIcon, WarningTwoIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
 import logoDetectBright from "../assets/logo-detect-bright.png";
@@ -196,14 +196,83 @@ const DetectionResults = () => {
   }
 
   if (error) {
+    const errorTextColor = useColorModeValue("red.500", "red.200");
+  
     return (
-      <Flex align="center" justify="center" h="100vh">
-        <Text fontSize="lg" color="red.500" textAlign="center">
-          {error}
-        </Text>
+      <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.025 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          <Box
+            bg={cardBg}
+            p="5"
+            borderRadius="md"
+            textAlign="center"
+            shadow="md"
+            height="100%"
+          >
+            <VStack spacing="6">
+              <WarningTwoIcon boxSize="14" color={errorTextColor} />
+    
+              <Heading fontSize="2xl" color={errorTextColor}>
+                Detection Not Found
+              </Heading>
+    
+              <Text fontSize="md" color={textColor} textAlign="center">
+                The requested detection with ID: <Text as="span" fontWeight="bold" color={errorTextColor}>#{id}</Text> does not exist.
+                Please check your list and try again.
+              </Text>
+    
+              <HStack spacing="4">
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    leftIcon={<ArrowBackIcon />}
+                    size="md"
+                    bg={allDetectionsBg}
+                    color={textColor}
+                    _hover={{ bg: startNewDetectionHoverBg }}
+                    _active={{ bg: startNewDetectionActiveBg }}
+                    onClick={() => navigate("/profile")}
+                  >
+                    Go to Dashboard
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  leftIcon={<RepeatIcon />}
+                  size="md"
+                  bg={allDetectionsBg}
+                  color={textColor}
+                  _hover={{ bg: startNewDetectionHoverBg }}
+                  _active={{ bg: startNewDetectionActiveBg }}
+                  onClick={() => navigate("/profile/start-new-claim-check")}
+                >
+                  Start New Detection
+                </Button>
+              </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    size="md"
+                    bg={primaryColor}
+                    color="white"
+                    _hover={{ bg: allDetectionsHoverBg }}
+                    _active={{ bg: allDetectionsActiveBg }}
+                    onClick={() => navigate("/profile/my-claim-checks")}
+                  >
+                    All Detections
+                  </Button>
+                </motion.div>
+              </HStack>
+            </VStack>
+          </Box>
+        </motion.div>
       </Flex>
     );
-  }
+  }  
 
   if (!detection) {
     return (

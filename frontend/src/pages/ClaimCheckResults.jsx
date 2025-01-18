@@ -21,11 +21,12 @@ import {
   SunIcon,
   MoonIcon,
   ArrowBackIcon,
+  RepeatIcon,
   CheckCircleIcon,
   WarningTwoIcon,
   WarningIcon,
   InfoIcon,
-  ExternalLinkIcon,
+  ExternalLinkIcon
 } from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
@@ -103,14 +104,83 @@ const ClaimCheckResults = () => {
   }
 
   if (error) {
+    const errorTextColor = useColorModeValue("red.500", "red.200");
+  
     return (
-      <Flex align="center" justify="center" h="100vh">
-        <Text fontSize="lg" color="red.500" textAlign="center">
-          {error}
-        </Text>
+      <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.025 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          <Box
+            bg={cardBg}
+            p="5"
+            borderRadius="md"
+            textAlign="center"
+            shadow="md"
+            height="100%"
+          >
+            <VStack spacing="6">
+              <WarningTwoIcon boxSize="14" color={errorTextColor} />
+    
+              <Heading fontSize="2xl" color={errorTextColor}>
+                Claim Check Not Found
+              </Heading>
+    
+              <Text fontSize="md" color={textColor} textAlign="center">
+                The requested claim check with ID: <Text as="span" fontWeight="bold" color={errorTextColor}>#{id}</Text> does not exist.
+                Please check your list and try again.
+              </Text>
+    
+              <HStack spacing="4">
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    leftIcon={<ArrowBackIcon />}
+                    size="md"
+                    bg={allClaimChecksBg}
+                    color={textColor}
+                    _hover={{ bg: startNewClaimCheckHoverBg }}
+                    _active={{ bg: startNewClaimCheckActiveBg }}
+                    onClick={() => navigate("/profile")}
+                  >
+                    Go to Dashboard
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  leftIcon={<RepeatIcon />}
+                  size="md"
+                  bg={allClaimChecksBg}
+                  color={textColor}
+                  _hover={{ bg: startNewClaimCheckHoverBg }}
+                  _active={{ bg: startNewClaimCheckActiveBg }}
+                  onClick={() => navigate("/profile/start-new-claim-check")}
+                >
+                  Start New Claim Check
+                </Button>
+              </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    size="md"
+                    bg={primaryColor}
+                    color="white"
+                    _hover={{ bg: allClaimChecksHoverBg }}
+                    _active={{ bg: allClaimChecksActiveBg }}
+                    onClick={() => navigate("/profile/my-claim-checks")}
+                  >
+                    All Claim Checks
+                  </Button>
+                </motion.div>
+              </HStack>
+            </VStack>
+          </Box>
+        </motion.div>
       </Flex>
     );
-  }
+  }  
 
   if (!claimCheck) {
     return (
