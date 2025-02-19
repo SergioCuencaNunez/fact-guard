@@ -139,7 +139,7 @@ const DefaultLayout = ({ children }) => (
   </Flex>
 );
 
-// Not Founf Layout (with Navbar and Footer)
+// Not Found Layout (with Navbar and Footer)
 const NotFoundLayout = ({ children }) => (
   <Flex direction="column" minH="100vh">
     <Navbar />
