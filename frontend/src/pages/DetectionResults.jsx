@@ -249,7 +249,7 @@ const DetectionResults = () => {
                   color={textColor}
                   _hover={{ bg: startNewDetectionHoverBg }}
                   _active={{ bg: startNewDetectionActiveBg }}
-                  onClick={() => navigate("/profile/start-new-claim-check")}
+                  onClick={() => navigate("/profile/start-new-detection")}
                 >
                   Start New Detection
                 </Button>
@@ -261,7 +261,7 @@ const DetectionResults = () => {
                     color="white"
                     _hover={{ bg: allDetectionsHoverBg }}
                     _active={{ bg: allDetectionsActiveBg }}
-                    onClick={() => navigate("/profile/my-claim-checks")}
+                    onClick={() => navigate("/profile/my-news-detections")}
                   >
                     All Detections
                   </Button>

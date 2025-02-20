@@ -32,7 +32,7 @@ const Footer = () => {
         <VStack align={{ base: 'center', md: 'flex-start' }} spacing="1">
           <img src={logo} alt="FactGuard Logo" style={{ height: '40px', width: 'auto' }} />
           <Text fontSize="md">Version 1.0</Text>
-          <Text fontSize="md">© 2025 Fact Guard. All Rights Reserved</Text>
+          <Text fontSize="md">© 2025 FactGuard. All Rights Reserved</Text>
         </VStack>
 
         {/* Right Section with Icons */}
