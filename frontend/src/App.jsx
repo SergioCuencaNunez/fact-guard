@@ -187,7 +187,6 @@ function App() {
               </AuthLayout>
             }
           />
-
           {/* Default Layout (For Main Pages) */}
           <Route
             path="/"

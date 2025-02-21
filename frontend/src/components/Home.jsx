@@ -81,7 +81,7 @@ const Home = () => {
         >
           <Box w={{ base: '100%', md: '55%' }} textAlign={{ base: 'center', md: 'left' }}>
             <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>
-              Discover the Power of FactGuard
+              Stay Informed, Stay Secure
             </Heading>
             <Text fontSize={{ base: 'md', md: 'lg' }} mb="3">
               {discoverText}
@@ -92,8 +92,8 @@ const Home = () => {
           </Box>
           <Image
             src={discoverImage}
-            alt="Fake news detection illustration"
-            w={{ base: '65%', sm: '45%' ,md: '40%', lg: '35%', xl: '25%' }}
+            alt="Fake News Detection Illustration"
+            w={{ base: '70%', sm: '58%', md: '40%', lg: '35%', xl: '30%' }}
             mx={{ base: 'auto', md: '0' }}
           />
         </HStack>
@@ -294,7 +294,7 @@ const Home = () => {
         exit={{ opacity: 0, y: -50 }}
         transition={{ duration: 0.5 }}
       >
-        <Heading mb="3" textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
+        <Heading mb="6" textAlign="center" fontSize={{ base: '2xl', md: '3xl' }}>
               Benefits of Using FactGuard
         </Heading>
         <HStack
@@ -305,8 +305,8 @@ const Home = () => {
           >
             <Image
               src={benefitsImage}
-              alt="FactGuard benefits illustration"
-              w={{ base: '70%', sm: '50%' ,md: '45%', lg: '40%', xl: '30%' }}
+              alt="FactGuard Benefits Illustration"
+              w={{ base: '72%', sm: '52%' ,md: '47%', lg: '42%', xl: '32%' }}
               mx={{ base: 'auto', md: '0' }}
               flexShrink={0}
             />

@@ -66,7 +66,7 @@ const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
 const primaryHoverDark = '#77e4c4';
 const primaryActiveLight = '#2a8073';
-const primaryActiveDark = '#77e4c4';
+const primaryActiveDark = '#91edd0';
 const sidebarLight = '#c9ebdf';
 const sidebarDark = '#0b7b6b';
 const gradient = "linear-gradient(to bottom, #2a8073, #3ca790, #4dcfaf)";
@@ -523,44 +523,48 @@ const Profile = () => {
 
           {/* Sidebar Buttons */}
           <VStack spacing="4" align="stretch" w="100%">
-            <Button
-              variant="ghost"
-              justifyContent="space-between"
-              _hover={{ bg: hoverColor }}
-              _active={{ bg: activeColor }}
-              size={{ base: "sm", md: "md" }}
-              color={textColor}
-              width="100%"
-              onClick={() => navigate("/profile")}
-            >
-              <HStack w="100%" justifyContent="space-between">
-                <HStack>
-                  <FaChartBar />
-                  <Text>Dashboard</Text>
-                </HStack>
-              </HStack>
-            </Button>
-            
-            {/* Detect Fake News Dropdown */}
-            <Box>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 variant="ghost"
                 justifyContent="space-between"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
+                _hover={{ color: hoverColor }}
+                _active={{ color: activeColor }}
                 size={{ base: "sm", md: "md" }}
-                onClick={() => toggleDropdown("detect")}
                 color={textColor}
                 width="100%"
+                onClick={() => navigate("/profile")}
               >
                 <HStack w="100%" justifyContent="space-between">
                   <HStack>
-                    <FaNewspaper />
-                    <Text>Detect Fake News</Text>
+                    <FaChartBar />
+                    <Text>Dashboard</Text>
                   </HStack>
-                  <ChevronDownIcon />
                 </HStack>
-              </Button> 
+              </Button>
+            </motion.div>
+            
+            {/* Detect Fake News Dropdown */}
+            <Box>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  justifyContent="space-between"
+                  _hover={{ color: hoverColor }}
+                  _active={{ color: activeColor }}
+                  size={{ base: "sm", md: "md" }}
+                  onClick={() => toggleDropdown("detect")}
+                  color={textColor}
+                  width="100%"
+                >
+                  <HStack w="100%" justifyContent="space-between">
+                    <HStack>
+                      <FaNewspaper />
+                      <Text>Detect Fake News</Text>
+                    </HStack>
+                    <ChevronDownIcon />
+                  </HStack>
+                </Button> 
+              </motion.div>
               <AnimatePresence initial={false}>             
                 {openDropdown === "detect" && (
                   <motion.div
@@ -576,6 +580,7 @@ const Profile = () => {
                       justifyContent="flex-start"
                       size="sm"
                       _hover={{ color: hoverColor }}
+                      _active={{ color: activeColor }}
                       color={textColor}
                       width="100%"
                       onClick={() => navigate("/profile/start-new-detection")}
@@ -590,6 +595,7 @@ const Profile = () => {
                       justifyContent="flex-start"
                       size="sm"
                       _hover={{ color: hoverColor }}
+                      _active={{ color: activeColor }}
                       color={textColor}
                       width="100%"
                       onClick={() => navigate("/profile/my-news-detections")}
@@ -607,25 +613,26 @@ const Profile = () => {
 
             {/* Verify Claims Dropdown */}
             <Box>
-              <Button
-                variant="ghost"
-                justifyContent="space-between"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size={{ base: "sm", md: "md" }}
-                onClick={() => toggleDropdown("verify")}
-                color={textColor}
-                width="100%"
-              >
-                <HStack w="100%" justifyContent="space-between">
-                  <HStack>
-                    <FaShieldAlt />
-                    <Text>Verify Claims</Text>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  justifyContent="space-between"
+                  _hover={{ color: hoverColor }}
+                  _active={{ color: activeColor }}
+                  size={{ base: "sm", md: "md" }}
+                  onClick={() => toggleDropdown("verify")}
+                  color={textColor}
+                  width="100%"
+                >
+                  <HStack w="100%" justifyContent="space-between">
+                    <HStack>
+                      <FaShieldAlt />
+                      <Text>Verify Claims</Text>
+                    </HStack>
+                    <ChevronDownIcon />
                   </HStack>
-                  <ChevronDownIcon />
-                </HStack>
-              </Button>
-
+                </Button>
+              </motion.div>
               <AnimatePresence initial={false}>
                 {openDropdown === "verify" && (
                   <motion.div
@@ -641,6 +648,7 @@ const Profile = () => {
                       justifyContent="flex-start"
                       size="sm"
                       _hover={{ color: hoverColor }}
+                      _active={{ color: activeColor }}
                       color={textColor}
                       width="100%"
                       onClick={() => navigate("/profile/start-new-claim-check")}
@@ -655,6 +663,7 @@ const Profile = () => {
                       justifyContent="flex-start"
                       size="sm"
                       _hover={{ color: hoverColor }}
+                      _active={{ color: activeColor }}
                       color={textColor}
                       width="100%"
                       onClick={() => navigate("/profile/my-claim-checks")}
@@ -672,24 +681,26 @@ const Profile = () => {
 
             {/* Settings Dropdown */}
             <Box>
-              <Button
-                variant="ghost"
-                justifyContent="space-between"
-                _hover={{ bg: hoverColor }}
-                _active={{ bg: activeColor }}
-                size={{ base: "sm", md: "md" }}
-                onClick={() => toggleDropdown("settings")}
-                color={textColor}
-                width="100%"
-              >
-                <HStack w="100%" justifyContent="space-between">
-                  <HStack>
-                    <FaCogs />
-                    <Text>Settings</Text>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  justifyContent="space-between"
+                  _hover={{ color: hoverColor }}
+                  _active={{ color: activeColor }}
+                  size={{ base: "sm", md: "md" }}
+                  onClick={() => toggleDropdown("settings")}
+                  color={textColor}
+                  width="100%"
+                >
+                  <HStack w="100%" justifyContent="space-between">
+                    <HStack>
+                      <FaCogs />
+                      <Text>Settings</Text>
+                    </HStack>
+                    <ChevronDownIcon />
                   </HStack>
-                  <ChevronDownIcon />
-                </HStack>
-              </Button>
+                </Button>
+              </motion.div>
               <AnimatePresence initial={false}>
                 {openDropdown === "settings" && (
                   <motion.div
@@ -705,6 +716,7 @@ const Profile = () => {
                         justifyContent="flex-start"
                         size="sm"
                         _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
                         color={textColor}
                         width="100%"
                         onClick={() => navigate("/profile/account-details")}
@@ -795,7 +807,7 @@ const Profile = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  <Heading size="lg" mb="4">Recent Pages</Heading>
+                  <Heading size="lg" mb="4">Features</Heading>
                   <Flex wrap="wrap" justify="space-between" gap="6">
                     {[
                       {
