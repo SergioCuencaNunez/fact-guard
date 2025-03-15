@@ -76,7 +76,7 @@ const SignUp = () => {
 
   useEffect(() => {
     if (passwordAlert) {
-      const timer = setTimeout(() => setPasswordAlert(null), 3000);
+      const timer = setTimeout(() => setPasswordAlert(null), 5000);
       return () => clearTimeout(timer);
     }
   }, [passwordAlert]);
@@ -106,7 +106,7 @@ const SignUp = () => {
       setPasswordAlert(
         "Password cannot match your username or email and must include 1 uppercase, 6-20 characters, and no invalid characters."
       );
-      setTimeout(() => setPasswordAlert(null), 3000);
+      setTimeout(() => setPasswordAlert(null), 5000);
       return;
     }
 
@@ -315,7 +315,7 @@ const SignUp = () => {
           </motion.div>
           <form onSubmit={handleSignUp}>
             <VStack spacing="4" align="stretch">
-              <FormControl id="username" isRequired>
+              <FormControl id="username">
                 <FormLabel>Username</FormLabel>
                 <InputGroup>
                 <InputLeftElement pointerEvents="none">
