@@ -315,7 +315,7 @@ const SignUp = () => {
           </motion.div>
           <form onSubmit={handleSignUp}>
             <VStack spacing="4" align="stretch">
-              <FormControl id="username">
+              <FormControl id="username" isRequired>
                 <FormLabel>Username</FormLabel>
                 <InputGroup>
                 <InputLeftElement pointerEvents="none">
