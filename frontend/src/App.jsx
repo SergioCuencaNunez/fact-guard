@@ -115,7 +115,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
             alignItems="center"
             px="8"
             py="10"
-            maxW="50%"
+            maxW={{md: "50%"}}
           >
             {children}  
       </Box>
