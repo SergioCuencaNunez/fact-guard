@@ -41,8 +41,8 @@ const SignUp = () => {
   // const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     
   const [alert, setAlert] = useState(null);
-  const [passwordAlert, setPasswordAlert] = useState(null);
   const [emailAlert, setEmailAlert] = useState(null);
+  const [passwordAlert, setPasswordAlert] = useState(null);
   const [checkboxAlert, setCheckboxAlert] = useState(null);
   const [emailValid, setEmailValid] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
