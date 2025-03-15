@@ -807,7 +807,7 @@ const Profile = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  <Heading size="lg" mb="4">Features</Heading>
+                  <Heading size="lg" mb="4">Key Features</Heading>
                   <Flex wrap="wrap" justify="space-between" gap="6">
                     {[
                       {
