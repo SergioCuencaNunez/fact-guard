@@ -814,9 +814,9 @@ const Profile = () => {
                         icon: <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />,
                         title: "Fake News Detection",
                         text: {
-                          base: "Detect fake news using our DL model.",
-                          md: "Detect fake news using our DL model.",
-                          lg: "FactGuard Detect makes use of an accurate DL model to detect fake news and identify misleading content.",
+                          base: "Detect fake news using our AI models.",
+                          md: "Detect fake news using our AI models.",
+                          lg: "FactGuard Detect makes use of an accurate AI models to detect fake news and identify misleading content.",
                         },
                       },
                       {
