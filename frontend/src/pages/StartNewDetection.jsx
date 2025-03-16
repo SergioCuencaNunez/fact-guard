@@ -350,10 +350,6 @@ const StartNewDetection = ({ addDetection }) => {
               <ModalFooter>
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                   <Button
-                    bg={primaryColor}
-                    color="white"
-                    _hover={{ bg: hoverColor }}
-                    _active={{ bg: activeColor }}
                     size="md"
                     onClick={onAlertClose}
                   >
@@ -377,11 +373,7 @@ const StartNewDetection = ({ addDetection }) => {
               </ModalBody>
               <ModalFooter>
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <Button
-                    bg={primaryColor}
-                    color="white"
-                    _hover={{ bg: hoverColor }}
-                    _active={{ bg: activeColor }}
+                <Button
                     size="md"
                     onClick={onErrorClose}
                   >
