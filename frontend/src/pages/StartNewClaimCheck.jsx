@@ -252,7 +252,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
           </Flex>
 
           {/* Powered by Google Fact Check Tools API */}
-          <HStack justify="flex-end" mb="2">
+          <HStack justify="flex-end" mb="4">
               <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
                 Powered by
               </Text>

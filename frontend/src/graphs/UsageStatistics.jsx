@@ -7,27 +7,30 @@ const UsageStatistics = ({ detections, claimChecks }) => {
 
   // Combine and group detections and claim checks by date
   const combinedData = [...detections, ...claimChecks].reduce((acc, item) => {
-    const date = new Date(item.date).toLocaleDateString();
-    acc[date] = acc[date] || { date, detections: 0, claimChecks: 0 };
+    const date = new Date(item.date);
+    const formattedDate = date.toLocaleDateString("es-ES"); // Format date as DD/MM/YYYY
+    acc[formattedDate] = acc[formattedDate] || { date: formattedDate, detections: 0, claimChecks: 0 };
 
     if (detections.some((d) => d.id === item.id)) {
-      acc[date].detections++;
+      acc[formattedDate].detections++;
     } else {
-      acc[date].claimChecks++;
+      acc[formattedDate].claimChecks++;
     }
 
     return acc;
   }, {});
 
   // Format data for the graph
-  const chartData = Object.values(combinedData).sort((a, b) => new Date(a.date) - new Date(b.date));
+  const chartData = Object.values(combinedData).sort((a, b) => 
+    new Date(a.date.split("/").reverse().join("-")) - new Date(b.date.split("/").reverse().join("-"))
+  );
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={chartData}>
         {/* Set a dotted grid */}
         <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
-        <XAxis dataKey="date" stroke={axisColor} />
+        <XAxis dataKey="date" stroke={axisColor} tickFormatter={(date) => date}/>
         <YAxis stroke={axisColor} />
         <Tooltip />
         <Legend />
