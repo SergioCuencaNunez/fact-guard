@@ -380,7 +380,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                 <Text fontSize="lg" color="gray.500" textAlign="center">
                   No claims checks found.
                 </Text>
-                <Text fontSize="md" color="gray.400" textAlign="center">
+                <Text fontSize="md" color="gray.400" textAlign="center" mb="4">
                   Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
                 </Text>
               </Flex>
@@ -418,12 +418,16 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                   : "Are you sure you want to delete the selected claim checks?"}
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="red" mr={3} onClick={confirmDelete}>
-                  Delete
-                </Button>
-                <Button variant="ghost" onClick={onClose}>
-                  Cancel
-                </Button>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button colorScheme="red" mr={3} onClick={confirmDelete}>
+                    Delete
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button onClick={onClose}>
+                    Cancel
+                  </Button>
+                </motion.div>
               </ModalFooter>
             </ModalContent>
           </Modal>

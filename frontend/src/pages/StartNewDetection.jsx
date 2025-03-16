@@ -348,16 +348,18 @@ const StartNewDetection = ({ addDetection }) => {
                 Please fill in both the title and content fields to proceed with detecting fake news. 
               </ModalBody>
               <ModalFooter>
-                <Button
-                  bg={primaryColor}
-                  color="white"
-                  _hover={{ bg: hoverColor }}
-                  _active={{ bg: activeColor }}
-                  size="md"
-                  onClick={onAlertClose}
-                >
-                  Close
-                </Button>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    bg={primaryColor}
+                    color="white"
+                    _hover={{ bg: hoverColor }}
+                    _active={{ bg: activeColor }}
+                    size="md"
+                    onClick={onAlertClose}
+                  >
+                    Close
+                  </Button>
+                </motion.div>
               </ModalFooter>
             </ModalContent>
           </Modal>
@@ -374,16 +376,18 @@ const StartNewDetection = ({ addDetection }) => {
                 <Text>{errorMessage}</Text>
               </ModalBody>
               <ModalFooter>
-                <Button
-                  bg={primaryColor}
-                  color="white"
-                  _hover={{ bg: hoverColor }}
-                  _active={{ bg: activeColor }}
-                  size="md"
-                  onClick={onErrorClose}
-                >
-                  Close
-                </Button>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    bg={primaryColor}
+                    color="white"
+                    _hover={{ bg: hoverColor }}
+                    _active={{ bg: activeColor }}
+                    size="md"
+                    onClick={onErrorClose}
+                  >
+                    Close
+                  </Button>
+                </motion.div>
               </ModalFooter>
             </ModalContent>
           </Modal>

@@ -328,8 +328,8 @@ const SignUp = () => {
                   />
                 </InputGroup>
               </FormControl>
-              <FormControl id="email" isRequired isInvalid={!emailValid}>
-                <FormLabel>Email</FormLabel>
+              <FormControl id="email" isInvalid={!emailValid}>
+                <FormLabel>Email <Text as="span" color={useColorModeValue("red.500", "red.300")}>*</Text></FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <EmailIcon color="gray.500" />
@@ -342,8 +342,8 @@ const SignUp = () => {
                   />
                 </InputGroup>
               </FormControl>
-              <FormControl id="password" isRequired isInvalid={!passwordValid}>
-                <FormLabel>Password</FormLabel>
+              <FormControl id="password" isInvalid={!passwordValid}>
+                <FormLabel>Password <Text as="span" color={useColorModeValue("red.500", "red.300")}>*</Text></FormLabel>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none">
                     <LockIcon color="gray.500" />

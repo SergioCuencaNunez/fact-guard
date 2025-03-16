@@ -115,7 +115,7 @@ const AccountDetails = () => {
       setAlert({
         type: "info",
         message:
-          "Name and email are not updated because they are the same as the current values.",
+          "Name and Email are not updated because they are the same as the current values.",
       });
       resetAlert();
       return;
@@ -279,9 +279,9 @@ const AccountDetails = () => {
         exit={{ opacity: 0, y: -50 }}
         transition={{ duration: 0.5 }}
     >
-        <Box px={{ md: 4 }} py={{ md: 6 }}>
+      <Box px={{ md: 4 }} py={{ md: 6 }}>
         <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
-            <Flex justify="space-between" align="center" mb="4">
+          <Flex justify="space-between" align="center" mb="4">
             <Heading fontSize={{ base: "3xl", md: "4xl" }}>Account Details</Heading>
             <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
                 <IconButton
@@ -290,131 +290,132 @@ const AccountDetails = () => {
                 onClick={toggleColorMode}
                 />
             </HStack>
-            </Flex>
-            <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
-            <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: alert ? "auto" : 0 }}
-                exit={{ height: 0 }}
-                transition={{ duration: 0.3 }}
-                style={{ overflow: "hidden" }}
-                >
-                <AnimatePresence>
-                    {alert && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                        <Alert status={alert.type} mb={4}>
-                        <AlertIcon />
-                        <AlertDescription>{alert.message}</AlertDescription>
-                        </Alert>
-                    </motion.div>
-                    )}
-                </AnimatePresence>
-            </motion.div>
-            <VStack spacing="4" align="stretch">
-              <Flex
-                  direction={{ base: "column", lg: "row" }}
-                  gap="4"
-                  alignItems={{ base: "flex-start", lg: "center" }}
+          </Flex>
+          <Box borderBottom="1px" borderColor="gray.300" mb="4"></Box>
+          <motion.div
+              initial={{ height: 0 }}
+              animate={{ height: alert ? "auto" : 0 }}
+              exit={{ height: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ overflow: "hidden" }}
               >
-                  <FormControl>
-                  <FormLabel>Name</FormLabel>
-                  <Input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter your name"
-                  />
-                  </FormControl>
-                  <FormControl isInvalid={!emailValid}>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onBlur={() => setEmailValid(validateEmail(email))}
-                      placeholder="Enter your email"
-                  />
-                  </FormControl>
-              </Flex>
-              <Flex
+              <AnimatePresence>
+                  {alert && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                      <Alert status={alert.type} mb={4}>
+                      <AlertIcon />
+                      <AlertDescription>{alert.message}</AlertDescription>
+                      </Alert>
+                  </motion.div>
+                  )}
+              </AnimatePresence>
+          </motion.div>
+          <VStack spacing="4" align="stretch">
+            <Flex
                 direction={{ base: "column", lg: "row" }}
                 gap="4"
-                alignItems="flex-start"
-                width="100%"
-                >
-                <FormControl isInvalid={!oldPasswordValid} flex="1">
-                    <FormLabel>Old Password</FormLabel>
-                    <Input
-                    type="password"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    />
+                alignItems={{ base: "flex-start", lg: "center" }}
+            >
+                <FormControl>
+                <FormLabel>Name</FormLabel>
+                <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
+                />
                 </FormControl>
-                <FormControl isInvalid={!passwordValid} flex="1">
-                    <FormLabel>New Password</FormLabel>
-                    <Input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => {
-                        setNewPassword(e.target.value);
-                        evaluatePasswordStrength(e.target.value);
-                    }}
-                    />
-                    <Progress
-                    value={(passwordStrength / 5) * 100}
-                    size="xs"
-                    colorScheme={
-                        passwordStrength < 3
-                        ? "red"
-                        : passwordStrength < 4
-                        ? "yellow"
-                        : "green"
-                    }
-                    mt="2"
-                    />
-                    <Text
-                    mt="1"
-                    fontSize="sm"
-                    color={getTextColor(passwordStrength)}
-                    >
-                    {getPasswordStrengthLabel(passwordStrength)}
-                    </Text>
+                <FormControl isInvalid={!emailValid}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={() => setEmailValid(validateEmail(email))}
+                    placeholder="Enter your email"
+                />
                 </FormControl>
-                <FormControl isInvalid={!confirmPasswordValid || !passwordValid} flex="1">
-                    <FormLabel>Confirm Password</FormLabel>
-                    <Input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                        evaluateConfirmPasswordStrength(e.target.value);
-                    }}
-                    />
-                    <Progress
-                    value={(confirmPasswordStrength / 5) * 100}
-                    size="xs"
-                    colorScheme={
-                        confirmPasswordStrength < 3
-                        ? "red"
-                        : confirmPasswordStrength < 4
-                        ? "yellow"
-                        : "green"
-                    }
-                    mt="2"
-                    />
-                    <Text
-                    mt="1"
-                    fontSize="sm"
-                    color={getTextColor(confirmPasswordStrength)}
-                    >
-                    {getPasswordStrengthLabel(confirmPasswordStrength)}
-                    </Text>
-                </FormControl>
-              </Flex>
-              <HStack spacing={{ base: "2", md: "4" }} mt="4" justify={{ base: "center", md: "center" }} flexWrap="wrap">
+            </Flex>
+            <Flex
+              direction={{ base: "column", lg: "row" }}
+              gap="4"
+              alignItems="flex-start"
+              width="100%"
+              >
+              <FormControl isInvalid={!oldPasswordValid} flex="1">
+                  <FormLabel>Old Password</FormLabel>
+                  <Input
+                  type="password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  />
+              </FormControl>
+              <FormControl isInvalid={!passwordValid} flex="1">
+                  <FormLabel>New Password</FormLabel>
+                  <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      evaluatePasswordStrength(e.target.value);
+                  }}
+                  />
+                  <Progress
+                  value={(passwordStrength / 5) * 100}
+                  size="xs"
+                  colorScheme={
+                      passwordStrength < 3
+                      ? "red"
+                      : passwordStrength < 4
+                      ? "yellow"
+                      : "green"
+                  }
+                  mt="2"
+                  />
+                  <Text
+                  mt="1"
+                  fontSize="sm"
+                  color={getTextColor(passwordStrength)}
+                  >
+                  {getPasswordStrengthLabel(passwordStrength)}
+                  </Text>
+              </FormControl>
+              <FormControl isInvalid={!confirmPasswordValid || !passwordValid} flex="1">
+                  <FormLabel>Confirm Password</FormLabel>
+                  <Input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      evaluateConfirmPasswordStrength(e.target.value);
+                  }}
+                  />
+                  <Progress
+                  value={(confirmPasswordStrength / 5) * 100}
+                  size="xs"
+                  colorScheme={
+                      confirmPasswordStrength < 3
+                      ? "red"
+                      : confirmPasswordStrength < 4
+                      ? "yellow"
+                      : "green"
+                  }
+                  mt="2"
+                  />
+                  <Text
+                  mt="1"
+                  fontSize="sm"
+                  color={getTextColor(confirmPasswordStrength)}
+                  >
+                  {getPasswordStrengthLabel(confirmPasswordStrength)}
+                  </Text>
+              </FormControl>
+            </Flex>
+            <HStack spacing={{ base: "2", md: "4" }} mt="4" justify={{ base: "center", md: "center" }} flexWrap="wrap">
+              <HStack spacing="4" justify="center">
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                     <Button
                       bg={primaryColor}
@@ -437,19 +438,20 @@ const AccountDetails = () => {
                     Reset Password
                     </Button>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <Button
-                      colorScheme="red"
-                      variant="solid"
-                      onClick={() => setIsDeleting(true)}
-                    >
-                    Delete Account
-                    </Button>
-                </motion.div>
               </HStack>
-            </VStack>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    colorScheme="red"
+                    variant="solid"
+                    onClick={() => setIsDeleting(true)}
+                  >
+                  Delete Account
+                  </Button>
+              </motion.div>
+            </HStack>
+          </VStack>
         </Flex>
-
+        
         {/* Account Deletion Modal */}
         <Modal isOpen={isDeleting} onClose={() => setIsDeleting(false)} isCentered>
             <ModalOverlay />
@@ -462,12 +464,16 @@ const AccountDetails = () => {
                   Are you sure you want to delete your account? This action cannot be undone. All your detections and claim checks will also be permanently removed.
               </ModalBody>
               <ModalFooter>
-                  <Button colorScheme="red" mr={3} onClick={handleDeleteAccount}>
-                  Delete
-                  </Button>
-                  <Button variant="ghost" onClick={() => setIsDeleting(false)}>
-                  Cancel
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button colorScheme="red" mr={3} onClick={handleDeleteAccount}>
+                    Delete
+                    </Button>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button onClick={() => setIsDeleting(false)}>
+                    Cancel
+                    </Button>
+                  </motion.div>
               </ModalFooter>
             </ModalContent>
         </Modal>
