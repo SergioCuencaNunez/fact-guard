@@ -425,7 +425,7 @@ const AccountDetails = () => {
                 {/* Save Changes & Reset Password in one row on mobile */}
                 <Flex width="100%" gap={{ base: "2", md: "4" }}>
                   <Button
-                    as={motion.button} // Makes button animated without breaking layout
+                    as={motion.button}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     bg={primaryColor}
@@ -433,7 +433,7 @@ const AccountDetails = () => {
                     onClick={handleSaveChanges}
                     _hover={{ bg: hoverColor }}
                     _active={{ bg: activeColor }}
-                    flex="1" // Ensures equal width
+                    flex="1"
                   >
                     Save Changes
                   </Button>
