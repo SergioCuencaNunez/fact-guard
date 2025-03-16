@@ -414,41 +414,62 @@ const AccountDetails = () => {
                   </Text>
               </FormControl>
             </Flex>
-            <HStack spacing={{ base: "2", md: "4" }} mt="4" justify={{ base: "center", md: "center" }} flexWrap="wrap">
-              <HStack spacing="4" justify="center">
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <Button
-                      bg={primaryColor}
-                      color="white"
-                      onClick={handleSaveChanges}
-                      _hover={{ bg: hoverColor }}
-                      _active={{ bg: activeColor }}
-                    >
-                    Save Changes
-                    </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                    <Button
-                      bg={primaryColor}
-                      color="white"
-                      onClick={handleResetPassword}
-                      _hover={{ bg: hoverColor }}
-                      _active={{ bg: activeColor }}
-                    >
-                    Reset Password
-                    </Button>
-                </motion.div>
-              </HStack>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Box width={{base: "100%", md: "auto"}} mx="auto" mt="2">
+              <Flex
+                direction={{ base: "column", lg: "row" }}
+                justify="center"
+                align="center"
+                width="100%"
+                gap={{ base: "2", md: "4" }}
+              >
+                {/* Save Changes & Reset Password in one row on mobile */}
+                <Flex width="100%" gap={{ base: "2", md: "4" }}>
                   <Button
+                    as={motion.button} // Makes button animated without breaking layout
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    bg={primaryColor}
+                    color="white"
+                    onClick={handleSaveChanges}
+                    _hover={{ bg: hoverColor }}
+                    _active={{ bg: activeColor }}
+                    flex="1" // Ensures equal width
+                  >
+                    Save Changes
+                  </Button>
+
+                  <Button
+                    as={motion.button}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    bg={primaryColor}
+                    color="white"
+                    onClick={handleResetPassword}
+                    _hover={{ bg: hoverColor }}
+                    _active={{ bg: activeColor }}
+                    flex="1"
+                  >
+                    Reset Password
+                  </Button>
+                </Flex>
+
+                {/* Delete Account - Below on mobile, in row on larger screens */}
+                <Flex>
+                  <Button
+                    as={motion.button}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     colorScheme="red"
                     variant="solid"
                     onClick={() => setIsDeleting(true)}
+                    flex="1"
+                    alignSelf="center"
                   >
-                  Delete Account
+                    Delete Account
                   </Button>
-              </motion.div>
-            </HStack>
+                </Flex>
+              </Flex>
+            </Box>
           </VStack>
         </Flex>
         
