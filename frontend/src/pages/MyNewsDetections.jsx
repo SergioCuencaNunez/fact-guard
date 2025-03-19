@@ -110,17 +110,17 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
     setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
   };
 
-    const getPredictionColor = (prediction) => {
-      if (prediction === "Fake") return "red";
-      if (prediction === "True") return "green";
-      return "orange";
-    };
-    
-    const getPredictionIcon = (prediction) => {
-      if (prediction === "Fake") return <WarningTwoIcon color="red.500" />;
-      if (prediction === "True") return <CheckCircleIcon color="green.500" />;
-      return <WarningIcon color="orange.500" />;
-    };
+  const getPredictionColor = (prediction) => {
+    if (prediction === "Fake") return "red";
+    if (prediction === "True") return "green";
+    return "orange";
+  };
+  
+  const getPredictionIcon = (prediction) => {
+    if (prediction === "Fake") return <WarningTwoIcon color="red.500" />;
+    if (prediction === "True") return <CheckCircleIcon color="green.500" />;
+    return <WarningIcon color="orange.500" />;
+  };
 
   return (
     <motion.div
