@@ -340,12 +340,6 @@ const Profile = () => {
       if (detectionToDelete) {
         // Delete a single detection
         await deleteDetection(detectionToDelete.id);
-      } else {
-        // Delete selected detections
-        for (const detection of selectedDetections) {
-          await deleteDetection(detection.id);
-        }
-        setSelectedDetections([]);
       }
       onDetectionModalClose();
     } catch (error) {
@@ -430,12 +424,6 @@ const Profile = () => {
       if (claimCheckToDelete) {
         // Delete a single claim checks
         await deleteClaimCheck(claimCheckToDelete.id);
-      } else {
-        // Delete selected claim checks
-        for (const claimCheck of selectedClaimChecks) {
-          await deleteClaimCheck(claimCheck.id);
-        }
-        setSelectedClaimChecks([]);
       }
       onClaimModalClose();
     } catch (error) {
