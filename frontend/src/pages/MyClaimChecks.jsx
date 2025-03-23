@@ -375,7 +375,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
               exit={{ opacity: 0, y: 15 }}
               transition={{ duration: 0.5 }}
             >
-              <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb={{ base: "4", md: "0" }}>
+              <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb="4" mt="4">
                 <WarningIcon boxSize="6" color="gray.500" mb="2" />
                 <Text fontSize="lg" color="gray.500" textAlign="center">
                   No claims checks found.

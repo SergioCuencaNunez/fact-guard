@@ -44,7 +44,8 @@ const DetectionResults = () => {
   const modelCardBg = useColorModeValue("gray.50", "gray.800");
   const contentBorderColor = useColorModeValue("gray.200", "gray.600");
   const textColor = useColorModeValue("black", "white");
-  const textColor2 = useColorModeValue("gray.500", "gray.400")
+  const textColor2 = useColorModeValue("gray.500", "gray.400");
+  const errorTextColor = useColorModeValue("red.500", "red.200");
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const allDetectionsBg = useColorModeValue("gray.100", "gray.600");
   const startNewDetectionHoverBg = useColorModeValue("gray.200", "gray.500");
@@ -195,9 +196,7 @@ const DetectionResults = () => {
     );
   }
 
-  if (error) {
-    const errorTextColor = useColorModeValue("red.500", "red.200");
-  
+  if (error) {  
     return (
       <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
         <motion.div

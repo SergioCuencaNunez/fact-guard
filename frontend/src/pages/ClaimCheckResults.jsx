@@ -52,7 +52,8 @@ const ClaimCheckResults = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const modelCardBg = useColorModeValue("gray.50", "gray.800");
   const textColor = useColorModeValue("black", "white");
-  const textColor2 = useColorModeValue("gray.500", "gray.400")
+  const textColor2 = useColorModeValue("gray.500", "gray.400");
+  const errorTextColor = useColorModeValue("red.500", "red.200");
   const allClaimChecksBg = useColorModeValue("gray.100", "gray.600");
   const startNewClaimCheckHoverBg = useColorModeValue("gray.200", "gray.500");
   const startNewClaimCheckActiveBg = useColorModeValue("gray.300", "gray.400");
@@ -104,8 +105,6 @@ const ClaimCheckResults = () => {
   }
 
   if (error) {
-    const errorTextColor = useColorModeValue("red.500", "red.200");
-  
     return (
       <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
         <motion.div

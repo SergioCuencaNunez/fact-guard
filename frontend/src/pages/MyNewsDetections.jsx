@@ -308,7 +308,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
               exit={{ opacity: 0, y: 15 }}
               transition={{ duration: 0.5 }}
             >
-              <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }}>
+              <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb="2" mt="4">
                 <WarningIcon boxSize="6" color="gray.500" mb="2" />
                 <Text fontSize="lg" color="gray.500" textAlign="center">
                   No detections found.
