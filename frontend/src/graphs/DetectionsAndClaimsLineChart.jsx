@@ -30,7 +30,28 @@ const DetectionsAndClaimsLineChart = ({ detections, claimChecks }) => {
         <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
         <XAxis dataKey="date" stroke={axisColor} tickFormatter={(date) => date} />
         <YAxis stroke={axisColor} />
-        <Tooltip />
+        <Tooltip
+          cursor={{
+            fill: useColorModeValue("#A0AEC0", "#CBD5E0"),
+            fillOpacity: 0.2,
+          }}
+          contentStyle={{
+            backgroundColor: useColorModeValue("#ffffff", "#1A202C"),
+            color: useColorModeValue("#1A202C", "#EDF2F7"),
+            border: "1px solid",
+            borderColor: useColorModeValue("#CBD5E0", "#4A5568"),
+            borderRadius: "6px",
+            fontSize: "14px",
+          }}
+          labelStyle={{
+            color: useColorModeValue("#2D3748", "#E2E8F0"),
+            fontWeight: "bold",
+          }}
+          itemStyle={{
+            color: useColorModeValue("#2D3748", "#E2E8F0"),
+            fontSize: "13px",
+          }}
+        />
         <Line type="monotone" dataKey="detections" stroke="#4dcfaf" />
         <Line type="monotone" dataKey="claims" stroke="#f56565" />
       </LineChart>
