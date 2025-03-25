@@ -49,6 +49,8 @@ import logoDark from '../assets/logo-main-dark.png';
 import logoGoogleFactCheckLogoBright from "../assets/logo-google-fact-check-bright.png";
 import logoGoogleFactCheckLogoDark from "../assets/logo-google-fact-check-dark.png";
 
+import BlurOverlay from "../components/BlurOverlay";
+
 import StartNewDetection from "./StartNewDetection";
 import MyNewsDetections from "./MyNewsDetections";
 import DetectionResults from "./DetectionResults";
@@ -430,6 +432,28 @@ const Profile = () => {
       console.error("Error deleting claim check(s):", error);
     }
   };
+
+  const isStatsAvailable = () => {
+    return (
+      Array.isArray(detections) &&
+      detections.length > 0 &&
+      Array.isArray(claimChecks) &&
+      claimChecks.length > 0
+    );
+  }; 
+  
+  const hasTwoDaysOfData = () => {
+    const dates = [
+      ...(Array.isArray(detections) ? detections : []),
+      ...(Array.isArray(claimChecks) ? claimChecks : []),
+    ]
+      .map((item) => item.date?.split("T")[0])
+      .filter(Boolean);
+  
+    const uniqueDates = [...new Set(dates)];
+    console.log(uniqueDates);
+    return uniqueDates.length > 1;
+  };  
   
   return (
     <Flex direction={{ base: "column", md: "row" }} bg={bg}>
@@ -867,7 +891,8 @@ const Profile = () => {
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                       style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
                     >
-                      <Box 
+                      <Box
+                        position="relative" 
                         bg={cardBg} 
                         p="5" 
                         borderRadius="md"
@@ -885,6 +910,9 @@ const Profile = () => {
                       >
                         <Heading size="md" mb="4">Detections and Claims Over Time</Heading>
                         <DetectionsAndClaimsLineChart detections={detections} claimChecks={claimChecks} />
+                        {!hasTwoDaysOfData() && (
+                          <BlurOverlay message="At least two days of data are required to visualize trends." />
+                        )}
                       </Box>
                     </motion.div>
                     <motion.div
@@ -893,7 +921,8 @@ const Profile = () => {
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                       style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
                     >
-                      <Box 
+                      <Box
+                        position="relative"
                         bg={cardBg} 
                         p="5" 
                         borderRadius="md"
@@ -911,6 +940,9 @@ const Profile = () => {
                       >
                         <Heading size="md" mb="4">Predictions and Ratings Overview</Heading>
                         <RatingsAndPredictionsPieChart detections={detections} claimChecks={claimChecks} />
+                        {!isStatsAvailable() && (
+                          <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
+                        )}
                       </Box>
                     </motion.div>
                     <motion.div
@@ -919,7 +951,8 @@ const Profile = () => {
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                       style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
                     >
-                      <Box 
+                      <Box
+                        position="relative" 
                         bg={cardBg} 
                         p="5" 
                         borderRadius="md"
@@ -937,6 +970,9 @@ const Profile = () => {
                       >
                         <Heading size="md" mb="4">Usage Statistics</Heading>
                         <UsageStatistics detections={detections} claimChecks={claimChecks} />
+                        {!isStatsAvailable() && (
+                          <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
+                        )}
                       </Box>
                     </motion.div>
                   </Flex>
