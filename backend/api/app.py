@@ -146,7 +146,16 @@ def predict_news(news_text, confidence_threshold):
         "BERT": {"Fake": (1 - bert_pred_probs[0]) * 100, "True": bert_pred_probs[0] * 100},
     }
 
+    f1_scores = {
+        "Decision Tree": 0.9359,
+        "Random Forest": 0.9610,
+        "XGBoost": 0.9786,
+        "LSTM": 0.9658,
+        "BERT": 0.9898,
+    }
+
     detection_results = []
+    weighted_votes = {"True": 0.0, "Fake": 0.0, "Uncertain": 0.0}
 
     for model, probs in predictions.items():
         true_prob = probs["True"]
@@ -162,19 +171,12 @@ def predict_news(news_text, confidence_threshold):
             "Prediction": prediction
         })
 
-    if detection_results:
-        prediction_counts = {
-            "True": sum(1 for result in detection_results if result["Prediction"] == "True"),
-            "Fake": sum(1 for result in detection_results if result["Prediction"] == "Fake"),
-            "Uncertain": sum(1 for result in detection_results if result["Prediction"] == "Uncertain"),
-        }
+        # Add weighted vote
+        weight = f1_scores.get(model, 1.0)
+        weighted_votes[prediction] += weight
 
-        if prediction_counts["True"] > prediction_counts["Fake"]:
-            final_prediction = "True"
-        elif prediction_counts["Fake"] > prediction_counts["True"]:
-            final_prediction = "Fake"
-        else:
-            final_prediction = "Uncertain"
+    if detection_results:
+        final_prediction = max(weighted_votes, key=weighted_votes.get)
         
         return {
             "success": True,
