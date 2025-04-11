@@ -30,3 +30,6 @@ backend/api/api_key.txt
 backend/data/*
 backend/models/*
 backend/preprocessing_artifacts/*
+
+# Node modules
+frontend/node_modules/
