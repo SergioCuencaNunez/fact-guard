@@ -147,11 +147,11 @@ def predict_news(news_text, confidence_threshold):
     }
 
     f1_scores = {
-        "Decision Tree": 0.9359,
-        "Random Forest": 0.9610,
-        "XGBoost": 0.9786,
-        "LSTM": 0.9658,
-        "BERT": 0.9898,
+        "Decision Tree": 0.9357,
+        "Random Forest": 0.9674,
+        "XGBoost": 0.9792,
+        "LSTM": 0.9671,
+        "BERT": 0.9936,
     }
 
     detection_results = []
