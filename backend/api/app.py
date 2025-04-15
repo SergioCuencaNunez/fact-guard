@@ -136,14 +136,14 @@ def predict_news(news_text, confidence_threshold):
     # Predict with BERT
     bert_predictions = bert_model.predict(dict(bert_inputs))
     bert_pred_logits = bert_predictions['logits'][0]
-    bert_pred_probs = tf.nn.sigmoid(bert_pred_logits).numpy()
+    bert_pred_probs = tf.nn.softmax(bert_pred_logits).numpy()
 
     predictions = {
         "Decision Tree": {"Fake": dt_pred[0] * 100, "True": dt_pred[1] * 100},
         "Random Forest": {"Fake": rf_pred[0] * 100, "True": rf_pred[1] * 100},
         "XGBoost": {"Fake": xgb_pred[0] * 100, "True": xgb_pred[1] * 100},
         "LSTM": {"Fake": lstm_pred_probs[0] * 100, "True": lstm_pred_probs[1] * 100},
-        "BERT": {"Fake": (1 - bert_pred_probs[0]) * 100, "True": bert_pred_probs[0] * 100},
+        "BERT": {"Fake": bert_pred_probs[0] * 100, "True": bert_pred_probs[1] * 100}
     }
 
     f1_scores = {
