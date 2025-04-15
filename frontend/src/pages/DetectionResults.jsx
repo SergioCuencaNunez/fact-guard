@@ -128,17 +128,17 @@ const DetectionResults = () => {
   const modelClassificationText5 = useBreakpointValue({
     base: (
       <span>
-        The final prediction for the article is determined using <strong>majority voting</strong>. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>.
+        The final prediction for the article is determined using <strong>weighted voting</strong>. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>.
         </span>
     ),
     md: (
       <span>
-        The final prediction for the article is determined using a <strong>majority voting</strong> mechanism. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
+        The final prediction for the article is determined using a <strong>weighted voting</strong> mechanism. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
         </span>
     ),
     lg: (
       <span>
-        The final prediction for the article is determined using a <strong>majority voting</strong> mechanism. Each model contributes its classification, and the category with the highest number of votes is chosen as the final prediction. In the event of a tie, the prediction defaults to <strong>Uncertain</strong>, emphasizing the need for human review.
+        The final prediction for the article is determined using a <strong>weighted voting</strong> mechanism, where each model contributes to the final decision based on its individual performance. Specifically, each classification is weighted by the model’s <strong>F1-score</strong>, giving more influence to models with higher predictive accuracy.  In the event of a tie, the system defaults to <strong>Uncertain</strong>, emphasizing the need for human review in borderline cases. 
       </span>
     ),
   });
