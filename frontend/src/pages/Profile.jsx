@@ -451,7 +451,6 @@ const Profile = () => {
       .filter(Boolean);
   
     const uniqueDates = [...new Set(dates)];
-    console.log(uniqueDates);
     return uniqueDates.length > 1;
   };  
   
