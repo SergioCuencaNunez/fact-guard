@@ -102,15 +102,12 @@ const Profile = () => {
 
   const getRatingColor = (rating) => {
     const lowerRating = rating.toLowerCase();
-  
-    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].includes(lowerRating)) {
+    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].some((term) => lowerRating.includes(term))) {
       return "red";
-    } else if (["true", "yes", "verdadero", "si"].includes(lowerRating)) {
+    } else if (["true", "yes", "verdadero", "si"].some((term) => lowerRating.includes(term))) {
       return "green";
-    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].includes(lowerRating)) {
+    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].some((term) => lowerRating.includes(term))) {
       return "orange";
-    } else if (lowerRating === "inconclusive") {
-      return "gray";
     } else {
       return "gray";
     }
@@ -118,11 +115,11 @@ const Profile = () => {
   
   const getRatingIcon = (rating) => {
     const lowerRating = rating.toLowerCase();
-    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].includes(lowerRating)) {
+    if (["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"].some((term) => lowerRating.includes(term))) {
       return <WarningTwoIcon color="red.500" />;
-    } else if (["true", "yes", "verdadero", "si"].includes(lowerRating)) {
+    } else if (["true", "yes", "verdadero", "si"].some((term) => lowerRating.includes(term))) {
       return <CheckCircleIcon color="green.500" />;
-    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].includes(lowerRating)) {
+    } else if (["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"].some((term) => lowerRating.includes(term))) {
       return <WarningIcon color="orange.500" />;
     } else {
       return <InfoIcon color="gray.500" />;
