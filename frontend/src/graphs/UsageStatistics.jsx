@@ -6,24 +6,46 @@ const UsageStatistics = ({ detections, claimChecks }) => {
   const gridColor = useColorModeValue("#B0B0B0", "#888888");
 
   // Combine and group detections and claim checks by date
-  const combinedData = [...detections, ...claimChecks].reduce((acc, item) => {
-    const date = new Date(item.date);
-    const formattedDate = date.toLocaleDateString("es-ES"); // Format date as DD/MM/YYYY
-    acc[formattedDate] = acc[formattedDate] || { date: formattedDate, detections: 0, claimChecks: 0 };
-
-    if (detections.some((d) => d.id === item.id)) {
-      acc[formattedDate].detections++;
-    } else {
-      acc[formattedDate].claimChecks++;
+  const combined = [
+    ...detections.map((d) => ({ ...d, type: "detection" })),
+    ...claimChecks.map((c) => ({ ...c, type: "claim" })),
+  ];
+  
+  const combinedMap = new Map();
+  
+  combined.forEach((item) => {
+    const dateObj = new Date(item.date);
+      const dateKey =
+      dateObj.getFullYear() +
+      "-" +
+      String(dateObj.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(dateObj.getDate()).padStart(2, "0");
+  
+    if (!combinedMap.has(dateKey)) {
+      combinedMap.set(dateKey, {
+        rawDate: dateKey,
+        formattedDate: dateObj.toLocaleDateString("es-ES"),
+        detections: 0,
+        claims: 0,
+      });
     }
-
-    return acc;
-  }, {});
-
-  // Format data for the graph
-  const chartData = Object.values(combinedData).sort((a, b) => 
-    new Date(a.date.split("/").reverse().join("-")) - new Date(b.date.split("/").reverse().join("-"))
-  );
+  
+    const entry = combinedMap.get(dateKey);
+    if (item.type === "detection") {
+      entry.detections += 1;
+    } else {
+      entry.claims += 1;
+    }
+  });
+  
+  const chartData = Array.from(combinedMap.values())
+    .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
+    .map(({ formattedDate, detections, claims }) => ({
+      date: formattedDate,
+      detections,
+      claims,
+    }));  
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -31,7 +53,12 @@ const UsageStatistics = ({ detections, claimChecks }) => {
         {/* Set a dotted grid */}
         <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
         <XAxis dataKey="date" stroke={axisColor} tickFormatter={(date) => date}/>
-        <YAxis stroke={axisColor} />
+        <YAxis
+          stroke={axisColor}
+          allowDecimals={false}
+          domain={[0, 'dataMax']}
+          tickCount={Math.max(...chartData.map(d => Math.max(d.detections, d.claims))) + 1}
+        />
         <Tooltip
           cursor={{
             fill: useColorModeValue("#A0AEC0", "#CBD5E0"),
@@ -56,7 +83,7 @@ const UsageStatistics = ({ detections, claimChecks }) => {
         />
         <Legend />
         <Bar dataKey="detections" fill="#4dcfaf" />
-        <Bar dataKey="claimChecks" fill="#f56565" />
+        <Bar dataKey="claims" fill="#f56565" />
       </BarChart>
     </ResponsiveContainer>
   );

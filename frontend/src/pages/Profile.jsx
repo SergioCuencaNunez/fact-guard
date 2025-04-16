@@ -96,6 +96,7 @@ const Profile = () => {
   const hoverColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const activeColor = useColorModeValue(primaryActiveLight, primaryActiveDark);
   const sidebarBgColor = useColorModeValue(sidebarLight, sidebarDark);
+  const avatarTextColor = useColorModeValue("white", "black");
   const avatarBgColor = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const textColorAvatar = useColorModeValue('gray.500', 'gray.300');
   const dateFormat = useBreakpointValue({ base: 'small', md: 'medium', lg: 'full', xl: 'full' });
@@ -500,7 +501,7 @@ const Profile = () => {
             w="100%"
           >
             <HStack>
-              <Avatar name={user.username} size="lg" bg={avatarBgColor} />
+              <Avatar name={user.username} size="lg" bg={avatarBgColor} color={avatarTextColor}/>
               <Box>
                 <Text fontWeight="bold" isTruncated>{user.username}</Text>
                 <Text fontSize="sm" color={textColorAvatar} isTruncated>
@@ -520,7 +521,7 @@ const Profile = () => {
 
           {/* User Info (Desktop only) */}
           <HStack display={{ base: "none", md: "flex" }}>
-            <Avatar name={user.username} size="lg" bg={avatarBgColor} />
+            <Avatar name={user.username} size="lg" bg={avatarBgColor} color={avatarTextColor}/>
             <Box>
               <Text fontWeight="bold" isTruncated>{user.username}</Text>
               <Text fontSize="sm" color={textColorAvatar} isTruncated>
