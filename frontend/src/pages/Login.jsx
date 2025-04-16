@@ -288,7 +288,7 @@ const Login = () => {
           </form>
           <Box textAlign="center" mt="4">
             <Text fontSize="sm" color={textColor} mb="2">
-              Empowering Truth: Delivering Clarity in a World of Misinformation
+              Empowering Truth: Delivering Clarity in a World of Disinformation
             </Text>
             <Text mt="2" fontSize="sm">
               Don't have an account?{' '}

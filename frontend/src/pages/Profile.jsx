@@ -840,9 +840,9 @@ const Profile = () => {
                         icon: <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />,
                         title: "Team Management",
                         text: {
-                          base: "Collaborate in detecting misinformation.",
-                          md: "Invite other people and collaborate in detecting misinformation.",
-                          lg: "Invite other people to use FactGuard and collaborate in detecting and preventing misinformation.",
+                          base: "Collaborate in detecting disinformation.",
+                          md: "Invite other people and collaborate in detecting disinformation.",
+                          lg: "Invite other people to use FactGuard and collaborate in detecting and preventing disinformation.",
                         },
                       },
                     ].map((item, index) => (
@@ -1068,7 +1068,7 @@ const Profile = () => {
                               No detections found.
                             </Text>
                             <Text fontSize="md" color="gray.400" textAlign="center">
-                              Start detecting fake news with FactGuard Detect by analyzing articles and preventing misinformation today.
+                              Start detecting fake news with FactGuard Detect by analyzing articles and preventing disinformation today.
                             </Text>
                           </Flex>
                         </motion.div>

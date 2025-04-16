@@ -73,7 +73,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
                 <Box p="5" bg={boxBg} color={boxColor} shadow="md" borderRadius="md" w="full">
                   <Heading size="md" mb="2">Real-Time Fact Checking</Heading>
                   <Text mb="4">
-                    Use our advanced tools to verify claims instantly and combat misinformation effectively.
+                    Use our advanced tools to verify claims instantly and combat disinformation effectively.
                   </Text>
                 </Box>
               </motion.div>
@@ -171,7 +171,7 @@ function App() {
             element={
               <AuthLayout
                 title="Welcome to FactGuard"
-                subtitle="Register now and gain access to powerful tools to verify claims and combat misinformation."
+                subtitle="Register now and gain access to powerful tools to verify claims and combat disinformation."
               >
                 <SignUp />
               </AuthLayout>

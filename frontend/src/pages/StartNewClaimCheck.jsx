@@ -287,7 +287,7 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
                 <Text mt={2} fontSize="sm" textAlign="justify">
                   {useBreakpointValue({
                     base: "The system is continuously improved to enhance reliability and user experience.",
-                    lg: "This integration with the Google Fact Check Tools API ensures robust claim validation, offering users a reliable tool for uncovering the truth. FactGuard Verify is continuously improved to provide enhanced reliability, transparency, and a seamless user experience in combating misinformation.",
+                    lg: "This integration with the Google Fact Check Tools API ensures robust claim validation, offering users a reliable tool for uncovering the truth. FactGuard Verify is continuously improved to provide enhanced reliability, transparency, and a seamless user experience in combating disinformation.",
                   })}
                 </Text>
               </Box>

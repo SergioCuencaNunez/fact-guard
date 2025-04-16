@@ -52,12 +52,12 @@ const Home = () => {
   
   const heroText = useBreakpointValue({
     base: "FactGuard supports transparency for fake news detection and claim verification. Join a community committed to accuracy.",
-    md: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. By leveraging Machine and Deep Learning, it is able to detect misinformation and uphold accuracy across the globe. Join a community committed to building a trustworthy and reliable media ecosystem.",
+    md: "FactGuard supports transparency with state-of-the-art tools for fake news detection, claim verification, and responsible content sharing. By leveraging Machine and Deep Learning, it is able to detect disinformation and uphold accuracy across the globe. Join a community committed to building a trustworthy and reliable media ecosystem.",
   });
 
   const discoverText = useBreakpointValue({
-    base: "FactGuard combats misinformation with powerful AI tools. Leverage real-time fact-checking to promote trust.",
-    md: "Our tools are designed to combat misinformation and empower users worldwide. Leverage our advanced AI-driven solutions to promote factual content and foster trust. FactGuard is not just a tool—it’s a commitment to ensuring the credibility of online information.",
+    base: "FactGuard combats disinformation with powerful AI tools. Leverage real-time fact-checking to promote trust.",
+    md: "Our tools are designed to combat disinformation and empower users worldwide. Leverage our advanced AI-driven solutions to promote factual content and foster trust. FactGuard is not just a tool—it’s a commitment to ensuring the credibility of online information.",
   });
 
   const discoverTextLg = useBreakpointValue({
@@ -246,7 +246,7 @@ const Home = () => {
           {
               icon: FaBookOpen,
               title: 'Educational Resources',
-              text: 'Learn tools and techniques to identify misinformation.',
+              text: 'Learn tools and techniques to identify disinformation.',
           },
           {
               icon: FaBolt,
