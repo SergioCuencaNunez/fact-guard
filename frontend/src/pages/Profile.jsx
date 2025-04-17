@@ -62,7 +62,7 @@ import NotFound from "../pages/NotFound";
 
 import RatingsAndPredictionsPieChart from "../graphs/RatingsAndPredictionsPieChart";
 import DetectionsAndClaimsLineChart from "../graphs/DetectionsAndClaimsLineChart";
-import UsageStatistics from "../graphs/UsageStatistics";
+import DailyInteractionBreakdown from "../graphs/DailyInteractionBreakdown";
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
@@ -965,8 +965,8 @@ const Profile = () => {
                           bg: useColorModeValue("gray.50", "gray.600"),
                         }}               
                       >
-                        <Heading size="md" mb="4">Usage Statistics</Heading>
-                        <UsageStatistics detections={detections} claimChecks={claimChecks} />
+                        <Heading size="md" mb="4">Daily Interaction Breakdown</Heading>
+                        <DailyInteractionBreakdown detections={detections} claimChecks={claimChecks} />
                         {!isStatsAvailable() && (
                           <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
                         )}
@@ -990,7 +990,7 @@ const Profile = () => {
                               <Thead>
                                 <Tr>
                                   <Th width="10%" textAlign="center"><b>ID</b></Th>
-                                  <Th width="45%" textAlign="left"><b>Title</b></Th>
+                                  <Th width="45%" textAlign="center"><b>Title</b></Th>
                                   <Th width="15%" textAlign="center"><b>Prediction</b></Th>
                                   <Th width="10%" textAlign="center"><b>Date</b></Th>
                                   <Th width="10%" textAlign="center"><b>Results</b></Th>
@@ -1091,7 +1091,7 @@ const Profile = () => {
                               <Thead>
                                 <Tr>
                                   <Th width="10%" textAlign="center"><b>ID</b></Th>
-                                  <Th width="45%" textAlign="left"><b>Query</b></Th>
+                                  <Th width="45%" textAlign="center"><b>Query</b></Th>
                                   <Th width="15%" textAlign="center"><b>Rating</b></Th>
                                   <Th width="10%" textAlign="center"><b>Date</b></Th>
                                   <Th width="10%" textAlign="center"><b>Results</b></Th>

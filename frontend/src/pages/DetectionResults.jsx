@@ -150,9 +150,9 @@ const DetectionResults = () => {
   });
 
   const insightsText2 =  useBreakpointValue({
-    base: "The probabilities provided are used to inform the final prediction through majority voting. For further investigation, please use trusted fact-checking sources such as ",
-    md: "The probabilities provided by each model are used to inform the final prediction through majority voting. For further investigation, it is advised to compare the article's claims with trusted fact-checking sources, such as ",
-    lg: "The probabilities and classifications provided by each model are used to inform the final prediction through a majority voting approach, ensuring transparency and accuracy in the assessment. For further investigation, it is advised to compare the article's claims with trusted fact-checking databases or reliable sources or databases, such as ",
+    base: "The probabilities provided are used to inform the final prediction through weighted voting. For further investigation, please use trusted fact-checking sources such as ",
+    md: "The probabilities provided by each model are used to inform the final prediction through weighted voting. For further investigation, it is advised to compare the article's claims with trusted fact-checking sources, such as ",
+    lg: "The probabilities and classifications provided by each model are used to inform the final prediction through a weighted voting approach, ensuring transparency and accuracy in the assessment. For further investigation, it is advised to compare the article's claims with trusted fact-checking databases or reliable sources or databases, such as ",
   });
   
   const [showAdvanced, setShowAdvanced] = useState(false);

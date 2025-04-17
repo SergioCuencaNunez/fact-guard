@@ -182,7 +182,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                   <Thead>
                     <Tr>
                       <Th width="10%" textAlign="center"><b>ID</b></Th>
-                      <Th width="35%" textAlign="left"><b>Title</b></Th>
+                      <Th width="35%" textAlign="center"><b>Title</b></Th>
                       <Th width="15%" textAlign="center"><b>Prediction</b></Th>
                       <Th width="10%" textAlign="center">
                         <Flex align="center" justify="center">

@@ -1,7 +1,7 @@
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useColorModeValue } from "@chakra-ui/react";
 
-const UsageStatistics = ({ detections, claimChecks }) => {
+const DailyInteractionBreakdown = ({ detections, claimChecks }) => {
   const axisColor = useColorModeValue("#4A4A4A", "#E0E0E0");
   const gridColor = useColorModeValue("#B0B0B0", "#888888");
 
@@ -41,11 +41,17 @@ const UsageStatistics = ({ detections, claimChecks }) => {
   
   const chartData = Array.from(combinedMap.values())
     .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
-    .map(({ formattedDate, detections, claims }) => ({
-      date: formattedDate,
-      detections,
-      claims,
-    }));  
+    .map(({ formattedDate, detections, claims }) => {
+      const total = detections + claims;
+      return {
+        date: formattedDate,
+        detections: total > 0 ? (detections / total) * 100 : 0,
+        claims: total > 0 ? (claims / total) * 100 : 0,
+      };
+    });
+
+  const maxBarSize = 55;
+  const dynamicBarSize = Math.min(maxBarSize, 1000 / chartData.length);
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -55,11 +61,12 @@ const UsageStatistics = ({ detections, claimChecks }) => {
         <XAxis dataKey="date" stroke={axisColor} tickFormatter={(date) => date}/>
         <YAxis
           stroke={axisColor}
+          domain={[0, 100]}
+          tickFormatter={(value) => `${value}%`}
           allowDecimals={false}
-          domain={[0, 'dataMax']}
-          tickCount={Math.max(...chartData.map(d => Math.max(d.detections, d.claims))) + 1}
         />
         <Tooltip
+          formatter={(value) => `${Math.round(value)}%`}
           cursor={{
             fill: useColorModeValue("#A0AEC0", "#CBD5E0"),
             fillOpacity: 0.2,
@@ -82,11 +89,11 @@ const UsageStatistics = ({ detections, claimChecks }) => {
           }}
         />
         <Legend />
-        <Bar dataKey="detections" fill="#4dcfaf" />
-        <Bar dataKey="claims" fill="#f56565" />
+        <Bar dataKey="detections" fill="#4dcfaf" stackId="a" name="Detections" barSize={dynamicBarSize}/>
+        <Bar dataKey="claims" fill="#f56565" stackId="a" name="Claims" barSize={dynamicBarSize}/>
       </BarChart>
     </ResponsiveContainer>
   );
 };
 
-export default UsageStatistics;
+export default DailyInteractionBreakdown;

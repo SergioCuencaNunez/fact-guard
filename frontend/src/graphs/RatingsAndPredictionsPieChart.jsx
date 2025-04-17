@@ -21,21 +21,32 @@ const RatingsAndPredictionsPieChart = ({ detections, claimChecks }) => {
   // Aggregate Claim Checks Data
   const getAggregateRating = (ratings) => {
     const categories = {
-      true: ["true", "yes", "verdadero", "si"],
-      false: ["false", "incorrect", "not true", "no", "fake", "falso", "incorrecto", "no verdadero"],
-      inconclusive: ["mixture", "altered", "misleading", "engañoso", "alterado", "descontextualizado", "sin contexto"],
+      true: [
+        "true", "yes", "verdadero", "si", 
+        "mostly true", "mostly-true", "mayoría cierto"
+      ],
+      false: [
+        "false", "incorrect", "not true", "no", "fake", 
+        "falso", "incorrecto", "no verdadero"
+      ],
+      inconclusive: [
+        "mixture", "altered", "misleading", "engañoso", 
+        "alterado", "descontextualizado", "sin contexto"
+      ],
     };
 
     let trueCount = 0;
     let falseCount = 0;
     let inconclusiveCount = 0;
 
+    const normalize = (str) => str.toLowerCase().replace(/[-_]/g, ' ').trim();
+
     ratings.forEach((rating) => {
-      const lowerRating = rating.toLowerCase();
+      const lowerRating = normalize(rating);
       if (categories.true.includes(lowerRating)) trueCount++;
       else if (categories.false.includes(lowerRating)) falseCount++;
       else if (categories.inconclusive.includes(lowerRating)) inconclusiveCount++;
-    });
+    });    
 
     if (trueCount > falseCount && trueCount > inconclusiveCount) return "True";
     if (falseCount > trueCount && falseCount > inconclusiveCount) return "False";

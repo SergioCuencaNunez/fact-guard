@@ -246,7 +246,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                   <Thead>
                     <Tr>
                       <Th width="10%" textAlign="center"><b>ID</b></Th>
-                      <Th width="35%" textAlign="left"><b>Query</b></Th>
+                      <Th width="35%" textAlign="center"><b>Query</b></Th>
                       <Th width="15%" textAlign="center"><b>Rating</b></Th>
                       <Th width="10%" textAlign="center">
                         <Flex align="center" justify="center">
