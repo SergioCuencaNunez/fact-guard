@@ -41,6 +41,7 @@ import {
   FaUsers,
   FaTrashAlt,
 } from "react-icons/fa";
+import { Helmet } from "react-helmet";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -453,54 +454,78 @@ const Profile = () => {
   };  
   
   return (
-    <Flex direction={{ base: "column", md: "row" }} bg={bg}>
-      {/* Sidebar */}
-      <Box
-        w={{ base: "full", md: "300px" }}
-        bg={sidebarBgColor}
-        px={{ base: "4", md: "6" }}
-        py={{ base: "6", md: "8" }}      
-        shadow="lg"
-        position={{ base: "relative", md: "sticky" }}
-        top="0"
-        h={{ base: "auto", md: "100vh" }}
-        overflowY="auto"
-        display="flex"
-        flexDirection="column"
-        justifyContent="space-between"
-        borderRightWidth="3px"
-        borderRightStyle="solid"
-        borderRightColor="transparent"
-        style={{
-          borderImage: gradient,
-          borderImageSlice: 1,
-          borderRight: useBreakpointValue({ base: "none", md: "solid" }),
-          borderBottom: useBreakpointValue({ base: "solid", md: "none" }),
-        }}      
-      >
-        <VStack spacing={{base: "4", md: "8"}} align="flex-start">
-          <HStack justifyContent={{ base: "center", md: "flex-start" }} w="100%">
-            <motion.img
-              src={logo}
-              alt="FactGuard Logo"
-              style={{ height: logoHeight, width: 'auto'}}
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{
-                type: 'spring',
-                stiffness: 260,
-                damping: 20,
-              }}
-            />
-          </HStack>
+    <>
+      <Helmet>
+        <title>FactGuard - Profile</title>
+      </Helmet>
+      <Flex direction={{ base: "column", md: "row" }} bg={bg}>
+        {/* Sidebar */}
+        <Box
+          w={{ base: "full", md: "300px" }}
+          bg={sidebarBgColor}
+          px={{ base: "4", md: "6" }}
+          py={{ base: "6", md: "8" }}      
+          shadow="lg"
+          position={{ base: "relative", md: "sticky" }}
+          top="0"
+          h={{ base: "auto", md: "100vh" }}
+          overflowY="auto"
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+          borderRightWidth="3px"
+          borderRightStyle="solid"
+          borderRightColor="transparent"
+          style={{
+            borderImage: gradient,
+            borderImageSlice: 1,
+            borderRight: useBreakpointValue({ base: "none", md: "solid" }),
+            borderBottom: useBreakpointValue({ base: "solid", md: "none" }),
+          }}      
+        >
+          <VStack spacing={{base: "4", md: "8"}} align="flex-start">
+            <HStack justifyContent={{ base: "center", md: "flex-start" }} w="100%">
+              <motion.img
+                src={logo}
+                alt="FactGuard Logo"
+                style={{ height: logoHeight, width: 'auto'}}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 20,
+                }}
+              />
+            </HStack>
 
-          {/* User Info and Logout Button (Mobile only) */}
-          <HStack
-            display={{ base: "flex", md: "none" }}
-            justifyContent="space-between"
-            w="100%"
-          >
-            <HStack>
+            {/* User Info and Logout Button (Mobile only) */}
+            <HStack
+              display={{ base: "flex", md: "none" }}
+              justifyContent="space-between"
+              w="100%"
+            >
+              <HStack>
+                <Avatar name={user.username} size="lg" bg={avatarBgColor} color={avatarTextColor}/>
+                <Box>
+                  <Text fontWeight="bold" isTruncated>{user.username}</Text>
+                  <Text fontSize="sm" color={textColorAvatar} isTruncated>
+                    {user.email}
+                  </Text>
+                </Box>
+              </HStack>
+              <Button
+                colorScheme="red"
+                variant="solid"
+                onClick={handleLogout}
+                size="sm"
+              >
+                <FaSignOutAlt />
+              </Button>
+            </HStack>
+
+            {/* User Info (Desktop only) */}
+            <HStack display={{ base: "none", md: "flex" }}>
               <Avatar name={user.username} size="lg" bg={avatarBgColor} color={avatarTextColor}/>
               <Box>
                 <Text fontWeight="bold" isTruncated>{user.username}</Text>
@@ -509,51 +534,9 @@ const Profile = () => {
                 </Text>
               </Box>
             </HStack>
-            <Button
-              colorScheme="red"
-              variant="solid"
-              onClick={handleLogout}
-              size="sm"
-            >
-              <FaSignOutAlt />
-            </Button>
-          </HStack>
 
-          {/* User Info (Desktop only) */}
-          <HStack display={{ base: "none", md: "flex" }}>
-            <Avatar name={user.username} size="lg" bg={avatarBgColor} color={avatarTextColor}/>
-            <Box>
-              <Text fontWeight="bold" isTruncated>{user.username}</Text>
-              <Text fontSize="sm" color={textColorAvatar} isTruncated>
-                {user.email}
-              </Text>
-            </Box>
-          </HStack>
-
-          {/* Sidebar Buttons */}
-          <VStack spacing="4" align="stretch" w="100%">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="ghost"
-                justifyContent="space-between"
-                _hover={{ color: hoverColor }}
-                _active={{ color: activeColor }}
-                size={{ base: "sm", md: "md" }}
-                color={textColor}
-                width="100%"
-                onClick={() => navigate("/profile")}
-              >
-                <HStack w="100%" justifyContent="space-between">
-                  <HStack>
-                    <FaChartBar />
-                    <Text>Dashboard</Text>
-                  </HStack>
-                </HStack>
-              </Button>
-            </motion.div>
-            
-            {/* Detect Fake News Dropdown */}
-            <Box>
+            {/* Sidebar Buttons */}
+            <VStack spacing="4" align="stretch" w="100%">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="ghost"
@@ -561,164 +544,50 @@ const Profile = () => {
                   _hover={{ color: hoverColor }}
                   _active={{ color: activeColor }}
                   size={{ base: "sm", md: "md" }}
-                  onClick={() => toggleDropdown("detect")}
                   color={textColor}
                   width="100%"
+                  onClick={() => navigate("/profile")}
                 >
                   <HStack w="100%" justifyContent="space-between">
                     <HStack>
-                      <FaNewspaper />
-                      <Text>Detect Fake News</Text>
+                      <FaChartBar />
+                      <Text>Dashboard</Text>
                     </HStack>
-                    <ChevronDownIcon />
-                  </HStack>
-                </Button> 
-              </motion.div>
-              <AnimatePresence initial={false}>             
-                {openDropdown === "detect" && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: "hidden" }}
-                  >
-                  <VStack align="stretch" pl="4" mt="2">
-                    <Button
-                      variant="ghost"
-                      justifyContent="flex-start"
-                      size="sm"
-                      _hover={{ color: hoverColor }}
-                      _active={{ color: activeColor }}
-                      color={textColor}
-                      width="100%"
-                      onClick={() => navigate("/profile/start-new-detection")}
-                    >
-                      <HStack>
-                        <FaPlus />
-                        <Text>Start New Detection</Text>
-                      </HStack>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      justifyContent="flex-start"
-                      size="sm"
-                      _hover={{ color: hoverColor }}
-                      _active={{ color: activeColor }}
-                      color={textColor}
-                      width="100%"
-                      onClick={() => navigate("/profile/my-news-detections")}
-                    >
-                      <HStack>
-                        <FaTasks />
-                        <Text>My News Detections</Text>
-                      </HStack>
-                    </Button>
-                  </VStack>
-                </motion.div>
-                )}
-              </AnimatePresence>
-            </Box>
-
-            {/* Verify Claims Dropdown */}
-            <Box>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="ghost"
-                  justifyContent="space-between"
-                  _hover={{ color: hoverColor }}
-                  _active={{ color: activeColor }}
-                  size={{ base: "sm", md: "md" }}
-                  onClick={() => toggleDropdown("verify")}
-                  color={textColor}
-                  width="100%"
-                >
-                  <HStack w="100%" justifyContent="space-between">
-                    <HStack>
-                      <FaShieldAlt />
-                      <Text>Verify Claims</Text>
-                    </HStack>
-                    <ChevronDownIcon />
                   </HStack>
                 </Button>
               </motion.div>
-              <AnimatePresence initial={false}>
-                {openDropdown === "verify" && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: "hidden" }}
+              
+              {/* Detect Fake News Dropdown */}
+              <Box>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    justifyContent="space-between"
+                    _hover={{ color: hoverColor }}
+                    _active={{ color: activeColor }}
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => toggleDropdown("detect")}
+                    color={textColor}
+                    width="100%"
                   >
-                  <VStack align="stretch" pl="4" mt="2">
-                    <Button
-                      variant="ghost"
-                      justifyContent="flex-start"
-                      size="sm"
-                      _hover={{ color: hoverColor }}
-                      _active={{ color: activeColor }}
-                      color={textColor}
-                      width="100%"
-                      onClick={() => navigate("/profile/start-new-claim-check")}
-                    >
+                    <HStack w="100%" justifyContent="space-between">
                       <HStack>
-                        <FaPlus />
-                        <Text>Start New Claim Check</Text>
+                        <FaNewspaper />
+                        <Text>Detect Fake News</Text>
                       </HStack>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      justifyContent="flex-start"
-                      size="sm"
-                      _hover={{ color: hoverColor }}
-                      _active={{ color: activeColor }}
-                      color={textColor}
-                      width="100%"
-                      onClick={() => navigate("/profile/my-claim-checks")}
-                    >
-                      <HStack>
-                        <FaTasks />
-                        <Text>My Claim Checks</Text>
-                      </HStack>
-                    </Button>
-                  </VStack>
-                </motion.div>
-                )}
-              </AnimatePresence>
-            </Box>
-
-            {/* Settings Dropdown */}
-            <Box>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="ghost"
-                  justifyContent="space-between"
-                  _hover={{ color: hoverColor }}
-                  _active={{ color: activeColor }}
-                  size={{ base: "sm", md: "md" }}
-                  onClick={() => toggleDropdown("settings")}
-                  color={textColor}
-                  width="100%"
-                >
-                  <HStack w="100%" justifyContent="space-between">
-                    <HStack>
-                      <FaCogs />
-                      <Text>Settings</Text>
+                      <ChevronDownIcon />
                     </HStack>
-                    <ChevronDownIcon />
-                  </HStack>
-                </Button>
-              </motion.div>
-              <AnimatePresence initial={false}>
-                {openDropdown === "settings" && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: "hidden" }}
-                  >
+                  </Button> 
+                </motion.div>
+                <AnimatePresence initial={false}>             
+                  {openDropdown === "detect" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: "hidden" }}
+                    >
                     <VStack align="stretch" pl="4" mt="2">
                       <Button
                         variant="ghost"
@@ -728,570 +597,707 @@ const Profile = () => {
                         _active={{ color: activeColor }}
                         color={textColor}
                         width="100%"
-                        onClick={() => navigate("/profile/account-details")}
+                        onClick={() => navigate("/profile/start-new-detection")}
                       >
                         <HStack>
-                          <FaUser />
-                          <Text>Account Details</Text>
+                          <FaPlus />
+                          <Text>Start New Detection</Text>
+                        </HStack>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/profile/my-news-detections")}
+                      >
+                        <HStack>
+                          <FaTasks />
+                          <Text>My News Detections</Text>
                         </HStack>
                       </Button>
                     </VStack>
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </Box>
-          </VStack>
-        </VStack>
-        
-        {/* Logout Button (Desktop only) */}
-        <HStack display={{ base: 'none', md: 'flex' }}>
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} style={{ width: '100%' }}>
-            <Button
-              leftIcon={<FaSignOutAlt />}
-              colorScheme="red"
-              variant="solid"
-              onClick={handleLogout}
-              size={{ base: "sm", md: "md" }}
-              width="100%"
-            >
-              Logout
-            </Button>
-          </motion.div>
-        </HStack>
-      </Box>
-      
-      {/* Main Content */}
-      <Box 
-        flex="1"
-        px={{base: 8, md: 8}}
-        py={{base: 10, md: 8}}
-        overflowY="auto">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Flex direction="column">
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -50 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Box
-                    bg={cardBg} 
-                    p="5" 
-                    borderRadius="md"
-                    shadow="md"
-                    mb="4" // Add margin-bottom
-                  >
-                    <Flex justify="space-between" align="center">
-                      <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
-                      <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
-                        <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate(dateFormat)}</Text>
-                        <IconButton
-                          aria-label="Toggle theme"
-                          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                          onClick={toggleColorMode}
-                          _hover={{
-                            bg: colorMode === "light" ? "gray.200" : "gray.600",
-                            transform: "scale(1.1)",
-                          }}
-                          _active={{
-                            bg: colorMode === "light" ? "gray.300" : "gray.500",
-                            transform: "scale(0.9)",
-                          }}
-                        />
-                      </HStack>
-                      <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
-                        <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate(dateFormat)}</Text>
-                      </HStack>
-                    </Flex>
-                    <Box borderBottom="1px" borderColor="gray.300"></Box>
-                  </Box>
-                </motion.div>
+                  )}
+                </AnimatePresence>
+              </Box>
 
-                {/* Key Features */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                >
-                  <Heading size="lg" mb="4">Key Features</Heading>
-                  <Flex wrap="wrap" justify="space-between" gap="6">
-                    {[
-                      {
-                        icon: <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />,
-                        title: "Fake News Detection",
-                        text: {
-                          base: "Detect fake news using our AI models.",
-                          md: "Detect fake news using our AI models.",
-                          lg: "FactGuard Detect makes use of an accurate AI models to detect fake news and identify misleading content.",
+              {/* Verify Claims Dropdown */}
+              <Box>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    justifyContent="space-between"
+                    _hover={{ color: hoverColor }}
+                    _active={{ color: activeColor }}
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => toggleDropdown("verify")}
+                    color={textColor}
+                    width="100%"
+                  >
+                    <HStack w="100%" justifyContent="space-between">
+                      <HStack>
+                        <FaShieldAlt />
+                        <Text>Verify Claims</Text>
+                      </HStack>
+                      <ChevronDownIcon />
+                    </HStack>
+                  </Button>
+                </motion.div>
+                <AnimatePresence initial={false}>
+                  {openDropdown === "verify" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: "hidden" }}
+                    >
+                    <VStack align="stretch" pl="4" mt="2">
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/profile/start-new-claim-check")}
+                      >
+                        <HStack>
+                          <FaPlus />
+                          <Text>Start New Claim Check</Text>
+                        </HStack>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/profile/my-claim-checks")}
+                      >
+                        <HStack>
+                          <FaTasks />
+                          <Text>My Claim Checks</Text>
+                        </HStack>
+                      </Button>
+                    </VStack>
+                  </motion.div>
+                  )}
+                </AnimatePresence>
+              </Box>
+
+              {/* Settings Dropdown */}
+              <Box>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    justifyContent="space-between"
+                    _hover={{ color: hoverColor }}
+                    _active={{ color: activeColor }}
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => toggleDropdown("settings")}
+                    color={textColor}
+                    width="100%"
+                  >
+                    <HStack w="100%" justifyContent="space-between">
+                      <HStack>
+                        <FaCogs />
+                        <Text>Settings</Text>
+                      </HStack>
+                      <ChevronDownIcon />
+                    </HStack>
+                  </Button>
+                </motion.div>
+                <AnimatePresence initial={false}>
+                  {openDropdown === "settings" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <VStack align="stretch" pl="4" mt="2">
+                        <Button
+                          variant="ghost"
+                          justifyContent="flex-start"
+                          size="sm"
+                          _hover={{ color: hoverColor }}
+                          _active={{ color: activeColor }}
+                          color={textColor}
+                          width="100%"
+                          onClick={() => navigate("/profile/account-details")}
+                        >
+                          <HStack>
+                            <FaUser />
+                            <Text>Account Details</Text>
+                          </HStack>
+                        </Button>
+                      </VStack>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Box>
+            </VStack>
+          </VStack>
+          
+          {/* Logout Button (Desktop only) */}
+          <HStack display={{ base: 'none', md: 'flex' }}>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} style={{ width: '100%' }}>
+              <Button
+                leftIcon={<FaSignOutAlt />}
+                colorScheme="red"
+                variant="solid"
+                onClick={handleLogout}
+                size={{ base: "sm", md: "md" }}
+                width="100%"
+              >
+                Logout
+              </Button>
+            </motion.div>
+          </HStack>
+        </Box>
+        
+        {/* Main Content */}
+        <Box 
+          flex="1"
+          px={{base: 8, md: 8}}
+          py={{base: 10, md: 8}}
+          overflowY="auto">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Flex direction="column">
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Box
+                      bg={cardBg} 
+                      p="5" 
+                      borderRadius="md"
+                      shadow="md"
+                      mb="4" // Add margin-bottom
+                    >
+                      <Flex justify="space-between" align="center">
+                        <Heading mb="4" fontSize={{ base: '3xl', md: '4xl' }}>Welcome, {user.username}</Heading>
+                        <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
+                          <Text fontSize="sm" letterSpacing="wide" color={textColor}>{getCurrentDate(dateFormat)}</Text>
+                          <IconButton
+                            aria-label="Toggle theme"
+                            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                            onClick={toggleColorMode}
+                            _hover={{
+                              bg: colorMode === "light" ? "gray.200" : "gray.600",
+                              transform: "scale(1.1)",
+                            }}
+                            _active={{
+                              bg: colorMode === "light" ? "gray.300" : "gray.500",
+                              transform: "scale(0.9)",
+                            }}
+                          />
+                        </HStack>
+                        <HStack spacing="4" display={{ base: "flex", md: "flex", lg: "none" }}>
+                          <Text fontSize="sm" letterSpacing="wide" textAlign="right" color={textColor}>{getCurrentDate(dateFormat)}</Text>
+                        </HStack>
+                      </Flex>
+                      <Box borderBottom="1px" borderColor="gray.300"></Box>
+                    </Box>
+                  </motion.div>
+
+                  {/* Key Features */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
+                    <Heading size="lg" mb="4">Key Features</Heading>
+                    <Flex wrap="wrap" justify="space-between" gap="6">
+                      {[
+                        {
+                          icon: <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                          title: "Fake News Detection",
+                          text: {
+                            base: "Detect fake news using our AI models.",
+                            md: "Detect fake news using our AI models.",
+                            lg: "FactGuard Detect makes use of an accurate AI models to detect fake news and identify misleading content.",
+                          },
                         },
-                      },
-                      {
-                        icon: <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />,
-                        title: "Claim Check",
-                        text: {
-                          base: "Validate claims with Google FactCheck API.",
-                          md: "Validate claims with Google FactCheck API.",
-                          lg: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
+                        {
+                          icon: <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                          title: "Claim Check",
+                          text: {
+                            base: "Validate claims with Google FactCheck API.",
+                            md: "Validate claims with Google FactCheck API.",
+                            lg: "FactGuard Verify makes use of the API of Google FactCheck Claim Search to validate claims effectively and efficiently.",
+                          },
                         },
-                      },
-                      {
-                        icon: <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />,
-                        title: "Team Management",
-                        text: {
-                          base: "Collaborate in detecting disinformation.",
-                          md: "Invite other people and collaborate in detecting disinformation.",
-                          lg: "Invite other people to use FactGuard and collaborate in detecting and preventing disinformation.",
+                        {
+                          icon: <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                          title: "Team Management",
+                          text: {
+                            base: "Collaborate in detecting disinformation.",
+                            md: "Invite other people and collaborate in detecting disinformation.",
+                            lg: "Invite other people to use FactGuard and collaborate in detecting and preventing disinformation.",
+                          },
                         },
-                      },
-                    ].map((item, index) => (
+                      ].map((item, index) => (
+                        <motion.div
+                          key={index}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                          style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                        >
+                          <Box
+                            bg={cardBg}
+                            p="5"
+                            borderRadius="md"
+                            textAlign="center"
+                            shadow="md"
+                            height="100%"
+                            _hover={{
+                              bg: useColorModeValue("gray.50", "gray.600"),
+                            }}
+                          >
+                            {item.icon}
+                            <Heading size="md" mt="4">{item.title}</Heading>
+                            <Text mt="2">{useBreakpointValue(item.text)}</Text>
+                          </Box>
+                        </motion.div>
+                      ))}
+                    </Flex>
+                  </motion.div>
+
+                  {/* Graphs Section */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                  >
+                    <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Trends & Statistics</Heading>
+                    <Flex wrap="wrap" gap="6" align="flex-start">
                       <motion.div
-                        key={index}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
                       >
                         <Box
-                          bg={cardBg}
-                          p="5"
+                          position="relative" 
+                          bg={cardBg} 
+                          p="5" 
                           borderRadius="md"
-                          textAlign="center"
-                          shadow="md"
                           height="100%"
+                          flex="1"
+                          shadow="md"
+                          display="flex" 
+                          flexDirection="column" 
+                          justifyContent="flex-start" 
+                          alignItems="center" 
+                          textAlign="center"
                           _hover={{
                             bg: useColorModeValue("gray.50", "gray.600"),
-                          }}
+                          }}                
                         >
-                          {item.icon}
-                          <Heading size="md" mt="4">{item.title}</Heading>
-                          <Text mt="2">{useBreakpointValue(item.text)}</Text>
+                          <Heading size="md" mb="4">Detections and Claims Over Time</Heading>
+                          <DetectionsAndClaimsLineChart detections={detections} claimChecks={claimChecks} />
+                          {!hasTwoDaysOfData() && (
+                            <BlurOverlay message="At least two days of data are required to visualize trends." />
+                          )}
                         </Box>
                       </motion.div>
-                    ))}
-                  </Flex>
-                </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                      >
+                        <Box
+                          position="relative"
+                          bg={cardBg} 
+                          p="5" 
+                          borderRadius="md"
+                          height="100%"
+                          flex="1"
+                          shadow="md"
+                          display="flex" 
+                          flexDirection="column" 
+                          justifyContent="flex-start" 
+                          alignItems="center" 
+                          textAlign="center"
+                          _hover={{
+                            bg: useColorModeValue("gray.50", "gray.600"),
+                          }}                
+                        >
+                          <Heading size="md" mb="4">Predictions and Ratings Overview</Heading>
+                          <RatingsAndPredictionsPieChart detections={detections} claimChecks={claimChecks} />
+                          {!isStatsAvailable() && (
+                            <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
+                          )}
+                        </Box>
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                      >
+                        <Box
+                          position="relative" 
+                          bg={cardBg} 
+                          p="5" 
+                          borderRadius="md"
+                          height="100%"
+                          flex="1"
+                          shadow="md"
+                          display="flex" 
+                          flexDirection="column" 
+                          justifyContent="flex-start" 
+                          alignItems="center" 
+                          textAlign="center"
+                          _hover={{
+                            bg: useColorModeValue("gray.50", "gray.600"),
+                          }}               
+                        >
+                          <Heading size="md" mb="4">Daily Interaction Breakdown</Heading>
+                          <DailyInteractionBreakdown detections={detections} claimChecks={claimChecks} />
+                          {!isStatsAvailable() && (
+                            <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
+                          )}
+                        </Box>
+                      </motion.div>
+                    </Flex>
+                  </motion.div>
 
-                {/* Graphs Section */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
-                >
-                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Trends & Statistics</Heading>
-                  <Flex wrap="wrap" gap="6" align="flex-start">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
-                    >
-                      <Box
-                        position="relative" 
-                        bg={cardBg} 
-                        p="5" 
-                        borderRadius="md"
-                        height="100%"
-                        flex="1"
-                        shadow="md"
-                        display="flex" 
-                        flexDirection="column" 
-                        justifyContent="flex-start" 
-                        alignItems="center" 
-                        textAlign="center"
-                        _hover={{
-                          bg: useColorModeValue("gray.50", "gray.600"),
-                        }}                
-                      >
-                        <Heading size="md" mb="4">Detections and Claims Over Time</Heading>
-                        <DetectionsAndClaimsLineChart detections={detections} claimChecks={claimChecks} />
-                        {!hasTwoDaysOfData() && (
-                          <BlurOverlay message="At least two days of data are required to visualize trends." />
+                  {/* Recent Content Section */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.5 }}
+                  >
+                    <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
+                      <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
+                        {detections.length > 0 ? (
+                          <>
+                            <Box overflowX="auto">
+                              <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                                <Thead>
+                                  <Tr>
+                                    <Th width="10%" textAlign="center"><b>ID</b></Th>
+                                    <Th width="45%" textAlign="center"><b>Title</b></Th>
+                                    <Th width="15%" textAlign="center"><b>Prediction</b></Th>
+                                    <Th width="10%" textAlign="center"><b>Date</b></Th>
+                                    <Th width="10%" textAlign="center"><b>Results</b></Th>
+                                    <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                                  </Tr>
+                                </Thead>
+                                <Tbody as={motion.tbody}>
+                                  <AnimatePresence>
+                                    {sortedDetections.slice(0, 5).map((detection) => (
+                                      <motion.tr
+                                        key={detection.id}
+                                        layout
+                                        initial={{ opacity: 0, y: 50 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -50 }}
+                                        transition={{ duration: 0.5 }}
+                                      >
+                                        <Td textAlign="center">#{detection.id}</Td>
+                                        <Td textAlign="justify">{detection.title}</Td>
+                                        <Td textAlign="center">
+                                          <Badge
+                                            colorScheme={getPredictionColor(detection.final_prediction)}
+                                            fontSize="md"
+                                            p={2}
+                                            display="flex"
+                                            alignItems="center"
+                                            justifyContent="center"
+                                            gap="2"
+                                            whiteSpace="normal"
+                                          >
+                                            {getPredictionIcon(detection.final_prediction)}
+                                            <Text as="span" fontSize="md">
+                                              {detection.final_prediction}
+                                            </Text>
+                                          </Badge>
+                                        </Td>
+                                        <Td textAlign="center">{formatDate(detection.date)}</Td>
+                                        <Td textAlign="center">
+                                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                            <Button
+                                              size="sm"
+                                              onClick={() =>
+                                                navigate(`/profile/detection-results/${detection.id}`, {
+                                                  state: { detection },
+                                                })
+                                              }
+                                            >
+                                              Results
+                                            </Button>
+                                          </motion.div>
+                                        </Td>
+                                        <Td textAlign="center">
+                                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                            <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
+                                              <FaTrashAlt />
+                                            </Button>
+                                          </motion.div>
+                                        </Td>
+                                      </motion.tr>
+                                    ))}
+                                  </AnimatePresence>
+                                </Tbody>
+                              </Table>
+                            </Box>
+                          </>
+                        ) : (
+                          <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 15 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Flex align="center" justify="center" direction="column" h="15vh">
+                              <WarningIcon boxSize="6" color="gray.500" mb="2" />
+                              <Text fontSize="lg" color="gray.500" textAlign="center">
+                                No detections found.
+                              </Text>
+                              <Text fontSize="md" color="gray.400" textAlign="center">
+                                Start detecting fake news with FactGuard Detect by analyzing articles and preventing disinformation today.
+                              </Text>
+                            </Flex>
+                          </motion.div>
                         )}
                       </Box>
-                    </motion.div>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
-                    >
-                      <Box
-                        position="relative"
-                        bg={cardBg} 
-                        p="5" 
-                        borderRadius="md"
-                        height="100%"
-                        flex="1"
-                        shadow="md"
-                        display="flex" 
-                        flexDirection="column" 
-                        justifyContent="flex-start" 
-                        alignItems="center" 
-                        textAlign="center"
-                        _hover={{
-                          bg: useColorModeValue("gray.50", "gray.600"),
-                        }}                
-                      >
-                        <Heading size="md" mb="4">Predictions and Ratings Overview</Heading>
-                        <RatingsAndPredictionsPieChart detections={detections} claimChecks={claimChecks} />
-                        {!isStatsAvailable() && (
-                          <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
-                        )}
-                      </Box>
-                    </motion.div>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
-                    >
-                      <Box
-                        position="relative" 
-                        bg={cardBg} 
-                        p="5" 
-                        borderRadius="md"
-                        height="100%"
-                        flex="1"
-                        shadow="md"
-                        display="flex" 
-                        flexDirection="column" 
-                        justifyContent="flex-start" 
-                        alignItems="center" 
-                        textAlign="center"
-                        _hover={{
-                          bg: useColorModeValue("gray.50", "gray.600"),
-                        }}               
-                      >
-                        <Heading size="md" mb="4">Daily Interaction Breakdown</Heading>
-                        <DailyInteractionBreakdown detections={detections} claimChecks={claimChecks} />
-                        {!isStatsAvailable() && (
-                          <BlurOverlay message="Make some predictions and claim checks to unlock this section." />
-                        )}
-                      </Box>
-                    </motion.div>
-                  </Flex>
-                </motion.div>
+                  </motion.div>
 
-                {/* Recent Content Section */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.5 }}
-                >
-                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, duration: 0.5 }}
+                  >
+                    <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
                     <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                      {detections.length > 0 ? (
-                        <>
-                          <Box overflowX="auto">
-                            <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                              <Thead>
-                                <Tr>
-                                  <Th width="10%" textAlign="center"><b>ID</b></Th>
-                                  <Th width="45%" textAlign="center"><b>Title</b></Th>
-                                  <Th width="15%" textAlign="center"><b>Prediction</b></Th>
-                                  <Th width="10%" textAlign="center"><b>Date</b></Th>
-                                  <Th width="10%" textAlign="center"><b>Results</b></Th>
-                                  <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                                </Tr>
-                              </Thead>
-                              <Tbody as={motion.tbody}>
-                                <AnimatePresence>
-                                  {sortedDetections.slice(0, 5).map((detection) => (
-                                    <motion.tr
-                                      key={detection.id}
-                                      layout
-                                      initial={{ opacity: 0, y: 50 }}
-                                      animate={{ opacity: 1, y: 0 }}
-                                      exit={{ opacity: 0, y: -50 }}
-                                      transition={{ duration: 0.5 }}
-                                    >
-                                      <Td textAlign="center">#{detection.id}</Td>
-                                      <Td textAlign="justify">{detection.title}</Td>
-                                      <Td textAlign="center">
-                                        <Badge
-                                          colorScheme={getPredictionColor(detection.final_prediction)}
-                                          fontSize="md"
-                                          p={2}
-                                          display="flex"
-                                          alignItems="center"
-                                          justifyContent="center"
-                                          gap="2"
-                                          whiteSpace="normal"
-                                        >
-                                          {getPredictionIcon(detection.final_prediction)}
-                                          <Text as="span" fontSize="md">
-                                            {detection.final_prediction}
-                                          </Text>
-                                        </Badge>
-                                      </Td>
-                                      <Td textAlign="center">{formatDate(detection.date)}</Td>
-                                      <Td textAlign="center">
-                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                          <Button
-                                            size="sm"
-                                            onClick={() =>
-                                              navigate(`/profile/detection-results/${detection.id}`, {
-                                                state: { detection },
-                                              })
-                                            }
+                        {claimChecks.length > 0 ? (
+                          <>
+                            <Box overflowX="auto">
+                              <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
+                                <Thead>
+                                  <Tr>
+                                    <Th width="10%" textAlign="center"><b>ID</b></Th>
+                                    <Th width="45%" textAlign="center"><b>Query</b></Th>
+                                    <Th width="15%" textAlign="center"><b>Rating</b></Th>
+                                    <Th width="10%" textAlign="center"><b>Date</b></Th>
+                                    <Th width="10%" textAlign="center"><b>Results</b></Th>
+                                    <Th width="10%" textAlign="center"><b>Remove</b></Th>
+                                  </Tr>
+                                </Thead>
+                                <Tbody as={motion.tbody}>
+                                  <AnimatePresence>
+                                    {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
+                                      <motion.tr
+                                        key={claimCheck.id}
+                                        layout
+                                        initial={{ opacity: 0, y: 50 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -50 }}
+                                        transition={{ duration: 0.5 }}
+                                      >
+                                        <Td textAlign="center">#{claimCheck.id}</Td>
+                                        <Td textAlign="justify">{claimCheck.query}</Td>
+                                        <Td textAlign="center">
+                                          <Badge
+                                            colorScheme={getRatingColor(getAggregateRating(claimCheck.ratings))}
+                                            fontSize="md"
+                                            p={2}
+                                            display="flex"
+                                            alignItems="center"
+                                            justifyContent="center"
+                                            gap="2"
+                                            whiteSpace="normal"
                                           >
-                                            Results
-                                          </Button>
-                                        </motion.div>
-                                      </Td>
-                                      <Td textAlign="center">
-                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                          <Button size="sm" color={primaryColor} onClick={() => handleDeleteDetection(detection)}>
-                                            <FaTrashAlt />
-                                          </Button>
-                                        </motion.div>
-                                      </Td>
-                                    </motion.tr>
-                                  ))}
-                                </AnimatePresence>
-                              </Tbody>
-                            </Table>
-                          </Box>
-                        </>
-                      ) : (
-                        <motion.div
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 15 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <Flex align="center" justify="center" direction="column" h="15vh">
-                            <WarningIcon boxSize="6" color="gray.500" mb="2" />
-                            <Text fontSize="lg" color="gray.500" textAlign="center">
-                              No detections found.
+                                            {getRatingIcon(getAggregateRating(claimCheck.ratings))}
+                                            <Text as="span" fontSize="sm">
+                                              {getAggregateRating(claimCheck.ratings)}
+                                            </Text>
+                                          </Badge>
+                                        </Td>
+                                        <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
+                                        <Td textAlign="center">
+                                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                            <Button
+                                              size="sm"
+                                              onClick={() =>
+                                                navigate(`/profile/claim-check-results/${claimCheck.id}`, {
+                                                  state: { claimCheck },
+                                                })
+                                              }
+                                            >
+                                              Results
+                                            </Button>
+                                          </motion.div>
+                                        </Td>
+                                        <Td textAlign="center">
+                                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                                            <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
+                                              <FaTrashAlt />
+                                            </Button>
+                                          </motion.div>
+                                        </Td>
+                                      </motion.tr>
+                                    ))}
+                                  </AnimatePresence>
+                                </Tbody>
+                              </Table>
+                            </Box>
+                          </>
+                        ) : (
+                          <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 15 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb={{ base: "4", md: "0" }}>
+                              <WarningIcon boxSize="6" color="gray.500" mb="2" />
+                              <Text fontSize="lg" color="gray.500" textAlign="center">
+                                No claims checks found.
+                              </Text>
+                              <Text fontSize="md" color="gray.400" textAlign="center">
+                                Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
+                              </Text>
+                            </Flex>
+                          </motion.div>
+                        )}
+                        {/* Powered by Google Fact Check Tools API*/}
+                        <HStack justify="flex-end">
+                            <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
+                              Powered by
                             </Text>
-                            <Text fontSize="md" color="gray.400" textAlign="center">
-                              Start detecting fake news with FactGuard Detect by analyzing articles and preventing disinformation today.
-                            </Text>
-                          </Flex>
-                        </motion.div>
-                      )}
-                    </Box>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 0.5 }}
-                >
-                  <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claim Checks</Heading>
-                  <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                      {claimChecks.length > 0 ? (
-                        <>
-                          <Box overflowX="auto">
-                            <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
-                              <Thead>
-                                <Tr>
-                                  <Th width="10%" textAlign="center"><b>ID</b></Th>
-                                  <Th width="45%" textAlign="center"><b>Query</b></Th>
-                                  <Th width="15%" textAlign="center"><b>Rating</b></Th>
-                                  <Th width="10%" textAlign="center"><b>Date</b></Th>
-                                  <Th width="10%" textAlign="center"><b>Results</b></Th>
-                                  <Th width="10%" textAlign="center"><b>Remove</b></Th>
-                                </Tr>
-                              </Thead>
-                              <Tbody as={motion.tbody}>
-                                <AnimatePresence>
-                                  {sortedClaimChecks.slice(0, 5).map((claimCheck) => (
-                                    <motion.tr
-                                      key={claimCheck.id}
-                                      layout
-                                      initial={{ opacity: 0, y: 50 }}
-                                      animate={{ opacity: 1, y: 0 }}
-                                      exit={{ opacity: 0, y: -50 }}
-                                      transition={{ duration: 0.5 }}
-                                    >
-                                      <Td textAlign="center">#{claimCheck.id}</Td>
-                                      <Td textAlign="justify">{claimCheck.query}</Td>
-                                      <Td textAlign="center">
-                                        <Badge
-                                          colorScheme={getRatingColor(getAggregateRating(claimCheck.ratings))}
-                                          fontSize="md"
-                                          p={2}
-                                          display="flex"
-                                          alignItems="center"
-                                          justifyContent="center"
-                                          gap="2"
-                                          whiteSpace="normal"
-                                        >
-                                          {getRatingIcon(getAggregateRating(claimCheck.ratings))}
-                                          <Text as="span" fontSize="sm">
-                                            {getAggregateRating(claimCheck.ratings)}
-                                          </Text>
-                                        </Badge>
-                                      </Td>
-                                      <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
-                                      <Td textAlign="center">
-                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                          <Button
-                                            size="sm"
-                                            onClick={() =>
-                                              navigate(`/profile/claim-check-results/${claimCheck.id}`, {
-                                                state: { claimCheck },
-                                              })
-                                            }
-                                          >
-                                            Results
-                                          </Button>
-                                        </motion.div>
-                                      </Td>
-                                      <Td textAlign="center">
-                                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                                          <Button size="sm" color={primaryColor} onClick={() => handleDeleteClaimCheck(claimCheck)}>
-                                            <FaTrashAlt />
-                                          </Button>
-                                        </motion.div>
-                                      </Td>
-                                    </motion.tr>
-                                  ))}
-                                </AnimatePresence>
-                              </Tbody>
-                            </Table>
-                          </Box>
-                        </>
-                      ) : (
-                        <motion.div
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 15 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <Flex align="center" justify="center" direction="column" h={{ base: "auto", md: "15vh" }} mb={{ base: "4", md: "0" }}>
-                            <WarningIcon boxSize="6" color="gray.500" mb="2" />
-                            <Text fontSize="lg" color="gray.500" textAlign="center">
-                              No claims checks found.
-                            </Text>
-                            <Text fontSize="md" color="gray.400" textAlign="center">
-                              Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
-                            </Text>
-                          </Flex>
-                        </motion.div>
-                      )}
-                      {/* Powered by Google Fact Check Tools API*/}
-                      <HStack justify="flex-end">
-                          <Text fontSize="sm" color={useColorModeValue("gray.600", "gray.400")}>
-                            Powered by
-                          </Text>
-                          <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
-                            <Box
-                              as="img"
-                              src={logoGoogleFactCheckLogo}
-                              alt="Google Fact Check Tools API Logo"
-                              height={logoGoogleFactCheckLogoHeight}
-                              _hover={{ opacity: 0.8 }}
-                              _active={{ transform: "scale(0.95)" }}
-                            />
-                          </a>
-                      </HStack>
-                    </Box>
-                </motion.div>
-              </Flex>
-            }
-          />
-          <Route
-            path="/start-new-detection"
-            element={<StartNewDetection addDetection={addDetection}/>}
+                            <a href="https://toolbox.google.com/factcheck/explorer/search/list:recent" target="_blank" rel="noopener noreferrer">
+                              <Box
+                                as="img"
+                                src={logoGoogleFactCheckLogo}
+                                alt="Google Fact Check Tools API Logo"
+                                height={logoGoogleFactCheckLogoHeight}
+                                _hover={{ opacity: 0.8 }}
+                                _active={{ transform: "scale(0.95)" }}
+                              />
+                            </a>
+                        </HStack>
+                      </Box>
+                  </motion.div>
+                </Flex>
+              }
             />
-          <Route
-            path="/my-news-detections"
-            element={
-              <MyNewsDetections
-                detections={detections}
-                deleteDetection={deleteDetection}
+            <Route
+              path="/start-new-detection"
+              element={<StartNewDetection addDetection={addDetection}/>}
               />
-            }
-          />
-          <Route path="/detection-results/:id" element={<DetectionResults />} />
-          <Route
-            path="/start-new-claim-check"
-            element={<StartNewClaimCheck addClaimCheck={addClaimCheck}/>}
+            <Route
+              path="/my-news-detections"
+              element={
+                <MyNewsDetections
+                  detections={detections}
+                  deleteDetection={deleteDetection}
+                />
+              }
             />
-          <Route
-            path="/my-claim-checks"
-            element={
-              <MyClaimChecks
-                claimChecks={claimChecks}
-                deleteClaimCheck={deleteClaimCheck}
+            <Route path="/detection-results/:id" element={<DetectionResults />} />
+            <Route
+              path="/start-new-claim-check"
+              element={<StartNewClaimCheck addClaimCheck={addClaimCheck}/>}
               />
-            }
-          />
-          <Route path="/claim-check-results/:id" element={<ClaimCheckResults />} />
-          <Route path="/account-details" element={<AccountDetails />} />
-          <Route
-            path="*"
-            element={
-              <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
-                <NotFound buttonText="Go Back to Dashboard" redirectPath="/profile" />
-              </Flex>
-            }
-          />
-        </Routes>
+            <Route
+              path="/my-claim-checks"
+              element={
+                <MyClaimChecks
+                  claimChecks={claimChecks}
+                  deleteClaimCheck={deleteClaimCheck}
+                />
+              }
+            />
+            <Route path="/claim-check-results/:id" element={<ClaimCheckResults />} />
+            <Route path="/account-details" element={<AccountDetails />} />
+            <Route
+              path="*"
+              element={
+                <Flex flex="1" justify="center" align="center" flexDirection="column" height="100%">
+                  <NotFound buttonText="Go Back to Dashboard" redirectPath="/profile" />
+                </Flex>
+              }
+            />
+          </Routes>
 
-        {/* Detections Confirmation Modal */}
-        <Modal isOpen={isDetectionModalOpen} onClose={onDetectionModalClose} isCentered>
-          <ModalOverlay />
-            <ModalContent
-              width={{ base: "90%"}}
-            >
-            <ModalHeader>Confirm Deletion</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {detectionToDelete
-                ? "Are you sure you want to delete this detection?"
-                : "Are you sure you want to delete the selected detections?"}
-            </ModalBody>
-            <ModalFooter>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button colorScheme="red" mr={3} onClick={confirmDeleteDetection}>
-                  Delete
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button onClick={onDetectionModalClose}>
-                  Cancel
-                </Button>
-              </motion.div>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+          {/* Detections Confirmation Modal */}
+          <Modal isOpen={isDetectionModalOpen} onClose={onDetectionModalClose} isCentered>
+            <ModalOverlay />
+              <ModalContent
+                width={{ base: "90%"}}
+              >
+              <ModalHeader>Confirm Deletion</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {detectionToDelete
+                  ? "Are you sure you want to delete this detection?"
+                  : "Are you sure you want to delete the selected detections?"}
+              </ModalBody>
+              <ModalFooter>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button colorScheme="red" mr={3} onClick={confirmDeleteDetection}>
+                    Delete
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button onClick={onDetectionModalClose}>
+                    Cancel
+                  </Button>
+                </motion.div>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
 
-        {/* Claim Checks Confirmation Modal */}
-        <Modal isOpen={isClaimModalOpen} onClose={onClaimModalClose} isCentered>
-          <ModalOverlay />
-            <ModalContent
-              width={{ base: "90%"}}
-            >
-            <ModalHeader>Confirm Deletion</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {claimCheckToDelete
-                ? "Are you sure you want to delete this claim check?"
-                : "Are you sure you want to delete the selected claim checks?"}
-            </ModalBody>
-            <ModalFooter>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button colorScheme="red" mr={3} onClick={confirmDeleteClaimCheck}>
-                  Delete
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button onClick={onClaimModalClose}>
-                  Cancel
-                </Button>
-              </motion.div>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </Box>
-    </Flex>
+          {/* Claim Checks Confirmation Modal */}
+          <Modal isOpen={isClaimModalOpen} onClose={onClaimModalClose} isCentered>
+            <ModalOverlay />
+              <ModalContent
+                width={{ base: "90%"}}
+              >
+              <ModalHeader>Confirm Deletion</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                {claimCheckToDelete
+                  ? "Are you sure you want to delete this claim check?"
+                  : "Are you sure you want to delete the selected claim checks?"}
+              </ModalBody>
+              <ModalFooter>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button colorScheme="red" mr={3} onClick={confirmDeleteClaimCheck}>
+                    Delete
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button onClick={onClaimModalClose}>
+                    Cancel
+                  </Button>
+                </motion.div>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Box>
+      </Flex>
+    </>
   );
 };
 
