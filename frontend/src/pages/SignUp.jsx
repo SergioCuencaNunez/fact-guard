@@ -88,6 +88,7 @@ const SignUp = () => {
     const email = event.target.email.value;
     const username = event.target.username.value || email.split("@")[0];
     const password = event.target.password.value;
+    const last_access = new Date().toISOString();
 
     if (!termsChecked) {
       setCheckboxAlert("You must agree to the Privacy Policy and Terms & Conditions.");
@@ -126,6 +127,7 @@ const SignUp = () => {
           username,
           email,
           password,
+          last_access,
         }),
       });
       const data = await response.json();

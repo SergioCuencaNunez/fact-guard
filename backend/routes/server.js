@@ -41,8 +41,7 @@ const db = new sqlite3.Database("../db/database.db", (err) => {
 
 // Login Route
 app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-
+  const { email, password, last_access } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
@@ -65,7 +64,7 @@ app.post("/login", (req, res) => {
     });
 
     // Update last_access timestamp
-    db.run("UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = ?", [user.id]);
+    db.run("UPDATE users SET last_access = ? WHERE id = ?", [last_access, user.id]);
 
     res.json({ message: "Login successful", token });
   });
@@ -86,7 +85,7 @@ app.get("/check-login-email", (req, res) => {
 
 // Sign Up Route
 app.post("/signup", (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, last_access } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
   const query =
     "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'user')";
@@ -105,7 +104,7 @@ app.post("/signup", (req, res) => {
     });
 
     // Update last_access timestamp
-    db.run("UPDATE users SET last_access = CURRENT_TIMESTAMP WHERE id = ?", [this.lastID]);
+    db.run("UPDATE users SET last_access = ? WHERE id = ?", [last_access, this.lastID]);
 
   });
 });

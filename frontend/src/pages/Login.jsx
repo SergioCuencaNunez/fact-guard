@@ -104,6 +104,7 @@ const Login = () => {
 
     const email = event.target.email.value;
     const password = event.target.password.value;
+    const last_access = new Date().toISOString();
 
     if (!validateEmail(email)) {
       setEmailValid(false);
@@ -116,7 +117,7 @@ const Login = () => {
       const response = await fetch(`${BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, last_access }),
       });
       const data = await response.json();
 
