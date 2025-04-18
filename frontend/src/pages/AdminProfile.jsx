@@ -51,7 +51,9 @@ import logoDark from '../assets/logo-main-dark.png';
 
 import MyUsers from "./MyUsers";
 import MyNewsDetections from "./MyNewsDetections";
+import DetectionResults from "./DetectionResults";
 import MyClaimChecks from "./MyClaimChecks";
+import ClaimCheckResults from "./ClaimCheckResults";
 import AccountDetails from "./AccountDetails";
 
 import NotFound from "../pages/NotFound"; 
@@ -1205,6 +1207,7 @@ const AdminProfile = () => {
                 />
               }
             />
+            <Route path="/detection-results/:id" element={<DetectionResults />} />
             <Route
               path="/my-claim-checks"
               element={
@@ -1214,6 +1217,7 @@ const AdminProfile = () => {
                 />
               }
             />
+            <Route path="/claim-check-results/:id" element={<ClaimCheckResults />} />
             <Route path="/account-details" element={<AccountDetails />} />
             <Route
               path="*"

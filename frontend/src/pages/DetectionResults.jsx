@@ -52,7 +52,7 @@ const DetectionResults = () => {
   const startNewDetectionActiveBg = useColorModeValue("gray.300", "gray.400");
   const allDetectionsHoverBg = useColorModeValue(primaryHoverLight, primaryHoverDark);
   const allDetectionsActiveBg = useColorModeValue(primaryActiveLight, primaryActiveDark);
-
+  
   const modelClassificationText1 = useBreakpointValue({
     base: (
       <span>
@@ -156,6 +156,20 @@ const DetectionResults = () => {
   });
   
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        if (decoded?.role === "admin") setIsAdmin(true);
+      } catch (e) {
+        console.error("Failed to decode token", e);
+      }
+    }
+  }, []);
 
   const [detection, setDetection] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -364,6 +378,33 @@ const DetectionResults = () => {
 
           <Divider mb="4" />
 
+          {/* User Details */}
+          {isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <Box mb="4">
+                <Heading size="md" mb="2" color={textColor}>
+                  User Details
+                </Heading>
+                <VStack align="flex-start" spacing="2">
+                  <Text fontSize="md">
+                    <b>User ID:</b> #{detection.user_id}
+                  </Text>
+                  <Text fontSize="md">
+                    <b>Date Analyzed:</b> {formatDate(detection.date)}
+                  </Text>
+                </VStack>
+              </Box>
+            </motion.div>
+          )}
+
+          {isAdmin && (
+            <Divider mb="4" />
+          )}  
+
           {/* Article Details */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -397,9 +438,11 @@ const DetectionResults = () => {
                 <Text fontSize="md">
                   <b>Confidence Threshold Established:</b> {detection.confidence}%
                 </Text>
-                <Text fontSize="md">
-                  <b>Date Analyzed:</b> {formatDate(detection.date)}
-                </Text>
+                {!isAdmin && (
+                  <Text fontSize="md">
+                    <b>Date Analyzed:</b> {formatDate(detection.date)}
+                  </Text>
+                )}
               </VStack>
             </Box>
           </motion.div>
@@ -612,53 +655,59 @@ const DetectionResults = () => {
             </Collapse>
           </motion.div>
           
-          <Divider mb="4" />
+          {!isAdmin && (
+            <>
+              <Divider mb="4" />
 
-          {/* Insights */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <Box textAlign="justify">
-              <Heading size="md" mb="2" color={textColor}>
-                Insights
-              </Heading>
-              <Text fontSize="md" mb="2">
-                {insightsText1}
-              </Text>
-              <Text fontSize="md">
-                {insightsText2}
-                <Link
-                  to="/profile/start-new-claim-check"
-                  style={{
-                    color: hoverColor,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  FactGuard Verify
-                </Link>
-                .
-              </Text>
-            </Box>
-          </motion.div>
+              {/* Insights */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                <Box textAlign="justify">
+                  <Heading size="md" mb="2" color={textColor}>
+                    Insights
+                  </Heading>
+                  <Text fontSize="md" mb="2">
+                    {insightsText1}
+                  </Text>
+                  <Text fontSize="md">
+                    {insightsText2}
+                    <Link
+                      to="/profile/start-new-claim-check"
+                      style={{
+                        color: hoverColor,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      FactGuard Verify
+                    </Link>
+                    .
+                  </Text>
+                </Box>
+              </motion.div>
+            </>
+          )}
 
           {/* Navigation Buttons */}
-          <Flex justify="center" mt="8">
+          <Flex justify="center" mt={isAdmin ? "4" : "8"}>
             <Stack direction={{ base: "column", md: "row" }} spacing="4" align="center">
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button
-                  leftIcon={<ArrowBackIcon />}
-                  size="md"
-                  bg={allDetectionsBg}
-                  color={textColor}
-                  _hover={{ bg: startNewDetectionHoverBg }}
-                  _active={{ bg: startNewDetectionActiveBg }}
-                  onClick={() => navigate("/profile/start-new-detection")}
-                >
-                  Start New Detection
-                </Button>
-              </motion.div>
+              {!isAdmin && (
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    leftIcon={<ArrowBackIcon />}
+                    size="md"
+                    bg={allDetectionsBg}
+                    color={textColor}
+                    _hover={{ bg: startNewDetectionHoverBg }}
+                    _active={{ bg: startNewDetectionActiveBg }}
+                    onClick={() => navigate("/profile/start-new-detection")}
+                  >
+                    Start New Detection
+                  </Button>
+                </motion.div>
+              )}
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                   size="md"
@@ -666,7 +715,13 @@ const DetectionResults = () => {
                   color="white"
                   _hover={{ bg: allDetectionsHoverBg }}
                   _active={{ bg: allDetectionsActiveBg }}
-                  onClick={() => navigate("/profile/my-news-detections")}
+                  onClick={() =>
+                    navigate(
+                      isAdmin
+                        ? "/admin/profile/my-news-detections"
+                        : "/profile/my-news-detections",
+                    )
+                  }
                 >
                   All Detections
                 </Button>

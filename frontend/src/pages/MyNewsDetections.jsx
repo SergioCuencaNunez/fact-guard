@@ -251,9 +251,14 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                               <Button
                                 size="sm"
                                 onClick={() =>
-                                  navigate(`/profile/detection-results/${detection.id}`, {
-                                    state: { detection },
-                                  })
+                                  navigate(
+                                    isAdmin
+                                      ? `/admin/profile/detection-results/${detection.id}`
+                                      : `/profile/detection-results/${detection.id}`,
+                                    {
+                                      state: { detection },
+                                    }
+                                  )
                                 }
                               >
                                 Results

@@ -95,6 +95,20 @@ const ClaimCheckResults = () => {
     fetchClaimCheck();
   }, [id]);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+    
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        if (decoded?.role === "admin") setIsAdmin(true);
+      } catch (e) {
+        console.error("Failed to decode token", e);
+      }
+    }
+  }, []);
+  
   if (loading) {
     return (
       <Flex align="center" justify="center" h="100vh">
@@ -286,6 +300,33 @@ const ClaimCheckResults = () => {
 
           <Divider mb="4" />
 
+          {/* User Details */}
+          {isAdmin && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <Box mb="4">
+                <Heading size="md" mb="2" color={textColor}>
+                  User Details
+                </Heading>
+                <VStack align="flex-start" spacing="2">
+                  <Text fontSize="md">
+                    <b>User ID:</b> #{claimCheck.user_id}
+                  </Text>
+                  <Text fontSize="md">
+                    <b>Date Analyzed:</b> {formatDate(claimCheck.date)}
+                  </Text>
+                </VStack>
+              </Box>
+            </motion.div>
+          )}
+
+          {isAdmin && (
+            <Divider mb="4" />
+          )}
+
           {/* Claim Details */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -306,9 +347,11 @@ const ClaimCheckResults = () => {
                 <Text fontSize="md">
                   <b>Language:</b> {claimCheck.language}
                 </Text>
-                <Text fontSize="md">
-                  <b>Date Analyzed:</b> {formatDate(claimCheck.date)}
-                </Text>
+                {!isAdmin && (
+                  <Text fontSize="md">
+                    <b>Date Analyzed:</b> {formatDate(claimCheck.date)}
+                  </Text>
+                )}
               </VStack>
             </Box>
           </motion.div>
@@ -382,44 +425,50 @@ const ClaimCheckResults = () => {
               ))}
             </Box>
           </motion.div>
+          
+          {!isAdmin && (
+            <>
+              <Divider mb="4" />
 
-          <Divider mb="4" />
-
-          {/* Insights */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
-            <Box textAlign="justify">
-              <Heading size="md" mb="2" color={textColor}>
-                Insights
-              </Heading>
-              <Text fontSize="md" mb="2">
-                This analysis was performed using Google Fact Check Tools API.
-              </Text>
-              <Text fontSize="md">
-                {insightsText}                
-              </Text>
-            </Box>
-          </motion.div>
+              {/* Insights */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <Box textAlign="justify">
+                  <Heading size="md" mb="2" color={textColor}>
+                    Insights
+                  </Heading>
+                  <Text fontSize="md" mb="2">
+                    This analysis was performed using Google Fact Check Tools API.
+                  </Text>
+                  <Text fontSize="md">
+                    {insightsText}                
+                  </Text>
+                </Box>
+              </motion.div>
+            </>
+          )}
 
           {/* Navigation Buttons */}
-          <Flex justify="center" mt="8">
+          <Flex justify="center" mt={isAdmin ? "4" : "8"}>
             <Stack direction={{ base: "column", md: "column", lg: "row" }} spacing="4" align="center">
-              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <Button
-                  leftIcon={<ArrowBackIcon />}
-                  size="md"
-                  bg={allClaimChecksBg}
-                  color={textColor}
-                  _hover={{ bg: startNewClaimCheckHoverBg }}
-                  _active={{ bg: startNewClaimCheckActiveBg }}
-                  onClick={() => navigate("/profile/start-new-claim-check")}
-                >
-                  Start New Claim Check
-                </Button>
-              </motion.div>
+              {!isAdmin && (
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button
+                    leftIcon={<ArrowBackIcon />}
+                    size="md"
+                    bg={allClaimChecksBg}
+                    color={textColor}
+                    _hover={{ bg: startNewClaimCheckHoverBg }}
+                    _active={{ bg: startNewClaimCheckActiveBg }}
+                    onClick={() => navigate("/profile/start-new-claim-check")}
+                  >
+                    Start New Claim Check
+                  </Button>
+                </motion.div>
+              )}
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                   size="md"
@@ -427,7 +476,13 @@ const ClaimCheckResults = () => {
                   color="white"
                   _hover={{ bg: allClaimChecksHoverBg }}
                   _active={{ bg: allClaimChecksActiveBg }}
-                  onClick={() => navigate("/profile/my-claim-checks")}
+                  onClick={() =>
+                    navigate(
+                      isAdmin
+                        ? "/admin/profile/my-claim-checks"
+                        : "/profile/my-claim-checks",
+                    )
+                  }
                 >
                   All Claim Checks
                 </Button>
