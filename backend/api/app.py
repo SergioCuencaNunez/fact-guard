@@ -4,6 +4,7 @@ import requests
 import pickle
 import jwt
 import nltk
+from datetime import datetime
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -232,23 +233,29 @@ def search_fact_check_claims(api_key, query, language_code="en"):
                 publisher = review.get("publisher", {}).get("name", "Unknown publisher")
                 rating = review.get("textualRating", "No rating")
                 url = review.get("url", "No URL")
+                review_date = review.get("reviewDate", "No date")
 
                 results.append({
                     "Claim": text,
                     "Claimant": claimant,
                     "Publisher": publisher,
                     "Rating": rating,
+                    "Date": review_date,
                     "URL": url
                 })
 
         if results:
-            return {"success": True, "data": results}
+            results = [r for r in results if r["Date"] != "No date"]
+            results.sort(key=lambda x: datetime.strptime(x["Date"], "%Y-%m-%d"), reverse=True)
+            top_results = results[:3]
+            return {"success": True, "data": top_results}
         else:
             language_name = LANGUAGE_MAP.get(language_code, language_code)
             return {
                 "success": False,
                 "message": f"No claims matching '{query}' were found in {language_name}.",
             }
+
 
     except requests.exceptions.RequestException as e:
         return {"success": False, "error": str(e)}

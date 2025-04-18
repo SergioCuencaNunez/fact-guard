@@ -95,11 +95,6 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const green = useColorModeValue("green.600", "green.300");
-  const orange = useColorModeValue("orange.600", "orange.300");
-  const gray = useColorModeValue("gray.600", "gray.300");
-  const red = useColorModeValue("red.600", "red.300");
-  
   const sortedDetections = [...detections].sort((a, b) => {
     return sortOrder === "desc"
       ? new Date(b.date) - new Date(a.date)

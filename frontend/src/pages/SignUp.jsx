@@ -135,7 +135,7 @@ const SignUp = () => {
         setTimeout(() => {
           localStorage.setItem("token", data.token);
           navigate("/profile");
-        }, 2500);
+        }, 3000);
       } else {
         setAlert({ type: "error", message: "Error signing up. If the issue persists, please contact the administrator." });
         setTimeout(() => setAlert(null), 3000);

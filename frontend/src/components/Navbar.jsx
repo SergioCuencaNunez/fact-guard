@@ -39,7 +39,7 @@ const Navbar = () => {
     const logoHeight = useBreakpointValue({ base: '45px', md: '50px' });
     const gradient = 'linear(to-r, #2a8073, #3ca790, #4dcfaf)';
   
-    if (['/login', '/signup', '/profile'].some(path => location.pathname.startsWith(path))) {
+    if (['/login', '/signup', '/profile', '/admin/profile'].some(path => location.pathname.startsWith(path))) {
         return null;
     }
 

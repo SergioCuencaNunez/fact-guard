@@ -95,6 +95,7 @@ const Login = () => {
       setAlert({ type: "error", message: "Error checking email. Please try again." });
       setTimeout(() => setAlert(null), 3000);
     }
+    
   };
 
   const handleLogin = async (event) => {
@@ -124,7 +125,12 @@ const Login = () => {
         setTimeout(() => {
           resetAlerts();
           localStorage.setItem("token", data.token);
-          navigate("/profile");
+          const decoded = JSON.parse(atob(data.token.split('.')[1]));
+          if (decoded.role === 'admin') {
+            navigate("/admin/profile");
+          } else {
+            navigate("/profile");
+          }
         }, 3000);
       } else {
         if (data.error === "User not found") {

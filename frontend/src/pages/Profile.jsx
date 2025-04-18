@@ -41,7 +41,7 @@ import {
   FaUsers,
   FaTrashAlt,
 } from "react-icons/fa";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -234,6 +234,12 @@ const Profile = () => {
 
         if (response.ok) {
           setUser({ username: data.username, email: data.email });
+        } else if (response.status === 403) {
+          navigate("/access-denied", {
+            state: {
+              message: data.error || "To access the profile, use the Admin Panel.",
+            },
+          });
         } else {
           console.error("Failed to fetch user data:", data.error);
           navigate("/login");
@@ -247,7 +253,13 @@ const Profile = () => {
     fetchUserData();
   }, [navigate]);
 
-  const handleLogout = () => {
+  const {
+    isOpen: isLogoutModalOpen,
+    onOpen: onLogoutModalOpen,
+    onClose: onLogoutModalClose,
+  } = useDisclosure();
+  
+  const confirmLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
@@ -517,7 +529,7 @@ const Profile = () => {
               <Button
                 colorScheme="red"
                 variant="solid"
-                onClick={handleLogout}
+                onClick={onLogoutModalOpen}
                 size="sm"
               >
                 <FaSignOutAlt />
@@ -755,7 +767,7 @@ const Profile = () => {
                 leftIcon={<FaSignOutAlt />}
                 colorScheme="red"
                 variant="solid"
-                onClick={handleLogout}
+                onClick={onLogoutModalOpen}
                 size={{ base: "sm", md: "md" }}
                 width="100%"
               >
@@ -1239,6 +1251,32 @@ const Profile = () => {
               }
             />
           </Routes>
+
+          {/* Logout Confirmation Modal */}
+          <Modal isOpen={isLogoutModalOpen} onClose={onLogoutModalClose} isCentered>
+            <ModalOverlay />
+              <ModalContent
+                width={{ base: "90%"}}
+              >
+              <ModalHeader>Confirm Logout</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                Are you sure you want to log out of your account?
+              </ModalBody>
+              <ModalFooter>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button colorScheme="red" mr={3} onClick={confirmLogout}>
+                    Logout
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <Button onClick={onLogoutModalClose}>
+                    Cancel
+                  </Button>
+                </motion.div>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
 
           {/* Detections Confirmation Modal */}
           <Modal isOpen={isDetectionModalOpen} onClose={onDetectionModalClose} isCentered>

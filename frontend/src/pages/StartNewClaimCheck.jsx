@@ -111,10 +111,10 @@ const StartNewClaimCheck = ({ addClaimCheck }) => {
   
         if (factCheckResult.success) {
           // Extract claims, ratings, and links
-          const claims = factCheckResult.data.slice(0, 3).map((item) => item.Claim);
-          const ratings = factCheckResult.data.slice(0, 3).map((item) => item.Rating || "Unknown");
-          const links = factCheckResult.data.slice(0, 3).map((item) => item.URL || "No URL");
-  
+          const claims = factCheckResult.data.map((item) => item.Claim);
+          const ratings = factCheckResult.data.map((item) => item.Rating || "Unknown");
+          const links = factCheckResult.data.map((item) => item.URL || "No URL");
+
           const claimData = {
             query: query,
             claims: claims,
