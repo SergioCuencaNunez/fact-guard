@@ -232,8 +232,8 @@ def search_fact_check_claims(api_key, query, language_code="en"):
             if review:
                 publisher = review.get("publisher", {}).get("name", "Unknown publisher")
                 rating = review.get("textualRating", "No rating")
-                url = review.get("url", "No URL")
                 review_date = review.get("reviewDate", "No date")
+                url = review.get("url", "No URL")
 
                 results.append({
                     "Claim": text,
