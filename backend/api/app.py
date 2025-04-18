@@ -246,7 +246,7 @@ def search_fact_check_claims(api_key, query, language_code="en"):
 
         if results:
             results = [r for r in results if r["Date"] != "No date"]
-            results.sort(key=lambda x: datetime.strptime(x["Date"], "%Y-%m-%d"), reverse=True)
+            results.sort(key=lambda x: datetime.strptime(x["Date"].split("T")[0], "%Y-%m-%d"), reverse=True)
             top_results = results[:3]
             return {"success": True, "data": top_results}
         else:

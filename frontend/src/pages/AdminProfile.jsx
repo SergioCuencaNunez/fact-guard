@@ -31,6 +31,7 @@ import {
 import {
   FaNewspaper,
   FaShieldAlt,
+  FaTasks,  
   FaUsers,
   FaUser,
   FaSignOutAlt,
@@ -39,7 +40,7 @@ import {
   FaTrashAlt,
 } from "react-icons/fa";
 
-import { SunIcon, MoonIcon, ChevronDownIcon, CheckCircleIcon, WarningIcon, WarningTwoIcon, InfoIcon } from "@chakra-ui/icons";
+import { SunIcon, MoonIcon, ChevronDownIcon, WarningIcon } from "@chakra-ui/icons";
 
 import { Helmet } from "react-helmet-async";
 import { useNavigate, Routes, Route } from "react-router-dom";
@@ -48,8 +49,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import logoBright from '../assets/logo-main-bright.png';
 import logoDark from '../assets/logo-main-dark.png';
 
+import MyUsers from "./MyUsers";
+import MyNewsDetections from "./MyNewsDetections";
+import MyClaimChecks from "./MyClaimChecks";
 import AccountDetails from "./AccountDetails";
+
 import NotFound from "../pages/NotFound"; 
+
+import RatingsAndPredictionsPieChart from "../graphs/RatingsAndPredictionsPieChart";
+import DetectionsAndClaimsLineChart from "../graphs/DetectionsAndClaimsLineChart";
+import DailyInteractionBreakdown from "../graphs/DailyInteractionBreakdown";
+
+import BlurOverlay from "../components/BlurOverlay";
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
@@ -77,6 +88,7 @@ const AdminProfile = () => {
     recentClaims: [],
   });
 
+  const [users, setUsers] = useState([]);
   const [detections, setDetections] = useState([]);
   const [claimChecks, setClaimsChecks] = useState([]);
 
@@ -145,18 +157,16 @@ const AdminProfile = () => {
 
     const fetchAdminData = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/admin/profile`, {
-          method: "GET",
+        const res = await fetch(`${BACKEND_URL}/admin/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
-
-        if (response.ok) {
+  
+        const data = await res.json();
+  
+        if (res.ok) {
           setOverview(data);
           setUser({ username: data.username, email: data.email });
-          setDetections(data.detections || []);
-          setClaimsChecks(data.claims || []);
-        } else if (response.status === 403) {
+        } else if (res.status === 403) {
           navigate("/access-denied", {
             state: {
               message: data.error || "Not authorized to access admin panel",
@@ -166,10 +176,10 @@ const AdminProfile = () => {
           console.error("Failed to fetch admin data:", data.error);
           navigate("/login");
         }
-      } catch (error) {
-        console.error("Error fetching admin data:", error);
+      } catch (err) {
+        console.error("Error fetching admin data:", err);
         navigate("/login");
-      }    
+      }
     };
 
     fetchAdminData();
@@ -196,43 +206,104 @@ const AdminProfile = () => {
     return date.toLocaleDateString("es-ES", options).replace(",", ""); // DD/MM/YYYY HH:MM
   };
 
-  const handleDeleteUser = (user) => {
-    setUserToDelete(user);
-    onUserModalOpen();
-  };
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-  const [userToDelete, setUserToDelete] = useState(null);
+      try {
+        const response = await fetch(`${BACKEND_URL}/users`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setUsers(data);
+        } else {
+          console.error("Failed to fetch users:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [navigate]);
+
+  // Delete a user from server
+  const deleteUser = async (id) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${BACKEND_URL}/users/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        setUsers((prev) => prev.filter((d) => d.id !== id));
+      } else {
+        console.error("Failed to delete user.");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+  
   const {
     isOpen: isUserModalOpen,
     onOpen: onUserModalOpen,
     onClose: onUserModalClose,
   } = useDisclosure();
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const handleDeleteUser = (user) => {
+    setUserToDelete(user);
+    onUserModalOpen();
+  };
 
   const confirmDeleteUser = async () => {
-    const token = localStorage.getItem("token");
-  
     try {
-      const response = await fetch(`${BACKEND_URL}/admin/delete-user/${userToDelete.id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      if (response.ok) {
-        setOverview((prev) => ({
-          ...prev,
-          users: prev.users.filter((u) => u.id !== userToDelete.id),
-          totalUsers: prev.totalUsers - 1,
-        }));
-      } else {
-        const errorData = await response.json();
-        console.error("Failed to delete user:", errorData.error);
+      if (userToDelete) {
+        // Delete a single detection
+        await deleteUser(userToDelete.id);
       }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    } finally {
       onUserModalClose();
+    } catch (error) {
+      console.error("Error deleting detection(s):", error);
     }
   };
+  
+  useEffect(() => {
+    const fetchDetections = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/detections`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setDetections(data);
+        } else {
+          console.error("Failed to fetch detections:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching detections:", error);
+      }
+    };
+
+    fetchDetections();
+  }, [navigate]);
 
   // Delete a detection from server
   const deleteDetection = async (id) => {
@@ -277,6 +348,34 @@ const AdminProfile = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchClaimsCheck = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/claims`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setClaimsChecks(data);
+        } else {
+          console.error("Failed to fetch claim checks:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching claim checks:", error);
+      }
+    };
+
+    fetchClaimsCheck();
+  }, [navigate]);
+
   // Delete a claim check from server
   const deleteClaimCheck = async (id) => {
     const token = localStorage.getItem("token");
@@ -294,7 +393,7 @@ const AdminProfile = () => {
     } catch (error) {
       console.error("Error deleting claim check:", error);
     }
-  };  
+  };
 
   const {
     isOpen: isClaimModalOpen,
@@ -319,6 +418,27 @@ const AdminProfile = () => {
     } catch (error) {
       console.error("Error deleting claim check(s):", error);
     }
+  };
+
+  const isStatsAvailable = () => {
+    return (
+      Array.isArray(detections) &&
+      detections.length > 0 &&
+      Array.isArray(claimChecks) &&
+      claimChecks.length > 0
+    );
+  }; 
+  
+  const hasTwoDaysOfData = () => {
+    const dates = [
+      ...(Array.isArray(detections) ? detections : []),
+      ...(Array.isArray(claimChecks) ? claimChecks : []),
+    ]
+      .map((item) => item.date?.split("T")[0])
+      .filter(Boolean);
+  
+    const uniqueDates = [...new Set(dates)];
+    return uniqueDates.length > 1;
   };
 
   return (
@@ -425,6 +545,165 @@ const AdminProfile = () => {
                   </HStack>
                 </Button>
               </motion.div>
+
+              {/* All Users Dropdown */}
+              <Box>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    justifyContent="space-between"
+                    _hover={{ color: hoverColor }}
+                    _active={{ color: activeColor }}
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => toggleDropdown("users")}
+                    color={textColor}
+                    width="100%"
+                  >
+                    <HStack w="100%" justifyContent="space-between">
+                      <HStack>
+                        <FaUsers />
+                        <Text>Users Registered</Text>
+                      </HStack>
+                      <ChevronDownIcon />
+                    </HStack>
+                  </Button>
+                </motion.div>
+                <AnimatePresence initial={false}>
+                  {openDropdown === "users" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: "hidden" }}
+                    >
+                    <VStack align="stretch" pl="4" mt="2">
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/admin/profile/my-users")}
+                      >
+                        <HStack>
+                          <FaTasks />
+                          <Text>All Users</Text>
+                        </HStack>
+                      </Button>
+                    </VStack>
+                  </motion.div>
+                  )}
+                </AnimatePresence>
+              </Box>
+
+              {/* All Detections Dropdown */}
+              <Box>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    justifyContent="space-between"
+                    _hover={{ color: hoverColor }}
+                    _active={{ color: activeColor }}
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => toggleDropdown("detect")}
+                    color={textColor}
+                    width="100%"
+                  >
+                    <HStack w="100%" justifyContent="space-between">
+                      <HStack>
+                        <FaNewspaper />
+                        <Text>FactGuard Detect</Text>
+                      </HStack>
+                      <ChevronDownIcon />
+                    </HStack>
+                  </Button> 
+                </motion.div>
+                <AnimatePresence initial={false}>             
+                  {openDropdown === "detect" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: "hidden" }}
+                    >
+                    <VStack align="stretch" pl="4" mt="2">
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/admin/profile/my-news-detections")}
+                      >
+                        <HStack>
+                          <FaTasks />
+                          <Text>All News Detections</Text>
+                        </HStack>
+                      </Button>
+                    </VStack>
+                  </motion.div>
+                  )}
+                </AnimatePresence>
+              </Box>
+
+              {/* All Claims Dropdown */}
+              <Box>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    justifyContent="space-between"
+                    _hover={{ color: hoverColor }}
+                    _active={{ color: activeColor }}
+                    size={{ base: "sm", md: "md" }}
+                    onClick={() => toggleDropdown("verify")}
+                    color={textColor}
+                    width="100%"
+                  >
+                    <HStack w="100%" justifyContent="space-between">
+                      <HStack>
+                        <FaShieldAlt />
+                        <Text>FactGuard Verify</Text>
+                      </HStack>
+                      <ChevronDownIcon />
+                    </HStack>
+                  </Button>
+                </motion.div>
+                <AnimatePresence initial={false}>
+                  {openDropdown === "verify" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: "hidden" }}
+                    >
+                    <VStack align="stretch" pl="4" mt="2">
+                      <Button
+                        variant="ghost"
+                        justifyContent="flex-start"
+                        size="sm"
+                        _hover={{ color: hoverColor }}
+                        _active={{ color: activeColor }}
+                        color={textColor}
+                        width="100%"
+                        onClick={() => navigate("/admin/profile/my-claim-checks")}
+                      >
+                        <HStack>
+                          <FaTasks />
+                          <Text>All Claim Checks</Text>
+                        </HStack>
+                      </Button>
+                    </VStack>
+                  </motion.div>
+                  )}
+                </AnimatePresence>
+              </Box>
               
               {/* Settings Dropdown */}
               <Box>
@@ -559,11 +838,6 @@ const AdminProfile = () => {
                     <Flex wrap="wrap" justify="space-between" gap="6">
                       {[
                         {
-                          icon: <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />,
-                          title: "Total Users",
-                          value: overview?.totalUsers ?? "-",
-                        },
-                        {
                           icon: <FaNewspaper size="50px" color={primaryColor} style={{ margin: "auto" }} />,
                           title: "Total Detections",
                           value: overview?.totalDetections ?? "-",
@@ -572,6 +846,11 @@ const AdminProfile = () => {
                           icon: <FaShieldAlt size="50px" color={primaryColor} style={{ margin: "auto" }} />,
                           title: "Total Claims",
                           value: overview?.totalClaims ?? "-",
+                        },
+                        {
+                          icon: <FaUsers size="50px" color={primaryColor} style={{ margin: "auto" }} />,
+                          title: "Total Users",
+                          value: overview?.totalUsers ?? "-",
                         },
                       ].map((item, index) => (
                         <motion.div
@@ -603,6 +882,107 @@ const AdminProfile = () => {
                     </Flex>
                   </motion.div>
 
+                  {/* Graphs Section */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.5 }}
+                  >
+                    <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Trends & Statistics</Heading>
+                    <Flex wrap="wrap" gap="6" align="flex-start">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                      >
+                        <Box
+                          position="relative" 
+                          bg={cardBg} 
+                          p="5" 
+                          borderRadius="md"
+                          height="100%"
+                          flex="1"
+                          shadow="md"
+                          display="flex" 
+                          flexDirection="column" 
+                          justifyContent="flex-start" 
+                          alignItems="center" 
+                          textAlign="center"
+                          _hover={{
+                            bg: useColorModeValue("gray.50", "gray.600"),
+                          }}                
+                        >
+                          <Heading size="md" mb="4">Detections and Claims Over Time</Heading>
+                          <DetectionsAndClaimsLineChart detections={detections} claimChecks={claimChecks} />
+                          {!hasTwoDaysOfData() && (
+                            <BlurOverlay message="We need activity from at least two different days to show trends over time." />
+                          )}
+                        </Box>
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                      >
+                        <Box
+                          position="relative"
+                          bg={cardBg} 
+                          p="5" 
+                          borderRadius="md"
+                          height="100%"
+                          flex="1"
+                          shadow="md"
+                          display="flex" 
+                          flexDirection="column" 
+                          justifyContent="flex-start" 
+                          alignItems="center" 
+                          textAlign="center"
+                          _hover={{
+                            bg: useColorModeValue("gray.50", "gray.600"),
+                          }}                
+                        >
+                          <Heading size="md" mb="4">Predictions and Ratings Overview</Heading>
+                          <RatingsAndPredictionsPieChart detections={detections} claimChecks={claimChecks} />
+                          {!isStatsAvailable() && (
+                            <BlurOverlay message="We need that users make predictions and claim checks to show statistics." />
+                          )}
+                        </Box>
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        style={{ flex: "1 1 calc(33.333% - 1rem)", minWidth: "250px" }}
+                      >
+                        <Box
+                          position="relative" 
+                          bg={cardBg} 
+                          p="5" 
+                          borderRadius="md"
+                          height="100%"
+                          flex="1"
+                          shadow="md"
+                          display="flex" 
+                          flexDirection="column" 
+                          justifyContent="flex-start" 
+                          alignItems="center" 
+                          textAlign="center"
+                          _hover={{
+                            bg: useColorModeValue("gray.50", "gray.600"),
+                          }}               
+                        >
+                          <Heading size="md" mb="4">Daily Interaction Breakdown</Heading>
+                          <DailyInteractionBreakdown detections={detections} claimChecks={claimChecks} />
+                          {!isStatsAvailable() && (
+                            <BlurOverlay message="We need that users make predictions and claim checks to show statistics." />
+                          )}
+                        </Box>
+                      </motion.div>
+                    </Flex>
+                  </motion.div>
+
                   {/* Recent Content Section */}
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -611,7 +991,7 @@ const AdminProfile = () => {
                   >
                     <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Users</Heading>
                       <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                      {Array.isArray(overview.users) && overview.users.length > 0 ? (
+                      {users.length > 0 ? (
                           <>
                             <Box overflowX="auto">
                               <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
@@ -626,7 +1006,7 @@ const AdminProfile = () => {
                                 </Thead>
                                 <Tbody as={motion.tbody}>
                                   <AnimatePresence>
-                                    {overview.users.slice(0, 5).map((user) => (
+                                    {users.slice(0, 5).map((user) => (
                                       <motion.tr
                                         key={user.id}
                                         layout
@@ -678,7 +1058,7 @@ const AdminProfile = () => {
                   >
                     <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
                       <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                        {Array.isArray(detections) && detections.length > 0 ? (
+                        {detections.length > 0 ? (
                           <>
                             <Box overflowX="auto">
                               <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
@@ -745,7 +1125,7 @@ const AdminProfile = () => {
                   >
                     <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claims</Heading>
                       <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
-                        {Array.isArray(claimChecks) && claimChecks.length > 0 ? (
+                        {claimChecks.length > 0 ? (
                           <>
                             <Box overflowX="auto">
                               <Table colorScheme={colorMode === "light" ? "gray" : "whiteAlpha"} mb="4">
@@ -805,6 +1185,33 @@ const AdminProfile = () => {
                       </Box>
                   </motion.div>
                 </Flex>
+              }
+            />
+            <Route
+              path="/my-users"
+              element={
+                <MyUsers
+                  users={users}
+                  deleteUser={deleteUser}
+                />
+              }
+            />
+           <Route
+              path="/my-news-detections"
+              element={
+                <MyNewsDetections
+                  detections={detections}
+                  deleteDetection={deleteDetection}
+                />
+              }
+            />
+            <Route
+              path="/my-claim-checks"
+              element={
+                <MyClaimChecks
+                  claimChecks={claimChecks}
+                  deleteClaimCheck={deleteClaimCheck}
+                />
               }
             />
             <Route path="/account-details" element={<AccountDetails />} />

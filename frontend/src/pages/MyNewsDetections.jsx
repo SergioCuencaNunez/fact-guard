@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   HStack,
   Box,
@@ -49,6 +49,20 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
   const [detectionToDelete, setDetectionToDelete] = useState(null);
   const [selectedDetections, setSelectedDetections] = useState([]);
   const [sortOrder, setSortOrder] = useState("desc");
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        if (decoded?.role === "admin") setIsAdmin(true);
+      } catch (e) {
+        console.error("Failed to decode token", e);
+      }
+    }
+  }, []);
 
   const handleDelete = (detection) => {
     setDetectionToDelete(detection);
@@ -127,7 +141,9 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
       <Box px={{ md: 4 }} py={{ md: 6 }}>
         <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
           <Flex justify="space-between" align="center" mb="4">
-            <Heading fontSize={{ base: '3xl', md: '4xl' }}>My News Detections</Heading>                    
+            <Heading fontSize={{ base: '3xl', md: '4xl' }}>
+              {isAdmin ? "All News Detections" : "My News Detections"}
+            </Heading>                    
             <HStack spacing="4" display={{ base: "none", md: "none", lg: "flex" }}>
                <motion.img
                   src={logo}
@@ -179,6 +195,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                       <Th width="10%" textAlign="center"><b>ID</b></Th>
                       <Th width="35%" textAlign="center"><b>Title</b></Th>
                       <Th width="15%" textAlign="center"><b>Prediction</b></Th>
+                      {isAdmin && <Th width="10%" textAlign="center"><b>User ID</b></Th>}
                       <Th width="10%" textAlign="center">
                         <Flex align="center" justify="center">
                           <b>Date</b>
@@ -227,6 +244,7 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                               </Text>
                             </Badge>
                           </Td>
+                          {isAdmin && <Td textAlign="center">{detection.user_id}</Td>}
                           <Td textAlign="center">{formatDate(detection.date)}</Td>
                           <Td textAlign="center">
                             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>

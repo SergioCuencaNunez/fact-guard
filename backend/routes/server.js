@@ -213,17 +213,63 @@ app.get("/profile", verifyToken, (req, res) => {
   });
 });
 
-// Get all detections for a user
-app.get("/detections", verifyToken, (req, res) => {
-  const query = `
-  SELECT * 
-  FROM detections 
-  WHERE user_id = ? 
-  ORDER BY date DESC
-`;
+// Get all users
+app.get("/users", verifyToken, (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Access denied. Only admins can view users." });
+  }
 
-  db.all(query, [req.user.id], (err, rows) => {
+  const query = `SELECT * FROM users WHERE role = 'user' ORDER BY last_access DESC`;
+  db.all(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch users." });
+    res.json(rows);
+  });
+});
+
+app.delete("/users/:id", verifyToken, (req, res) => {
+  const userId = req.params.id;
+
+  // Check if the requester is an admin
+  if (!req.user || req.user.role !== "admin"){
+    return res.status(403).json({ error: "Unauthorized access." });
+  }
+
+  const query = "DELETE FROM users WHERE id = ?";
+  db.run(query, [userId], function (err) {
+    if (err) {
+      console.error("Error deleting user:", err.message);
+      return res.status(500).json({ error: "Failed to delete user." });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const deleteClaims = "DELETE FROM claims WHERE user_id = ?";
+    const deleteDetections = "DELETE FROM detections WHERE user_id = ?";
+    db.run(deleteClaims, [userId], (err) => {
+      if (err) console.error("Failed to delete claims:", err.message);
+    });
+    db.run(deleteDetections, [userId], (err) => {
+      if (err) console.error("Failed to delete detections:", err.message);
+    });
+
+    res.status(200).json({ message: "User deleted successfully." });
+  });
+});
+
+
+// Get all detections
+app.get("/detections", verifyToken, (req, res) => {
+  const isAdmin = req.user.role === "admin";
+  const query = isAdmin
+    ? `SELECT * FROM detections ORDER BY date DESC`
+    : `SELECT * FROM detections WHERE user_id = ? ORDER BY date DESC`;
+
+  const params = isAdmin ? [] : [req.user.id];
+
+  db.all(query, params, (err, rows) => {
     if (err) return res.status(500).json({ error: "Failed to fetch detections" });
+
     const parsedRows = rows.map((row) => ({
       ...row,
       models: JSON.parse(row.models),
@@ -239,9 +285,15 @@ app.get("/detections", verifyToken, (req, res) => {
 // Get detection by ID
 app.get("/detections/:id", verifyToken, (req, res) => {
   const { id } = req.params;
+  const isAdmin = req.user.role === "admin";
 
-  const query = "SELECT * FROM detections WHERE id = ? AND user_id = ?";
-  db.get(query, [id, req.user.id], (err, row) => {
+  const query = isAdmin
+    ? "SELECT * FROM detections WHERE id = ?"
+    : "SELECT * FROM detections WHERE id = ? AND user_id = ?";
+
+  const params = isAdmin ? [id] : [id, req.user.id];
+
+  db.get(query, params, (err, row) => {
     if (err) return res.status(500).json({ error: "Failed to fetch detection" });
 
     if (!row) {
@@ -365,16 +417,16 @@ app.delete("/detections/:id", verifyToken, (req, res) => {
   });
 });
 
-// Get all claims for a user
+// Get all claims
 app.get("/claims", verifyToken, (req, res) => {
-  const query = `
-    SELECT id, query, claims, ratings, links, language, date 
-    FROM claims 
-    WHERE user_id = ? 
-    ORDER BY date DESC
-  `;
+  const isAdmin = req.user.role === "admin";
+  const query = isAdmin
+    ? `SELECT * FROM claims ORDER BY date DESC`
+    : `SELECT * FROM claims WHERE user_id = ? ORDER BY date DESC`;
 
-  db.all(query, [req.user.id], (err, rows) => {
+  const params = isAdmin ? [] : [req.user.id];
+
+  db.all(query, params, (err, rows) => {
     if (err) return res.status(500).json({ error: "Failed to fetch claims." });
 
     const parsedRows = rows.map((row) => ({
@@ -388,19 +440,24 @@ app.get("/claims", verifyToken, (req, res) => {
   });
 });
 
-// Get detection by ID
+// Get claim by ID
 app.get("/claims/:id", verifyToken, (req, res) => {
   const { id } = req.params;
+  const isAdmin = req.user.role === "admin";
 
-  const query = "SELECT * FROM claims WHERE id = ? AND user_id = ?";
-  db.get(query, [id, req.user.id], (err, row) => {
+  const query = isAdmin
+    ? "SELECT * FROM claims WHERE id = ?"
+    : "SELECT * FROM claims WHERE id = ? AND user_id = ?";
+
+  const params = isAdmin ? [id] : [id, req.user.id];
+
+  db.get(query, params, (err, row) => {
     if (err) return res.status(500).json({ error: "Failed to fetch claim" });
 
     if (!row) {
       return res.status(404).json({ error: "Claim not found" });
     }
 
-    // Parse JSON fields before sending the response
     const parsedRow = {
       ...row,
       claims: JSON.parse(row.claims),
@@ -520,7 +577,7 @@ app.get("/admin/profile", verifyToken, (req, res) => {
   if (req.user.role !== "admin") {
     return res.status(403).json({ error: "Access denied. Only users with administrative privileges can access this route." });
   }
-  
+
   const overview = {};
 
   db.get("SELECT username, email FROM users WHERE id = ?", [req.user.id], (err, admin) => {
@@ -542,56 +599,10 @@ app.get("/admin/profile", verifyToken, (req, res) => {
           if (err) return res.status(500).json({ error: "Error fetching claims count" });
           overview.totalClaims = row.totalClaims;
 
-          db.all("SELECT id, username, email, last_access FROM users WHERE role = 'user' ORDER BY last_access DESC", [], (err, users) => {
-            if (err) return res.status(500).json({ error: "Error fetching users" });
-            overview.users = users;
-
-            db.all("SELECT id, title, user_id, date FROM detections ORDER BY date DESC", [], (err, detections) => {
-              if (err) return res.status(500).json({ error: "Error fetching detections" });
-              overview.detections = detections;
-
-              db.all("SELECT id, query, user_id, date FROM claims ORDER BY date DESC", [], (err, claims) => {
-                if (err) return res.status(500).json({ error: "Error fetching claims" });
-                overview.claims = claims;
-
-                res.json(overview);
-              });
-            });
-          });
+          res.json(overview);
         });
       });
     });
-  });
-});
-
-app.delete("/admin/delete-user/:id", verifyToken, (req, res) => {
-  const userId = req.params.id;
-
-  // Check if the requester is an admin
-  if (!req.user || req.user.role !== "admin"){
-    return res.status(403).json({ error: "Unauthorized access." });
-  }
-
-  const query = "DELETE FROM users WHERE id = ?";
-  db.run(query, [userId], function (err) {
-    if (err) {
-      console.error("Error deleting user:", err.message);
-      return res.status(500).json({ error: "Failed to delete user." });
-    }
-    if (this.changes === 0) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    const deleteClaims = "DELETE FROM claims WHERE user_id = ?";
-    const deleteDetections = "DELETE FROM detections WHERE user_id = ?";
-    db.run(deleteClaims, [userId], (err) => {
-      if (err) console.error("Failed to delete claims:", err.message);
-    });
-    db.run(deleteDetections, [userId], (err) => {
-      if (err) console.error("Failed to delete detections:", err.message);
-    });
-
-    res.status(200).json({ message: "User deleted successfully." });
   });
 });
 

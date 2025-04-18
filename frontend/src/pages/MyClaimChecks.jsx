@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   HStack,
   Box,
@@ -64,6 +64,20 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
   const [selectedClaimChecks, setSelectedClaimChecks] = useState([]);
   const [sortOrder, setSortOrder] = useState("desc");
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const decoded = JSON.parse(atob(token.split('.')[1]));
+          if (decoded?.role === "admin") setIsAdmin(true);
+        } catch (e) {
+          console.error("Failed to decode token", e);
+        }
+      }
+    }, []);
+  
   const handleDelete = (claimCheck) => {
     setClaimCheckToDelete(claimCheck);
     onOpen();
@@ -196,7 +210,9 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
       <Box px={{ md: 4 }} py={{ md: 6 }}>
         <Flex direction="column" bg={cardBg} p={8} borderRadius="md" shadow="md">
           <Flex justify="space-between" align="center" mb="4">
-            <Heading fontSize={{ base: '3xl', md: '4xl' }}>My Claim Checks</Heading>                    
+            <Heading fontSize={{ base: '3xl', md: '4xl' }}>
+              {isAdmin ? "All Claim Checks" : "My Claim Checks"}
+            </Heading>                     
             <HStack spacing="4" display={{ base: "none", lg: "flex" }}>
               <motion.img
                 src={logo}
@@ -248,6 +264,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                       <Th width="10%" textAlign="center"><b>ID</b></Th>
                       <Th width="35%" textAlign="center"><b>Query</b></Th>
                       <Th width="15%" textAlign="center"><b>Rating</b></Th>
+                      {isAdmin && <Th width="10%" textAlign="center"><b>User ID</b></Th>}
                       <Th width="10%" textAlign="center">
                         <Flex align="center" justify="center">
                           <b>Date</b>
@@ -296,6 +313,7 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                               </Text>
                             </Badge>
                           </Td>
+                          {isAdmin && <Td textAlign="center">{claimCheck.user_id}</Td>}
                           <Td textAlign="center">{formatDate(claimCheck.date)}</Td>
                           <Td textAlign="center">
                             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
