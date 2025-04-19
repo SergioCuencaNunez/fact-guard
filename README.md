@@ -37,13 +37,11 @@ FactGuard is a web application designed to detect fake news and verify claims us
   - Node.js
   - React + Vite
 
-## Currently Work in Progress
+## Development Status
 
-This project is currently in a highly advanced stage of development and is nearing production readiness. The team is actively preparing the final features and deployment processes for a stable release.
+FactGuard has been successfully developed and all core functionalities — including fake news detection, claim verification, and user management — have been fully implemented and tested. However, due to the high resource requirements of the DL models, the application cannot currently be deployed on free-tier platforms. 
 
-## Deployment
-
-FactGuard will be hosted on **Render**, ensuring high availability and performance for end-users.
+As a result, FactGuard is only accessible to users connected to the same local network where the application is hosted. The system remains ready for deployment in more robust environments that support large-scale AI workloads.
 
 ## License
 
