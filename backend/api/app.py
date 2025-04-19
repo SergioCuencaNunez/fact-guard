@@ -256,7 +256,6 @@ def search_fact_check_claims(api_key, query, language_code="en"):
                 "message": f"No claims matching '{query}' were found in {language_name}.",
             }
 
-
     except requests.exceptions.RequestException as e:
         return {"success": False, "error": str(e)}
 
