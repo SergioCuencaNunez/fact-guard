@@ -229,12 +229,10 @@ function App() {
             path="/verify"
             element={<DefaultLayout><Verify /></DefaultLayout>}
           />
-
           {/* Profile Route */}
           <Route path="/profile/*" element={<Profile />} />
           {/* Admin Profile Route */}
           <Route path="/admin/profile/*" element={<AdminProfile />} />
-
           {/* Not Found */}
           <Route
             path="*"
