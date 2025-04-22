@@ -1056,7 +1056,7 @@ const AdminProfile = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
+                    transition={{ delay: 0.8, duration: 0.5 }}
                   >
                     <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Detections</Heading>
                       <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
@@ -1123,7 +1123,7 @@ const AdminProfile = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.5 }}
+                    transition={{ delay: 1.0, duration: 0.5 }}
                   >
                     <Heading fontSize={{ base: '2xl', md: '3xl' }} my="6">Recent Claims</Heading>
                       <Box bg={cardBg} p="5" borderRadius="md" overflowX="auto" shadow="md">
