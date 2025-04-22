@@ -12,13 +12,11 @@ import {
   Th,
   Td,
   Button,
-  Badge,
   IconButton,
   Checkbox,
   useDisclosure,
   useColorMode,
   useColorModeValue,
-  useBreakpointValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -31,12 +29,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import {
   SunIcon,
   MoonIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CheckCircleIcon,
-  WarningTwoIcon,
   WarningIcon,
-  InfoIcon,
 } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
