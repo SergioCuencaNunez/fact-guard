@@ -42,7 +42,6 @@ const MyUsers = ({ users, deleteUser }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [userToDelete, setUserToDelete] = useState(null);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [sortOrder, setSortOrder] = useState("desc");
 
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -103,16 +102,6 @@ const MyUsers = ({ users, deleteUser }) => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
   
-  const sortedUsers = [...users].sort((a, b) => {
-    return sortOrder === "desc"
-      ? new Date(b.date) - new Date(a.date)
-      : new Date(a.date) - new Date(b.date);
-  });
-
-  const toggleSortOrder = () => {
-    setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -149,7 +138,7 @@ const MyUsers = ({ users, deleteUser }) => {
                   </Thead>
                   <Tbody as={motion.tbody}>
                     <AnimatePresence>
-                      {sortedUsers.map((user) => (
+                      {users.map((user) => (
                         <motion.tr
                           key={user.id}
                           layout
