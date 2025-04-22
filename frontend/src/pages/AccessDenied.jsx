@@ -3,7 +3,7 @@ import { Flex, Box, Button, Image, VStack, Heading, Text, useColorModeValue } fr
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from "framer-motion";
 
-import accessDeniedImage from '../assets/403.png'; // usa alguna imagen distinta si quieres
+import accessDeniedImage from '../assets/403.png';
 
 const primaryColor = '#4dcfaf';
 const primaryHoverLight = '#3ca790';
