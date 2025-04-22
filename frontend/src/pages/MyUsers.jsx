@@ -36,9 +36,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const primaryColor = "#4dcfaf";
 
-const MyUsers = ({ users, deleteUser }) => {
-  const navigate = useNavigate();
-  
+const MyUsers = ({ users, deleteUser }) => {  
   const cardBg = useColorModeValue("white", "gray.700");
   
   const { colorMode, toggleColorMode } = useColorMode();
