@@ -31,7 +31,6 @@ import {
   MoonIcon,
   WarningIcon,
 } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const primaryColor = "#4dcfaf";
