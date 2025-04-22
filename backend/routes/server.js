@@ -256,7 +256,6 @@ app.delete("/users/:id", verifyToken, (req, res) => {
   });
 });
 
-
 // Get all detections
 app.get("/detections", verifyToken, (req, res) => {
   const isAdmin = req.user.role === "admin";
