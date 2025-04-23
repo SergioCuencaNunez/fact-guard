@@ -331,9 +331,11 @@ const MyNewsDetections = ({ detections, deleteDetection }) => {
                 <Text fontSize="lg" color="gray.500" textAlign="center">
                   No detections found.
                 </Text>
-                <Text fontSize="md" color="gray.400" textAlign="center">
-                  Start detecting fake news with FactGuard Detect by analyzing articles and preventing disinformation today.
-                </Text>
+                {!isAdmin && (
+                  <Text fontSize="md" color="gray.400" textAlign="center">
+                    Start detecting fake news with FactGuard Detect by analyzing articles and preventing disinformation today.
+                  </Text>
+                )}
               </Flex>
             </motion.div>
           )}

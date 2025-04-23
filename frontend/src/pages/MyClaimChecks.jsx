@@ -400,9 +400,11 @@ const MyClaimChecks = ({ claimChecks, deleteClaimCheck }) => {
                 <Text fontSize="lg" color="gray.500" textAlign="center">
                   No claims checks found.
                 </Text>
-                <Text fontSize="md" color="gray.400" textAlign="center" mb="4">
-                  Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
-                </Text>
+                {!isAdmin && (
+                  <Text fontSize="md" color="gray.400" textAlign="center" mb="4">
+                    Start verifying claims with FactGuard Verify by evaluating their reliability using trusted sources and robust fact-checking methods.
+                  </Text>
+                )}
               </Flex>
             </motion.div>
           )}
