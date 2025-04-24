@@ -471,6 +471,7 @@ const ClaimCheckResults = () => {
               )}
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
+                 {...(isAdmin && { leftIcon: <ArrowBackIcon /> })}
                   size="md"
                   bg={primaryColor}
                   color="white"
