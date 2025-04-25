@@ -387,7 +387,7 @@ const SignUp = () => {
           </form>
           <Box textAlign="center" mt="4">
             <Text fontSize="sm" color={textColor} mb="2">
-              Empowering Truth: Delivering Clarity in a World of Disinformation
+              Empowering Clarity. Enabling Trust
             </Text>
             <Text mt="2" fontSize="sm">
               Already have an account?{' '}

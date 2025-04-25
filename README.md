@@ -3,7 +3,7 @@
   <img src="frontend/src/assets/banner.png" alt="Logo" width="400">
 </p>
 
-## Empowering Truth: Delivering Clarity in a World of Disinformation
+## Empowering Clarity. Enabling Trust
 
 FactGuard is a web application designed to detect fake news and verify claims using advanced AI techniques. It combines **Machine Learning (ML)** and **Deep Learning (DL)** models to analyze content, identify fake news, and perform real-time claim verification. The platform integrates models like **BERT** and **LSTM** for detection, alongside **Decision Trees**, **Random Forest**, and **XGBoost** for ML-based classification. Additionally, the system features a backend database for storing user information, detections, and claims, ensuring a robust and scalable solution for users, journalists, and analysts.
 
