@@ -162,6 +162,7 @@ const Login = () => {
 
   return (
     <motion.div
+      style={{ width: "100vw", display: "flex", justifyContent: "center", alignItems: "center" }}
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -50 }}
